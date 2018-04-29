@@ -1,6 +1,7 @@
 #include <iostream>
 #include <type_traits>
 #include "RPSContainers.h"
+#include "RPSBoard.h"
  
 
 int main() {
@@ -10,5 +11,6 @@ int main() {
     static_assert(!std::is_abstract<RPSJokerChange>(), "RPSJokerChange is abstract.");
     static_assert(!std::is_abstract<RPSFightInfo>(), "RPSFightInfo is abstract.");
     static_assert(!std::is_abstract<RPSPiecePosition>(), "RPSPiecePosition is abstract.");
+    static_assert(!std::is_abstract<RPSBoard>(), "RPSBoard is abstract.");
     return 0;
 }
