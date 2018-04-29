@@ -1,4 +1,4 @@
-EXEC	:= ex1
+EXEC	:= ex2
 CC		:= g++
 CFLAGS	:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -ggdb
 SRCDIR	:= .
