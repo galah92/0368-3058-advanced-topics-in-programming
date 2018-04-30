@@ -4,6 +4,7 @@
 #include "RPSContainers.h"
 
 using std::string;
+using std::to_string;
 using std::ostringstream;
 using std::istringstream;
 using std::make_unique;
@@ -15,13 +16,8 @@ const string MOVES_FILE_EXT	= ".rps_moves";
 
 
 void FilePlayerAlgorithm::getInitialPositions(int player, vector<unique_ptr<PiecePosition>> &positions) {
-    ostringstream oss;
-    oss << FILES_PREFIX << player + 1 << BOARD_FILE_EXT;
-    ifstream fin(oss.str());
-    _boardstream = ifstream(oss.str());
-    oss.clear();
-    oss << FILES_PREFIX << player + 1 << MOVES_FILE_EXT;
-	_movesstream = ifstream(oss.str());
+    _boardstream = ifstream(FILES_PREFIX + to_string(player + 1) + BOARD_FILE_EXT);
+    _movesstream = ifstream(FILES_PREFIX + to_string(player + 1) + MOVES_FILE_EXT);
     positions.clear(); // just to make sure
     string line;
     while (getline(_boardstream, line)) {
