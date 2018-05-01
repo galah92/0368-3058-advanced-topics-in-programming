@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 #include "FilePlayerAlgorithm.h"
-#include "RPSContainers.h"
+#include "GameContainers.h"
 
 using std::string;
 using std::to_string;

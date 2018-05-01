@@ -1,6 +1,6 @@
 #include <memory>
 #include <vector>
-#include "RPSGameManager.h"
+#include "GameManager.h"
 #include "PiecePosition.h"
 
 using std::unique_ptr;

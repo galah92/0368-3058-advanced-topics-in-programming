@@ -1,7 +1,7 @@
 #include <iostream>
 #include <type_traits>
-#include "RPSContainers.h"
-#include "RPSBoard.h"
+#include "GameContainers.h"
+#include "GameBoard.h"
  
 
 int main() {
