@@ -1,11 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <sstream>
 #include <memory>
 #include <fstream>
 #include "PlayerAlgorithm.h"
 #include "PiecePosition.h"
 
+using std::istringstream;
 using std::unique_ptr;
 using std::vector;
 using std::ifstream;
@@ -22,4 +24,5 @@ public:
 private:
     ifstream _boardstream;
 	ifstream _movesstream;
+    istringstream _movestream; // store each line in moves file
 };

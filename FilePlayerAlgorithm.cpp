@@ -1,12 +1,10 @@
 #include <string>
-#include <sstream>
 #include "FilePlayerAlgorithm.h"
 #include "GameContainers.h"
 
 using std::string;
 using std::to_string;
 using std::ostringstream;
-using std::istringstream;
 using std::make_unique;
 
 
@@ -21,10 +19,9 @@ void FilePlayerAlgorithm::getInitialPositions(int player, vector<unique_ptr<Piec
     positions.clear(); // just to make sure
     string line;
     while (getline(_boardstream, line)) {
-		if (line.empty()) continue;
 		istringstream ss(line);
 		char piece, joker;
-		unsigned int x, y;
+		int x, y;
 		ss >> piece >> x >> y >>  joker;
         RPSPoint pos(x, y);
         positions.push_back(make_unique<RPSPiecePosition>(pos, piece, joker));
@@ -45,9 +42,23 @@ void FilePlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 }
 
 unique_ptr<Move> FilePlayerAlgorithm::getMove() {
-    return nullptr;
+    string line;
+    getline(_movesstream, line);
+    _movestream = istringstream(line);
+    int fromX, fromY, toX, toY;
+    _movestream >> fromX >> fromY >> toX >> toY;
+    RPSPoint from(fromX, fromY);
+    RPSPoint to(toX, toY);
+    return make_unique<RPSMove>(from, to);
 }
 
 unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
-    return nullptr;
+    string jokerPrefix;
+    _movesstream >> jokerPrefix;
+    if (jokerPrefix != "J:") return nullptr;
+    int jokerX, jokerY;
+    char newRep;
+    _movesstream >> jokerX >> jokerY >> newRep;
+    RPSPoint pos(jokerX, jokerY);
+    return make_unique<RPSJokerChange>(pos, newRep);
 }
