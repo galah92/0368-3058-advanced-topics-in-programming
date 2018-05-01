@@ -10,7 +10,14 @@ SOURCES	= $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 TARGET	= $(BINDIR)/$(EXEC)
 
-.PHONY: build clean
+OSNAME	:= $(shell uname -n)
+ifeq ($(OSNAME), nova)
+	CC	:= g++-5.3.0
+else
+	CC	:= g++
+endif
+
+.PHONY: clean zip
 
 default : all
 
@@ -24,3 +31,6 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)
+
+zip:
+	zip hw2_203521984_203774849 *.cpp *.h makefile *.txt
