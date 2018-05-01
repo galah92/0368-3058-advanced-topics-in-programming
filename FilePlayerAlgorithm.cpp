@@ -22,7 +22,7 @@ void FilePlayerAlgorithm::getInitialPositions(int player, vector<unique_ptr<Piec
 		istringstream ss(line);
 		char piece, joker;
 		int x, y;
-		ss >> piece >> x >> y >>  joker;
+		ss >> piece >> x >> y >> joker;
         RPSPoint pos(x, y);
         positions.push_back(make_unique<RPSPiecePosition>(pos, piece, joker));
 	}

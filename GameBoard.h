@@ -1,20 +1,17 @@
 #pragma once
 
 #include <array>
-#include <memory>
 #include "Board.h"
 #include "Point.h"
 
-#define N 10
-#define M 10
-
-using std::unique_ptr;
 using std::array;
 
+const int N = 10;
+const int M = 10;
 
-class RPSBoard : public Board {
+class GameBoard : public Board {
 public:
 	int getPlayer(const Point& pos) const;
 private:
-    array<unique_ptr<char>, N * M> _board;
+    array<char, N * M> _board;
 };
