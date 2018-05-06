@@ -47,9 +47,7 @@ unique_ptr<Move> FilePlayerAlgorithm::getMove() {
     _movestream = istringstream(line);
     int fromX, fromY, toX, toY;
     _movestream >> fromX >> fromY >> toX >> toY;
-    RPSPoint from(fromX, fromY);
-    RPSPoint to(toX, toY);
-    return make_unique<RPSMove>(from, to);
+    return make_unique<RPSMove>(RPSPoint(fromX, fromY), RPSPoint(toX, toY));
 }
 
 unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {

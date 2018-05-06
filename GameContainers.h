@@ -23,12 +23,12 @@ private:
 
 class RPSMove : public Move {
 public:
-    RPSMove(Point &from, Point &to) : _from(from), _to(to) { }
+    RPSMove(const Point &from, const Point &to) : _from(from), _to(to) { }
 	const Point& getFrom() const { return _from; };
 	const Point& getTo() const { return _to; };
 private:
-    Point &_from;
-    Point &_to;
+    const Point &_from;
+    const Point &_to;
 };
 
 class RPSJokerChange : public JokerChange {

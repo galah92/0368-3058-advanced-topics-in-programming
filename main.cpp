@@ -11,6 +11,6 @@ int main() {
     static_assert(!std::is_abstract<RPSJokerChange>(), "RPSJokerChange is abstract.");
     static_assert(!std::is_abstract<RPSFightInfo>(), "RPSFightInfo is abstract.");
     static_assert(!std::is_abstract<RPSPiecePosition>(), "RPSPiecePosition is abstract.");
-    static_assert(!std::is_abstract<RPSBoard>(), "RPSBoard is abstract.");
+    //static_assert(!std::is_abstract<GameBoard>(), "RPSBoard is abstract.");
     return 0;
 }
