@@ -23,7 +23,7 @@ void FilePlayerAlgorithm::getInitialPositions(int player, vector<unique_ptr<Piec
 		char piece, joker;
 		int x, y;
 		ss >> piece >> x >> y >> joker;
-        RPSPoint pos(x, y);
+        RPSPoint pos(x - 1, y - 1);
         positions.push_back(make_unique<RPSPiecePosition>(pos, piece, joker));
 	}
 }
@@ -47,7 +47,7 @@ unique_ptr<Move> FilePlayerAlgorithm::getMove() {
     _movestream = istringstream(line);
     int fromX, fromY, toX, toY;
     _movestream >> fromX >> fromY >> toX >> toY;
-    return make_unique<RPSMove>(RPSPoint(fromX, fromY), RPSPoint(toX, toY));
+    return make_unique<RPSMove>(RPSPoint(fromX - 1, fromY - 1), RPSPoint(toX - 1, toY - 1));
 }
 
 unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
