@@ -1,15 +1,15 @@
 #include "GamePiece.h"
 
 
-GamePiece::GamePiece(int player, char piece, bool isJoker) :
-    _player(player), _piece(piece), _isJoker(isJoker) { }
+GamePiece::GamePiece(int player, char piece, char jokerRep) :
+    _player(player), _piece(piece), _jokerRep(jokerRep) { }
 
 int GamePiece::getPlayer() const {
     return _player;
 }
 
-bool GamePiece::setPiece(char piece) {
-    if (!_isJoker) return false;
-    _piece = piece;
+bool GamePiece::setJokerRep(char jokerRep) {
+    if (_piece != 'J') return false;
+    _jokerRep = jokerRep;
     return true;
 }

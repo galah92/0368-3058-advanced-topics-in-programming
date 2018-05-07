@@ -3,11 +3,11 @@
 
 class GamePiece {
 public:
-    GamePiece(int player, char piece, bool isJoker);
+    GamePiece(int player, char piece, char jokerRep = ' ');
     int getPlayer() const;
-    bool setPiece(char piece);
+    bool setJokerRep(char jokerRep);
 private:
     int _player;
     char _piece;
-    bool _isJoker;
+    char _jokerRep;
 };
