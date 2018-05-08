@@ -72,6 +72,7 @@ bool GameManager::isValidMove(unique_ptr<Move>& move, int player) {
     auto xDiff = abs(from.getX() - to.getX());
     auto yDiff = abs(from.getY() - to.getY());
     if ((xDiff > 1 || yDiff > 1) || (xDiff == 0 && yDiff == 0)) return false;
+    if (!_board.getPiece(from)->canMove()) return false;
     if (_board.getPiece(from)->getPlayer() != player) return false;
     if (_board.getPiece(to)->getPlayer() == player) return false;
     return true;
@@ -86,9 +87,8 @@ bool GameManager::isValidJokerChange(unique_ptr<JokerChange>& change, int player
     return true;
 }
 
-shared_ptr<GamePiece> GameManager::fight(const Point &pos, GamePiece &piece) {
-    auto defendingPiece = _board.getPiece(pos);
-    (void)pos;
-    (void)piece;
+shared_ptr<GamePiece> GameManager::fight(shared_ptr<GamePiece> piece1, shared_ptr<GamePiece> piece2) {
+    (void)piece1;
+    (void)piece2;
     return nullptr;
 }

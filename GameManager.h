@@ -20,7 +20,7 @@ private:
     bool populate(int player, vector<unique_ptr<PiecePosition>> &positions, Fights &fights);
     bool isValidMove(unique_ptr<Move>& move, int player);
     bool isValidJokerChange(unique_ptr<JokerChange>& change, int player);
-    shared_ptr<GamePiece> fight(const Point &pos, GamePiece &piece);
+    shared_ptr<GamePiece> fight(shared_ptr<GamePiece> piece1, shared_ptr<GamePiece> piece2);
     array<reference_wrapper<PlayerAlgorithm>, 2> _players;
     array<unsigned int, 2> numFlags;
     array<unsigned int, 2> numMovablePieces;
