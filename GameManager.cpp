@@ -2,7 +2,7 @@
 #include <vector>
 #include "GameManager.h"
 #include "PiecePosition.h"
-#include "GameContainers.h"
+#include "GameFightInfo.h"
 #include "GamePoint.h"
 
 using std::unique_ptr;
