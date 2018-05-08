@@ -2,6 +2,7 @@
 #include <vector>
 #include "GameManager.h"
 #include "PiecePosition.h"
+#include "GameContainers.h"
 
 using std::unique_ptr;
 using std::vector;
@@ -22,13 +23,25 @@ void GameManager::play() {
     // TODO: handle populate fail
 }
 
-bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positions, vector<unique_ptr<FightInfo>> &fights) {
+bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positions, Fights &fights) {
     GameBoard tmpBoard;
     for (const auto &pos : positions) {
         if (!tmpBoard.getPlayer(pos->getPosition())) return false;
-        tmpBoard.setPiece(*pos, player);
+        tmpBoard.setPiece(pos->getPosition(), GamePiece(player, pos->getPiece(), pos->getJokerRep()));
         numFlags[player] += pos->getPiece() == 'J';
         // TODO: increment numMovablePieces if needed
     }
+    for (unsigned int i = 0; i < N; i++) {
+        for (unsigned int j = 0; j < M; j++) {
+            const auto piece = tmpBoard.getPiece(RPSPoint(i, j));
+            (void)fights;
+        }
+    }
     return false;
+}
+
+void GameManager::fight(Point &pos, GamePiece &piece, Fights &fights) {
+    (void)pos;
+    (void)piece;
+    (void)fights;
 }

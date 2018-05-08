@@ -41,9 +41,9 @@ private:
     char _newRep;
 };
 
-class RPSFightInfo :  public FightInfo {
+class GameFightInfo :  public FightInfo {
 public:
-    RPSFightInfo(Point &pos, char piece1, char piece2, int winner) :
+    GameFightInfo(Point &pos, char piece1, char piece2, int winner) :
         _pos(pos),
         _piece1(piece1),
         _piece2(piece2),
