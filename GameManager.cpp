@@ -3,6 +3,7 @@
 #include "GameManager.h"
 #include "PiecePosition.h"
 #include "GameContainers.h"
+#include "GamePoint.h"
 
 using std::unique_ptr;
 using std::vector;
@@ -33,7 +34,7 @@ bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positi
     }
     for (unsigned int i = 0; i < N; i++) {
         for (unsigned int j = 0; j < M; j++) {
-            const auto piece = tmpBoard.getPiece(RPSPoint(i, j));
+            const auto piece = tmpBoard.getPiece(GamePoint(i, j));
             (void)fights;
         }
     }

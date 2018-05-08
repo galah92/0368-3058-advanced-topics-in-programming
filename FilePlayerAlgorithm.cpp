@@ -1,6 +1,10 @@
 #include <string>
 #include "FilePlayerAlgorithm.h"
 #include "GameContainers.h"
+#include "GamePiecePosition.h"
+#include "GameJokerChange.h"
+#include "GamePoint.h"
+#include "GameMove.h"
 
 using std::string;
 using std::to_string;
@@ -23,8 +27,8 @@ void FilePlayerAlgorithm::getInitialPositions(int player, vector<unique_ptr<Piec
 		char piece, joker;
 		int x, y;
 		ss >> piece >> x >> y >> joker;
-        RPSPoint pos(x - 1, y - 1);
-        positions.push_back(make_unique<RPSPiecePosition>(pos, piece, joker));
+        GamePoint pos(x - 1, y - 1);
+        positions.push_back(make_unique<GamePiecePosition>(pos, piece, joker));
 	}
 }
 
@@ -47,7 +51,7 @@ unique_ptr<Move> FilePlayerAlgorithm::getMove() {
     _movestream = istringstream(line);
     int fromX, fromY, toX, toY;
     _movestream >> fromX >> fromY >> toX >> toY;
-    return make_unique<RPSMove>(RPSPoint(fromX - 1, fromY - 1), RPSPoint(toX - 1, toY - 1));
+    return make_unique<GameMove>(GamePoint(fromX - 1, fromY - 1), GamePoint(toX - 1, toY - 1));
 }
 
 unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
@@ -57,6 +61,6 @@ unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
     int jokerX, jokerY;
     char newRep;
     _movesstream >> jokerX >> jokerY >> newRep;
-    RPSPoint pos(jokerX, jokerY);
-    return make_unique<RPSJokerChange>(pos, newRep);
+    GamePoint pos(jokerX, jokerY);
+    return make_unique<GameJokerChange>(pos, newRep);
 }
