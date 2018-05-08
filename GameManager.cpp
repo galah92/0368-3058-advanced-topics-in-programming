@@ -1,13 +1,17 @@
 #include <memory>
 #include <vector>
+#include <cstdlib>
 #include "GameManager.h"
 #include "PiecePosition.h"
 #include "GameFightInfo.h"
 #include "GamePoint.h"
 
 using std::unique_ptr;
+using std::shared_ptr;
 using std::vector;
 using std::ref;
+using std::abs;
+using std::make_shared;
 
 
 GameManager::GameManager(PlayerAlgorithm &player1, PlayerAlgorithm &player2) :
@@ -22,13 +26,32 @@ void GameManager::play() {
     _players[1].get().getInitialPositions(2, positions);
     // result = populate(2, positions);
     // TODO: handle populate fail
+    //
+    int player = 0;
+    while (true) {
+        auto move = _players[player].get().getMove();
+        if (!isValidMove(move, player)) return;
+        _players[!player].get().notifyOnOpponentMove(*move);
+        //auto fightInfo = fight(move, player);
+        //if (fightInfo) {
+        //    _players[0].get().notifyFightResult(*fightInfo);
+        //    _players[1].get().notifyFightResult(*fightInfo);
+        //}
+        auto change = _players[player].get().getJokerChange();
+        if (change) {
+            if (!isValidJokerChange(change, player)) return;
+            auto piece = _board.getPiece(change->getJokerChangePosition());
+            piece->setJokerRep(change->getJokerNewRep());
+        }
+        player = !player; // swap player
+    }
 }
 
 bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positions, Fights &fights) {
     GameBoard tmpBoard;
     for (const auto &pos : positions) {
         if (!tmpBoard.getPlayer(pos->getPosition())) return false;
-        tmpBoard.setPiece(pos->getPosition(), GamePiece(player, pos->getPiece(), pos->getJokerRep()));
+        tmpBoard.setPiece(pos->getPosition(), make_shared<GamePiece>(player, pos->getPiece(), pos->getJokerRep()));
         numFlags[player] += pos->getPiece() == 'J';
         // TODO: increment numMovablePieces if needed
     }
@@ -41,8 +64,31 @@ bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positi
     return false;
 }
 
-void GameManager::fight(Point &pos, GamePiece &piece, Fights &fights) {
+bool GameManager::isValidMove(unique_ptr<Move>& move, int player) {
+    if (!move) return false;
+    auto &from = move->getFrom();
+    auto &to = move->getTo();
+    if (!_board.isValidPosition(from) || !_board.isValidPosition(to)) return false;
+    auto xDiff = abs(from.getX() - to.getX());
+    auto yDiff = abs(from.getY() - to.getY());
+    if ((xDiff > 1 || yDiff > 1) || (xDiff == 0 && yDiff == 0)) return false;
+    if (_board.getPiece(from)->getPlayer() != player) return false;
+    if (_board.getPiece(to)->getPlayer() == player) return false;
+    return true;
+}
+
+bool GameManager::isValidJokerChange(unique_ptr<JokerChange>& change, int player) {
+    auto &pos = change->getJokerChangePosition();
+    if (!_board.isValidPosition(pos)) return false;
+    auto piece = _board.getPiece(pos);
+    if (piece->getPiece() != 'J' || piece->getPlayer() != player) return false;
+    // TODO check change->getJokerNewRep() is valid piece char
+    return true;
+}
+
+shared_ptr<GamePiece> GameManager::fight(const Point &pos, GamePiece &piece) {
+    auto defendingPiece = _board.getPiece(pos);
     (void)pos;
     (void)piece;
-    (void)fights;
+    return nullptr;
 }

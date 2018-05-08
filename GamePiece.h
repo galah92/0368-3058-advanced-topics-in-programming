@@ -10,6 +10,7 @@ public:
     bool setJokerRep(char jokerRep);
     bool isFlag() const;
     bool canMove() const;
+    bool canKill() const;
     operator char() const;
 private:
     int _player;
