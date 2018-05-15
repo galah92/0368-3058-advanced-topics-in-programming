@@ -6,20 +6,13 @@
 #include "GameFightInfo.h"
 #include "GamePoint.h"
 
-using std::unique_ptr;
-using std::shared_ptr;
-using std::vector;
-using std::ref;
-using std::abs;
-using std::make_shared;
-
 
 GameManager::GameManager(PlayerAlgorithm &player1, PlayerAlgorithm &player2) :
-    _players({ ref(player1), ref(player2) }) { }
+    _players({ std::ref(player1), std::ref(player2) }) { }
 
 void GameManager::play() {
-    vector<unique_ptr<PiecePosition>> positions;
-    vector<unique_ptr<FightInfo>> fights;
+	std::vector<std::unique_ptr<PiecePosition>> positions;
+	std::vector<std::unique_ptr<FightInfo>> fights;
     _players[0].get().getInitialPositions(1, positions);
     // bool result = populate(1, positions);
     // TODO: handle populate fail
@@ -47,11 +40,11 @@ void GameManager::play() {
     }
 }
 
-bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positions, Fights &fights) {
+bool GameManager::populate(int player, std::vector<std::unique_ptr<PiecePosition>> &positions, std::vector<std::unique_ptr<FightInfo>> &fights) {
     GameBoard tmpBoard;
     for (const auto &pos : positions) {
         if (!tmpBoard.getPlayer(pos->getPosition())) return false;
-        tmpBoard.setPiece(pos->getPosition(), make_shared<GamePiece>(player, pos->getPiece(), pos->getJokerRep()));
+        tmpBoard.setPiece(pos->getPosition(), std::make_shared<GamePiece>(player, pos->getPiece(), pos->getJokerRep()));
         numFlags[player] += pos->getPiece() == 'J';
         // TODO: increment numMovablePieces if needed
     }
@@ -64,13 +57,13 @@ bool GameManager::populate(int player, vector<unique_ptr<PiecePosition>> &positi
     return false;
 }
 
-bool GameManager::isValidMove(unique_ptr<Move>& move, int player) {
+bool GameManager::isValidMove(std::unique_ptr<Move>& move, int player) {
     if (!move) return false;
     auto &from = move->getFrom();
     auto &to = move->getTo();
     if (!_board.isValidPosition(from) || !_board.isValidPosition(to)) return false;
-    auto xDiff = abs(from.getX() - to.getX());
-    auto yDiff = abs(from.getY() - to.getY());
+    auto xDiff = std::abs(from.getX() - to.getX());
+    auto yDiff = std::abs(from.getY() - to.getY());
     if ((xDiff > 1 || yDiff > 1) || (xDiff == 0 && yDiff == 0)) return false;
     if (!_board.getPiece(from)->canMove()) return false;
     if (_board.getPiece(from)->getPlayer() != player) return false;
@@ -78,7 +71,7 @@ bool GameManager::isValidMove(unique_ptr<Move>& move, int player) {
     return true;
 }
 
-bool GameManager::isValidJokerChange(unique_ptr<JokerChange>& change, int player) {
+bool GameManager::isValidJokerChange(std::unique_ptr<JokerChange>& change, int player) {
     auto &pos = change->getJokerChangePosition();
     if (!_board.isValidPosition(pos)) return false;
     auto piece = _board.getPiece(pos);
@@ -87,7 +80,7 @@ bool GameManager::isValidJokerChange(unique_ptr<JokerChange>& change, int player
     return true;
 }
 
-shared_ptr<GamePiece> GameManager::fight(shared_ptr<GamePiece> piece1, shared_ptr<GamePiece> piece2) {
+std::shared_ptr<GamePiece> GameManager::fight(std::shared_ptr<GamePiece> piece1, std::shared_ptr<GamePiece> piece2) {
     (void)piece1;
     (void)piece2;
     return nullptr;

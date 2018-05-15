@@ -6,23 +6,18 @@
 #include "PlayerAlgorithm.h"
 #include "GameBoard.h"
 
-using std::array;
-using std::vector;
-using std::reference_wrapper;
-using Fights = vector<unique_ptr<FightInfo>>;
-
 
 class GameManager {
 public:
     GameManager(PlayerAlgorithm &player1, PlayerAlgorithm &player2);
     void play();
 private:
-    bool populate(int player, vector<unique_ptr<PiecePosition>> &positions, Fights &fights);
-    bool isValidMove(unique_ptr<Move>& move, int player);
-    bool isValidJokerChange(unique_ptr<JokerChange>& change, int player);
-    shared_ptr<GamePiece> fight(shared_ptr<GamePiece> piece1, shared_ptr<GamePiece> piece2);
-    array<reference_wrapper<PlayerAlgorithm>, 2> _players;
-    array<unsigned int, 2> numFlags;
-    array<unsigned int, 2> numMovablePieces;
+    bool populate(int player, std::vector<std::unique_ptr<PiecePosition>> &positions, std::vector<std::unique_ptr<FightInfo>> &fights);
+    bool isValidMove(std::unique_ptr<Move>& move, int player);
+    bool isValidJokerChange(std::unique_ptr<JokerChange>& change, int player);
+	std::shared_ptr<GamePiece> fight(std::shared_ptr<GamePiece> piece1, std::shared_ptr<GamePiece> piece2);
+	std::array<std::reference_wrapper<PlayerAlgorithm>, 2> _players;
+	std::array<unsigned int, 2> numFlags;
+	std::array<unsigned int, 2> numMovablePieces;
     GameBoard _board = GameBoard();
 };
