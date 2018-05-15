@@ -21,7 +21,8 @@
     <None Include="$(MSBuildThisFileDirectory)..\..\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\*.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\AutoPlayerAlgorithm.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\AutoPlayerAlgorithm.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\*.cpp" />

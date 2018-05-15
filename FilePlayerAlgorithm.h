@@ -1,28 +1,27 @@
 #pragma once
 
 #include <vector>
-#include <sstream>
 #include <memory>
+#include <sstream>
 #include <fstream>
 #include "PlayerAlgorithm.h"
 #include "PiecePosition.h"
-
-using std::istringstream;
-using std::unique_ptr;
-using std::vector;
-using std::ifstream;
+#include "FightInfo.h"
+#include "Board.h"
+#include "Move.h"
+#include "JokerChange.h"
 
 
 class FilePlayerAlgorithm : public PlayerAlgorithm {
 public:
-    void getInitialPositions(int player, vector<unique_ptr<PiecePosition>>& positions);
-	void notifyOnInitialBoard(const Board& b, const vector<unique_ptr<FightInfo>>& fights);
+    void getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions);
+	void notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights);
 	void notifyOnOpponentMove(const Move& move);
 	void notifyFightResult(const FightInfo& fightInfo);
-	unique_ptr<Move> getMove();
-	unique_ptr<JokerChange> getJokerChange();
+	std::unique_ptr<Move> getMove();
+	std::unique_ptr<JokerChange> getJokerChange();
 private:
-    ifstream _boardstream;
-	ifstream _movesstream;
-    istringstream _movestream; // store each line in moves file
+    std::ifstream _boardstream;
+	std::ifstream _movesstream;
+    std::istringstream _movestream; // store each line in moves file
 };
