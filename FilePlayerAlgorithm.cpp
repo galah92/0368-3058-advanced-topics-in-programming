@@ -1,6 +1,5 @@
 #include <string>
 #include "FilePlayerAlgorithm.h"
-#include "GameContainers.h"
 #include "GamePiecePosition.h"
 #include "GameJokerChange.h"
 #include "GamePoint.h"
