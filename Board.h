@@ -18,7 +18,11 @@ public:
 class BoardImpl : public Board {
 public:
 	BoardImpl();
-	int getPlayer(const Point& pos) const;
+	void clear();
+	int getPlayer(const Point& pos) const override;
+	std::shared_ptr<Piece> getPiece(const Point& pos) const;
+	std::shared_ptr<Piece> setPiece(const Point& pos, std::shared_ptr<Piece> piece);
 private:
+	bool isValidPosition(const Point& pos) const;
 	std::array<std::shared_ptr<Piece>, N * M> _board;
 };

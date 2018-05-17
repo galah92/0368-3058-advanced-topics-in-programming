@@ -1,16 +1,17 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 
-enum class PieceType {
-	None,
-	Flag,
-	Rock,
-	Paper,
-	Scissors,
-	Bomb,
-	Unknown,
+enum class PieceType : char {
+	None = ' ',
+	Flag = 'F',
+	Rock = 'R',
+	Paper = 'P',
+	Scissors = 'S',
+	Bomb = 'B',
+	Unknown = '#',
 };
 
 class Piece {
@@ -22,6 +23,9 @@ public:
 	int getPlayer() const;
 	PieceType getType() const;
 	bool isJoker() const;
+	static bool isValid(PieceType piece);
+	static std::unordered_map<PieceType, bool> canMove;
+	operator char() const;
 	static std::shared_ptr<Piece> Empty;
 private:
 	int _player;

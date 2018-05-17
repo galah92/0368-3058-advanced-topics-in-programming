@@ -1,24 +1,37 @@
 #pragma once
 
+#include <memory>
 #include <vector>
-#include <array>
-#include <functional>
+#include <unordered_map>
 #include "PlayerAlgorithm.h"
-#include "PiecePosition.h"
-#include "GameBoard.h"
+#include "Piece.h"
 
+
+enum class PlayerStatus {
+	Playing,
+	InvalidPos,
+	InvalidMove,
+	NoFlags,
+	CantMove,
+};
+
+class Player {
+public:
+	Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
+		index(index),
+		algo(algo) {}
+	std::shared_ptr<PlayerAlgorithm> algo;
+	PlayerStatus status = PlayerStatus::Playing;
+	unsigned int numFlags = 0;
+	unsigned int numMovable = 0;
+	int index;
+};
 
 class GameManager {
 public:
-    GameManager(PlayerAlgorithm &player1, PlayerAlgorithm &player2);
-    void play();
+	void play(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
 private:
-    bool populate(int player, std::vector<std::unique_ptr<PiecePosition>> &positions, std::vector<std::unique_ptr<FightInfo>> &fights);
-    bool isValidMove(std::unique_ptr<Move>& move, int player);
-    bool isValidJokerChange(std::unique_ptr<JokerChange>& change, int player);
-	std::shared_ptr<GamePiece> fight(std::shared_ptr<GamePiece> piece1, std::shared_ptr<GamePiece> piece2);
-	std::array<std::reference_wrapper<PlayerAlgorithm>, 2> _players;
-	std::array<unsigned int, 2> numFlags;
-	std::array<unsigned int, 2> numMovablePieces;
-    GameBoard _board = GameBoard();
+	void position(Player& player);
+	Player _players[2];
+	BoardImpl _board;
 };
