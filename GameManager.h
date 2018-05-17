@@ -32,6 +32,11 @@ public:
 	void play(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
 private:
 	void position(Player& player);
+	void doMove(Player& player);
+	void changeJoker(Player& player);
+	void output();
+	bool isGameOn();
 	Player _players[2];
 	BoardImpl _board;
+	unsigned int _numFights;
 };
