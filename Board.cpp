@@ -1,10 +1,7 @@
-#pragma once
-
-
 #include "Board.h"
 
 BoardImpl::BoardImpl() {
-
+	_board.fill(Piece::Empty);
 }
 
 int BoardImpl::getPlayer(const Point& pos) const {

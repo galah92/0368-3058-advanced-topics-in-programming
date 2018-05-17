@@ -1,9 +1,7 @@
-#pragma once
-
 #include "Piece.h"
 
 
-Piece Piece::Empty = Piece(0, PieceType::None, false);
+std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, PieceType::None, false);
 
 int Piece::getPlayer() const {
 	return _player;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 
 enum class PieceType {
 	None,
@@ -20,7 +22,7 @@ public:
 	int getPlayer() const;
 	PieceType getType() const;
 	bool isJoker() const;
-	static Piece Empty;
+	static std::shared_ptr<Piece> Empty;
 private:
 	int _player;
 	PieceType _type;
