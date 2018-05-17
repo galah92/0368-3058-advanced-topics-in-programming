@@ -2,9 +2,6 @@
 #include <vector>
 #include <cstdlib>
 #include "GameManager.h"
-#include "PiecePosition.h"
-#include "GameFightInfo.h"
-#include "GamePoint.h"
 
 
 GameManager::GameManager(PlayerAlgorithm &player1, PlayerAlgorithm &player2) :
@@ -50,7 +47,7 @@ bool GameManager::populate(int player, std::vector<std::unique_ptr<PiecePosition
     }
     for (unsigned int i = 0; i < N; i++) {
         for (unsigned int j = 0; j < M; j++) {
-            const auto piece = tmpBoard.getPiece(GamePoint(i, j));
+            // const auto piece = tmpBoard.getPiece(GamePoint(i, j));
             (void)fights;
         }
     }

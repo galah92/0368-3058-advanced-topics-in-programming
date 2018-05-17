@@ -4,6 +4,7 @@
 #include <array>
 #include <functional>
 #include "PlayerAlgorithm.h"
+#include "PiecePosition.h"
 #include "GameBoard.h"
 
 

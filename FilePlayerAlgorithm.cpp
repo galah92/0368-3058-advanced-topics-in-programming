@@ -1,9 +1,6 @@
 #include <string>
 #include "FilePlayerAlgorithm.h"
-#include "GamePiecePosition.h"
-#include "GameJokerChange.h"
-#include "GamePoint.h"
-#include "GameMove.h"
+#include "Point.h"
 
 
 const std::string FILES_PREFIX = "player";
@@ -22,8 +19,8 @@ void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 		char piece, joker;
 		int x, y;
 		ss >> piece >> x >> y >> joker;
-		GamePoint pos(x - 1, y - 1);
-		positions.push_back(std::make_unique<GamePiecePosition>(pos, piece, joker));
+		PointImpl pos(x - 1, y - 1);
+		positions.push_back(std::make_unique<PiecePositionImpl>(pos, piece, joker));
 	}
 }
 
@@ -40,22 +37,24 @@ void FilePlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 	(void)fightInfo;
 }
 
-unique_ptr<Move> FilePlayerAlgorithm::getMove() {
+std::unique_ptr<Move> FilePlayerAlgorithm::getMove() {
 	std::string line;
 	getline(_movesstream, line);
 	_movestream = std::istringstream(line);
 	int fromX, fromY, toX, toY;
 	_movestream >> fromX >> fromY >> toX >> toY;
-	return std::make_unique<GameMove>(GamePoint(fromX - 1, fromY - 1), GamePoint(toX - 1, toY - 1));
+	PointImpl from(fromX - 1, fromY - 1);
+	PointImpl to(toX - 1, toY - 1);
+	return std::make_unique<MoveImpl>(from, to);
 }
 
-unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
+std::unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
 	std::string jokerPrefix;
 	_movesstream >> jokerPrefix;
 	if (jokerPrefix != "J:") return nullptr;
 	int jokerX, jokerY;
 	char newRep;
 	_movesstream >> jokerX >> jokerY >> newRep;
-	GamePoint pos(jokerX, jokerY);
-	return std::make_unique<GameJokerChange>(pos, newRep);
+	PointImpl pos(jokerX, jokerY);
+	return std::make_unique<JokerChangeImpl>(pos, newRep);
 }

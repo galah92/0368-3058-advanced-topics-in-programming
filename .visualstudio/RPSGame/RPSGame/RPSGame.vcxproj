@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{F8B61059-D5E5-478A-8A0B-A5F82B1C3C62}</ProjectGuid>
-    <RootNamespace>RPSGameWindows</RootNamespace>
+    <ProjectGuid>{8BF24679-9B6A-4057-A6A3-4938C8E95BDC}</ProjectGuid>
+    <RootNamespace>RPSGame</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -55,7 +55,6 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
-    <Import Project="..\RPSGameShared\RPSGameShared.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -71,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -79,7 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
@@ -116,6 +115,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\..\.gitignore" />
+    <None Include="..\..\..\init.sh" />
+    <None Include="..\..\..\LICENSE" />
+    <None Include="..\..\..\makefile" />
+    <None Include="..\..\..\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\AutoPlayerAlgorithm.h" />
+    <ClInclude Include="..\..\..\Board.h" />
+    <ClInclude Include="..\..\..\FightInfo.h" />
+    <ClInclude Include="..\..\..\FilePlayerAlgorithm.h" />
+    <ClInclude Include="..\..\..\GameBoard.h" />
+    <ClInclude Include="..\..\..\GameManager.h" />
+    <ClInclude Include="..\..\..\JokerChange.h" />
+    <ClInclude Include="..\..\..\Move.h" />
+    <ClInclude Include="..\..\..\PiecePosition.h" />
+    <ClInclude Include="..\..\..\PlayerAlgorithm.h" />
+    <ClInclude Include="..\..\..\Point.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\FilePlayerAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\GameBoard.cpp" />
+    <ClCompile Include="..\..\..\GameManager.cpp" />
+    <ClCompile Include="..\..\..\GamePiece.cpp" />
+    <ClCompile Include="..\..\..\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\no_raw_allocation_bonus.txt" />
+    <Text Include="..\..\..\students.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

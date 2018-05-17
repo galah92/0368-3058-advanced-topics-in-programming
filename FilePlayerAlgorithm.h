@@ -6,10 +6,10 @@
 #include <fstream>
 #include "PlayerAlgorithm.h"
 #include "PiecePosition.h"
-#include "FightInfo.h"
-#include "Board.h"
-#include "Move.h"
 #include "JokerChange.h"
+#include "FightInfo.h"
+#include "Move.h"
+#include "Board.h"
 
 
 class FilePlayerAlgorithm : public PlayerAlgorithm {

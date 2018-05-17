@@ -1,17 +1,19 @@
-#ifndef __POINT_H_
-#define __POINT_H_
+#pragma once
 
-//--------------------------
-// Point Interface
-//--------------------------
-// abstract class Point should be the base class for your "Point" implementation
-// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
 
 class Point {
 public:
 	virtual int getX() const = 0;
 	virtual int getY() const = 0;
-	virtual ~Point() {}
+	virtual ~Point() = default;
 };
 
-#endif
+class PointImpl : public Point {
+public:
+	PointImpl(int x, int y) : _x(x), _y(y) {}
+	int getX() const override { return _x; }
+	int getY() const override { return _y; }
+private:
+	int _x;
+	int _y;
+};
