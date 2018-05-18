@@ -15,8 +15,12 @@ void GameManager::play(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<P
 	// TODO: merge boards somehow
 	unsigned int playerIndex = 0;
 	while (_numFights < FIGHTS_THRESHOLD) {
-		if (isGameOn()) doMove(_players[playerIndex]);
-		if (isGameOn()) changeJoker(_players[playerIndex]);
+		if (isGameOn()) {
+			doMove(_players[playerIndex]);
+		}
+		if (isGameOn()) {
+			changeJoker(_players[playerIndex]);
+		}
 		playerIndex = 1 - playerIndex; // switch player
 	}
 	output();
@@ -56,14 +60,21 @@ void GameManager::doMove(Player & player) {
 		return;
 	}
 	if (_board.getPlayer(to) != 0) { // fight
-		
+		const auto piece1 = _board.getPiece(from);
+		const auto piece2 = _board.getPiece(to);
 	} else { // no fight
-
+		_board.setPiece(to, _board.getPiece(from));
 	}
 }
 
 void GameManager::changeJoker(Player & player) {
 	(void)player;
+}
+
+std::shared_ptr<Piece> fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
+	(void)piece1;
+	(void)piece2;
+	return nullptr;
 }
 
 void GameManager::output() {

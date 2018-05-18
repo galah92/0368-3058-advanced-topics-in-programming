@@ -22,7 +22,7 @@ public:
 		_isJoker(isJoker) {}
 	int getPlayer() const;
 	PieceType getType() const;
-	bool isJoker() const;
+	bool canKill(PieceType piece);
 	static bool isValid(PieceType piece);
 	static std::unordered_map<PieceType, bool> canMove;
 	operator char() const;

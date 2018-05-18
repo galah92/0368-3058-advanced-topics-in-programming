@@ -38,6 +38,7 @@ private:
 	void doMove(Player& player);
 	void changeJoker(Player& player);
 	void output();
+	std::shared_ptr<Piece> fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2);
 	bool isGameOn();
 	Player _players[2];
 	BoardImpl _board;
