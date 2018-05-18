@@ -51,17 +51,19 @@ void GameManager::doMove(Player & player) {
 	const auto move = player.algo->getMove();
 	const auto& from = move->getFrom();
 	const auto& to = move->getTo();
-	if (_board.getPlayer(from) != player.index ||
-		!_board.isValidPosition(to) ||
-		_board.getPlayer(to) == player.index) {
+	if (_board.getPlayer(from) != player.index || !_board.isValidPosition(to) || _board.getPlayer(to) == player.index) {
 		player.status = PlayerStatus::InvalidMove;
 		return;
 	}
+	if (_board.getPlayer(to) != 0) { // fight
+		
+	} else { // no fight
 
+	}
 }
 
 void GameManager::changeJoker(Player & player) {
-
+	(void)player;
 }
 
 void GameManager::output() {

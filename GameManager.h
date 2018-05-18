@@ -18,12 +18,15 @@ enum class PlayerStatus {
 class Player {
 public:
 	Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
-		index(index),
-		algo(algo) {}
+		algo(algo),
+		status(PlayerStatus::Playing),
+		numFlags(0),
+		numMovable(0),
+		index(index) {}
 	std::shared_ptr<PlayerAlgorithm> algo;
 	PlayerStatus status = PlayerStatus::Playing;
-	unsigned int numFlags = 0;
-	unsigned int numMovable = 0;
+	unsigned int numFlags;
+	unsigned int numMovable;
 	int index;
 };
 
