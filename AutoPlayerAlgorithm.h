@@ -19,4 +19,5 @@ public:
 	std::unique_ptr<Move> getMove();
 	std::unique_ptr<JokerChange> getJokerChange();
 private:
+	std::array<std::shared_ptr<Piece>, N * M> _OpponentBoard;
 };

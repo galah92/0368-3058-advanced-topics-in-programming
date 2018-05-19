@@ -9,9 +9,6 @@ const std::string MOVES_FILE_EXT = ".rps_moves";
 void getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions){
     positions.clear(); // to make sure
     // random corner?
-    char piece;
-    char joker;
-    
     // flag block
     positions.push_back(std::make_unique<PiecePositionImpl>(0,0, 'F', "")); // put the flag in the corner
     positions.push_back(std::make_unique<PiecePositionImpl>(0,1, 'B', "")); // cover the flag 
@@ -31,15 +28,16 @@ void getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>
 }
 
 void notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights){
-
+    (void) b;  
+    (void) fights;
 }
 
 void notifyOnOpponentMove(const Move& move){
-
+    (void) move;
 }
 
 void notifyFightResult(const FightInfo& fightInfo){
-
+    (void) fightInfo;
 }
 
 std::unique_ptr<Move> getMove(){
