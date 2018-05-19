@@ -14,8 +14,7 @@ void GameManager::play(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<P
 	// positioning
 	position(_players[0]);
 	position(_players[1]);
-	// TODO: merge boards somehow
-
+	// moves
 	unsigned int playerIndex = 0;
 	while (_numFights < FIGHTS_THRESHOLD) {
 		if (!isGameOn()) break;
@@ -49,7 +48,12 @@ void GameManager::position(Player& player) {
 		player.status = PlayerStatus::InvalidPos;
 		return;
 	}
-	// TODO: merge boards here?
+	for (unsigned int i = 0; i < N; i++) {
+		for (unsigned int j = 0; j < N; j++) {
+			PointImpl pos(i, j);
+			_board.setPiece(pos, fight(_board.getPiece(pos), _tmpBoard.getPiece(pos)));
+		}
+	}
 }
 
 void GameManager::doMove(Player& player) {
@@ -83,7 +87,7 @@ void GameManager::output() {
 	if (_players[0].status == PlayerStatus::Playing || _players[1].status == PlayerStatus::Playing) {
 		int winner = _players[0].status == PlayerStatus::Playing ? 1 : 2;
 		int loser = 1 - winner;
-		fout << "Winner:" << winner << std::endl;
+		fout << "Winner:" << winner << std::endl << "Reason: ";
 		switch (_players[loser].status) {
 		case PlayerStatus::InvalidPos:
 			fout << "Bad positioning input for player " << loser << std::endl;
@@ -101,7 +105,7 @@ void GameManager::output() {
 			break;
 		}
 	} else { // tie
-		fout << "Winner:" << 0 << std::endl;
+		fout << "Winner:" << 0 << std::endl << "Reason: ";
 		if (_players[0].status == PlayerStatus::InvalidPos) {
 			fout << "Bad positioning input for both players" << std::endl;
 		} else { // _players[0].status == PlayerStatus::NoFlags

@@ -1,5 +1,6 @@
 #include "Board.h"
 
+
 BoardImpl::BoardImpl() {
 	clear();
 }
