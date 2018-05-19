@@ -1,3 +1,5 @@
+#include <iostream>
+#include <fstream>
 #include "GameManager.h"
 
 
@@ -78,7 +80,36 @@ void GameManager::changeJoker(Player& player) {
 }
 
 void GameManager::output() {
-
+	std::ofstream fout("rps.output");
+	if (_players[0].status == PlayerStatus::Playing || _players[1].status == PlayerStatus::Playing) {
+		int winner = _players[0].status == PlayerStatus::Playing ? 1 : 2;
+		int loser = 1 - winner;
+		fout << "Winner:" << winner << std::endl;
+		switch (_players[loser].status) {
+		case PlayerStatus::InvalidPos:
+			fout << "Bad positioning input for player " << loser << std::endl;
+			break;
+		case PlayerStatus::InvalidMove:
+			fout << "Bad move input for player " << loser << std::endl;
+			break;
+		case PlayerStatus::NoFlags:
+			fout << "All flags of the opponent are captured" << std::endl;
+			break;
+		case PlayerStatus::CantMove:
+			fout << "All moving PIECEs of the opponent are eaten" << std::endl;
+			break;
+		default:
+			break;
+		}
+	} else { // tie
+		fout << "Winner:" << 0 << std::endl;
+		if (_players[0].status == PlayerStatus::InvalidPos) {
+			fout << "Bad positioning input for both players" << std::endl;
+		} else { // _players[0].status == PlayerStatus::NoFlags
+			fout << "Bad move input for both players" << std::endl;
+		}
+	}
+	fout << _board;
 }
 
 std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {

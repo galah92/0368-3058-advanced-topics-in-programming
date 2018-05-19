@@ -28,3 +28,13 @@ bool BoardImpl::isValidPosition(const Point & pos) const {
 	int y = pos.getY();
 	return x >= 0 && x < N && y >= 0 && y < M;
 }
+
+std::ostream & operator<<(std::ostream& os, const BoardImpl& board) {
+	for (unsigned int i = 0; i < N; i++) {
+		for (unsigned int j = 0; j < M; j++) {
+			os << board._board[i * M + j];
+		}
+		os << std::endl;
+	}
+	return os;
+}
