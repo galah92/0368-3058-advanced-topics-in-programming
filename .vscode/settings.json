@@ -36,6 +36,16 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "atomic": "cpp",
+        "unordered_map": "cpp",
+        "__bit_reference": "cpp",
+        "algorithm": "cpp",
+        "array": "cpp",
+        "locale": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp"
     }
 }
