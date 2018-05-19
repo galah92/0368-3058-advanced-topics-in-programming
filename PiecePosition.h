@@ -1,7 +1,8 @@
 #pragma once
 
+#include <memory>
+#include "Point.h"
 
-class Point;
 
 class PiecePosition {
 public:
@@ -13,15 +14,15 @@ public:
 
 class PiecePositionImpl : public PiecePosition {
 public:
-	PiecePositionImpl(Point& pos, char piece, char jokerRep) :
-		_pos(pos),
+	PiecePositionImpl(PointImpl& pos, char piece, char jokerRep) :
+		_pos(std::make_unique<PointImpl>(pos)),
 		_piece(piece),
 		_jokerRep(jokerRep) {}
-	const Point& getPosition() const override { return _pos; };
+	const Point& getPosition() const override { return *_pos; };
 	char getPiece() const override { return _piece; };
 	char getJokerRep() const override { return _jokerRep; };
 private:
-	Point& _pos;
+	std::unique_ptr<Point> _pos;
 	char _piece;
 	char _jokerRep;
 };

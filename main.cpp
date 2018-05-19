@@ -1,21 +1,13 @@
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
+#include <memory>
+#include "GameManager.h"
+#include "FilePlayerAlgorithm.h"
 
 
 int main(int argc, char *argv[])
 {
-	std::cout << "Hello World!" << std::endl;
-	if (argc < 2)
-	{
-		std::cout << "Usage: ./ex2 <auto|file>-vs-<auto|file>" << std::endl;
-		return -1;
-	}
-	std::stringstream ss(argv[1]);
-	std::string ptype1, vs, ptype2;
-	std::getline(ss, ptype1, '-');
-	std::getline(ss, vs, '-');
-	std::getline(ss, ptype2, '-');
+	auto algo1 = std::make_shared<FilePlayerAlgorithm>();
+	auto algo2 = std::make_shared<FilePlayerAlgorithm>();
+	// GameManager game;
+	// game.play(algo1, algo2);
 	return 0;
 }

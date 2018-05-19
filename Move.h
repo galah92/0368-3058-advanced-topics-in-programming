@@ -1,7 +1,8 @@
 #pragma once
 
+#include <memory>
+#include "Point.h"
 
-class Point;
 
 class Move {
 public:
@@ -12,10 +13,12 @@ public:
 
 class MoveImpl : public Move {
 public:
-	MoveImpl(Point& from, Point& to) : _from(from), _to(to) {}
-	const Point& getFrom() const override { return _from; };
-	const Point& getTo() const override { return _to; };
+	MoveImpl(PointImpl& from, PointImpl& to) :
+		_from(std::make_unique<PointImpl>(from)),
+		_to(std::make_unique<PointImpl>(to)) {}
+	const Point& getFrom() const override { return *_from; };
+	const Point& getTo() const override { return *_to; };
 private:
-	Point& _from;
-	Point& _to;
+	std::unique_ptr<Point> _from;
+	std::unique_ptr<Point> _to;
 };

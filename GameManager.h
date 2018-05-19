@@ -16,6 +16,7 @@ enum class PlayerStatus {
 
 class Player {
 public:
+	Player() = default;
 	Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
 		algo(algo),
 		status(PlayerStatus::Playing),

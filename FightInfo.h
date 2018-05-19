@@ -1,7 +1,8 @@
 #pragma once
 
+#include <memory>
+#include "Point.h"
 
-class Point;
 
 class FightInfo {
 public:
@@ -13,16 +14,16 @@ public:
 
 class FightInfoImpl : public FightInfo {
 public:
-	FightInfoImpl(Point& pos, char piece1, char piece2, int winner) :
-		_pos(pos),
+	FightInfoImpl(PointImpl& pos, char piece1, char piece2, int winner) :
+		_pos(std::make_unique<PointImpl>(pos)),
 		_piece1(piece1),
 		_piece2(piece2),
 		_winner(winner) {}
-	const Point& getPosition() const override { return _pos; };
+	const Point& getPosition() const override { return *_pos; };
 	char getPiece(int player) const override { return player == 1 ? _piece1 : _piece2; };
 	int getWinner() const override { return _winner; };
 private:
-	Point& _pos;
+	std::unique_ptr<Point> _pos;
 	char _piece1;
 	char _piece2;
 	int _winner;
