@@ -15,14 +15,13 @@ void GameManager::play(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<P
 	position(_players[0]);
 	position(_players[1]);
 	// TODO: merge boards somehow
+
 	unsigned int playerIndex = 0;
 	while (_numFights < FIGHTS_THRESHOLD) {
-		if (isGameOn()) {
-			doMove(_players[playerIndex]);
-		}
-		if (isGameOn()) {
-			changeJoker(_players[playerIndex]);
-		}
+		if (!isGameOn()) break;
+		doMove(_players[playerIndex]);
+		if (!isGameOn()) break;
+		changeJoker(_players[playerIndex]);
 		playerIndex = 1 - playerIndex; // switch player
 	}
 	output();
