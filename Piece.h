@@ -22,9 +22,11 @@ public:
 		_isJoker(isJoker) {}
 	int getPlayer() const;
 	PieceType getType() const;
-	bool canKill(PieceType piece);
+	bool setType(PieceType type);
+	bool isJoker() const;
+	bool canMove() const;
+	bool canKill(PieceType piece) const;
 	static bool isValid(PieceType piece);
-	static std::unordered_map<PieceType, bool> canMove;
 	operator char() const;
 	static std::shared_ptr<Piece> Empty;
 private:

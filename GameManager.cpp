@@ -41,7 +41,7 @@ void GameManager::position(Player& player) {
 		} else {
 			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player.index, pieceType, isJoker));
 			if (piece->getType() == PieceType::Flag) player.numFlags++;
-			if (Piece::canMove[piece->getType()]) player.numMovable++;
+			if (piece->canMove()) player.numMovable++;
 		}
 	}
 	if (player.numFlags == 0 || player.numMovable == 0) {
@@ -51,7 +51,7 @@ void GameManager::position(Player& player) {
 	// TODO: merge boards here?
 }
 
-void GameManager::doMove(Player & player) {
+void GameManager::doMove(Player& player) {
 	const auto move = player.algo->getMove();
 	const auto& from = move->getFrom();
 	const auto& to = move->getTo();
@@ -60,24 +60,42 @@ void GameManager::doMove(Player & player) {
 		return;
 	}
 	if (_board.getPlayer(to) != 0) { // fight
-		const auto piece1 = _board.getPiece(from);
-		const auto piece2 = _board.getPiece(to);
+		_board.setPiece(to, fight(_board.getPiece(from), _board.getPiece(to)));
 	} else { // no fight
 		_board.setPiece(to, _board.getPiece(from));
 	}
 }
 
-void GameManager::changeJoker(Player & player) {
-	(void)player;
-}
-
-std::shared_ptr<Piece> fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
-	(void)piece1;
-	(void)piece2;
-	return nullptr;
+void GameManager::changeJoker(Player& player) {
+	const auto jokerChange = player.algo->getJokerChange();
+	const auto rep = (PieceType)jokerChange->getJokerNewRep();
+	const auto piece = _board.getPiece(jokerChange->getJokerChangePosition());
+	if (Piece::isValid(rep) || !piece || !piece->isJoker()) {
+		player.status = PlayerStatus::InvalidMove;
+		return;
+	}
+	piece->setType(rep);
 }
 
 void GameManager::output() {
+
+}
+
+std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
+	auto killPiece1 = piece2->canKill(piece1->getType());
+	auto killPiece2 = piece1->canKill(piece2->getType());
+	if (killPiece1) {
+		auto player = _players[piece1->getPlayer()];
+		if (piece1->getType() == PieceType::Flag) player.numFlags--;
+		if (piece1->canMove()) player.numMovable--;
+	}
+	if (killPiece2) {
+		auto player = _players[piece2->getPlayer()];
+		if (piece2->getType() == PieceType::Flag) player.numFlags--;
+		if (piece2->canMove()) player.numMovable--;
+	}
+	if (killPiece1 && killPiece2) return Piece::Empty;
+	return killPiece1 ? piece2 : piece1;
 }
 
 bool GameManager::isGameOn() {
