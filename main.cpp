@@ -3,7 +3,7 @@
 #include "FilePlayerAlgorithm.h"
 
 
-int main(int argc, char *argv[])
+int main()
 {
 	auto algo1 = std::make_shared<FilePlayerAlgorithm>();
 	auto algo2 = std::make_shared<FilePlayerAlgorithm>();

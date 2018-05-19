@@ -13,7 +13,7 @@ public:
 
 class MoveImpl : public Move {
 public:
-	MoveImpl(PointImpl& from, PointImpl& to) :
+	MoveImpl(const PointImpl& from, const PointImpl& to) :
 		_from(std::make_unique<PointImpl>(from)),
 		_to(std::make_unique<PointImpl>(to)) {}
 	const Point& getFrom() const override { return *_from; };

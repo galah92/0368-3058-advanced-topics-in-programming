@@ -12,7 +12,7 @@ public:
 
 class JokerChangeImpl : public JokerChange {
 public:
-	JokerChangeImpl(PointImpl& pos, char rep) :
+	JokerChangeImpl(const PointImpl& pos, char rep) :
 		_pos(std::make_unique<PointImpl>(pos)),
 		_rep(rep) { }
 	const Point& getJokerChangePosition() const override { return *_pos; };

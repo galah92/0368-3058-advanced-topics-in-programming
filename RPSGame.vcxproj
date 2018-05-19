@@ -98,6 +98,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AutoPlayerAlgorithm.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="FilePlayerAlgorithm.cpp" />
     <ClCompile Include="GameManager.cpp" />

@@ -14,8 +14,12 @@ public:
 
 class PiecePositionImpl : public PiecePosition {
 public:
-	PiecePositionImpl(PointImpl& pos, char piece, char jokerRep) :
+	PiecePositionImpl(const PointImpl& pos, char piece, char jokerRep) :
 		_pos(std::make_unique<PointImpl>(pos)),
+		_piece(piece),
+		_jokerRep(jokerRep) {}
+	PiecePositionImpl(int x, int y, char piece, char jokerRep) :
+		_pos(std::make_unique<PointImpl>(x, y)),
 		_piece(piece),
 		_jokerRep(jokerRep) {}
 	const Point& getPosition() const override { return *_pos; };

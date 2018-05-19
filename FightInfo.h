@@ -14,7 +14,7 @@ public:
 
 class FightInfoImpl : public FightInfo {
 public:
-	FightInfoImpl(PointImpl& pos, char piece1, char piece2, int winner) :
+	FightInfoImpl(const PointImpl& pos, char piece1, char piece2, int winner) :
 		_pos(std::make_unique<PointImpl>(pos)),
 		_piece1(piece1),
 		_piece2(piece2),
