@@ -9,8 +9,8 @@ const std::string MOVES_FILE_EXT = ".rps_moves";
 
 
 void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>> &positions) {
-	_boardstream = std::ifstream(FILES_PREFIX + std::to_string(player + 1) + BOARD_FILE_EXT);
-	_movesstream = std::ifstream(FILES_PREFIX + std::to_string(player + 1) + MOVES_FILE_EXT);
+	_boardstream = std::ifstream(FILES_PREFIX + std::to_string(player) + BOARD_FILE_EXT);
+	_movesstream = std::ifstream(FILES_PREFIX + std::to_string(player) + MOVES_FILE_EXT);
 	positions.clear(); // just to make sure
 	std::string line;
 	while (std::getline(_boardstream, line))

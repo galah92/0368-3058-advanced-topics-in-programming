@@ -73,6 +73,7 @@ void GameManager::doMove(Player& player) {
 
 void GameManager::changeJoker(Player& player) {
 	const auto jokerChange = player.algo->getJokerChange();
+	if (!jokerChange) return;
 	const auto rep = (PieceType)jokerChange->getJokerNewRep();
 	const auto piece = _board.getPiece(jokerChange->getJokerChangePosition());
 	if (Piece::isValid(rep) || !piece || !piece->isJoker()) {
@@ -85,15 +86,15 @@ void GameManager::changeJoker(Player& player) {
 void GameManager::output() {
 	std::ofstream fout("rps.output");
 	if (_players[0].status == PlayerStatus::Playing || _players[1].status == PlayerStatus::Playing) {
-		int winner = _players[0].status == PlayerStatus::Playing ? 1 : 2;
+		int winner = _players[0].status == PlayerStatus::Playing ? 0 : 1;
 		int loser = 1 - winner;
-		fout << "Winner:" << winner << std::endl << "Reason: ";
+		fout << "Winner: " << winner + 1 << std::endl << "Reason: ";
 		switch (_players[loser].status) {
 		case PlayerStatus::InvalidPos:
-			fout << "Bad positioning input for player " << loser << std::endl;
+			fout << "Bad positioning input for player " << loser + 1 << std::endl;
 			break;
 		case PlayerStatus::InvalidMove:
-			fout << "Bad move input for player " << loser << std::endl;
+			fout << "Bad move input for player " << loser + 1 << std::endl;
 			break;
 		case PlayerStatus::NoFlags:
 			fout << "All flags of the opponent are captured" << std::endl;
@@ -112,7 +113,7 @@ void GameManager::output() {
 			fout << "Bad move input for both players" << std::endl;
 		}
 	}
-	fout << _board;
+	fout << std::endl << _board;
 }
 
 std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
@@ -120,13 +121,25 @@ std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::sh
 	auto killPiece2 = piece1->canKill(piece2->getType());
 	if (killPiece1) {
 		auto player = _players[piece1->getPlayer()];
-		if (piece1->getType() == PieceType::Flag) player.numFlags--;
-		if (piece1->canMove()) player.numMovable--;
+		if (piece1->getType() == PieceType::Flag) {
+			player.numFlags--;
+			if (player.numFlags == 0) player.status = PlayerStatus::NoFlags;
+		}
+		if (piece1->canMove()) {
+			player.numMovable--;
+			if (player.numMovable == 0) player.status = PlayerStatus::CantMove;
+		}
 	}
 	if (killPiece2) {
 		auto player = _players[piece2->getPlayer()];
-		if (piece2->getType() == PieceType::Flag) player.numFlags--;
-		if (piece2->canMove()) player.numMovable--;
+		if (piece2->getType() == PieceType::Flag) {
+			player.numFlags--;
+			if (player.numFlags == 0) player.status = PlayerStatus::NoFlags;
+		}
+		if (piece2->canMove()) {
+			player.numMovable--;
+			if (player.numMovable == 0) player.status = PlayerStatus::CantMove;
+		}
 	}
 	if (killPiece1 && killPiece2) return Piece::Empty;
 	return killPiece1 ? piece2 : piece1;
