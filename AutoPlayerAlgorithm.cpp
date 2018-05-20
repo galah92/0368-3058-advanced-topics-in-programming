@@ -11,44 +11,57 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 0, 'F', ' ')); // put the flag in the corner
 	auto piece = std::make_shared<Piece>(player, (PieceType)'F', PieceType::Joker);
 	setPiece(0, 0, piece);
+	_piecesOnBoard[(PieceType)'F'].push_back(piece);
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 1, 'B', ' ')); // cover the flag 
 	piece = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
 	setPiece(0, 1, piece);	
+	_piecesOnBoard[(PieceType)'B'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 0, 'B', ' ')); // cover the flag
 	piece = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
 	setPiece(1, 0, piece);
+	_piecesOnBoard[(PieceType)'B'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 1, 'J', 'B')); // cover the flag
 	piece = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
 	setPiece(1, 1, piece);
+	_piecesOnBoard[(PieceType)'J'].push_back(piece);	
 
 																			  // randomize other pieces?
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 5, 'J', 'B'));
 	piece = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
 	setPiece(5, 5, piece);
+	_piecesOnBoard[(PieceType)'J'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(2, 7, 'R', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
 	setPiece(2, 7, piece);
+	_piecesOnBoard[(PieceType)'R'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(8, 2, 'R', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
 	setPiece(8, 2, piece);
+	_piecesOnBoard[(PieceType)'R'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(2, 2, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(2, 2, piece);
+	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(3, 7, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(3, 7, piece);
+	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(4, 4, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(4, 4, piece);
+	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 8, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(5, 8, piece);
+	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(7, 4, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(7, 4, piece);
+	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(6, 6, 'S', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'S', PieceType::Joker);
 	setPiece(6, 6, piece);
+	_piecesOnBoard[(PieceType)'S'].push_back(piece);	
 
 }
 
