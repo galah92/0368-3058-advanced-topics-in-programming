@@ -95,8 +95,13 @@ void GameManager::changeJoker(int i) {
 	const auto jokerChange = player->algo->getJokerChange();
 	if (!jokerChange) return;
 	const auto rep = (PieceType)jokerChange->getJokerNewRep();
-	const auto piece = _board[jokerChange->getJokerChangePosition()];
-	if (Piece::isValid(rep) || !piece || piece->getType() != PieceType::Joker) {
+	const auto& pos = jokerChange->getJokerChangePosition();
+	if (!Piece::isValid(rep) || !_board.isValidPosition(pos)) {
+		player->status = PlayerStatus::InvalidMove;
+		return;
+	}
+	const auto piece = _board[pos];
+	if (_board[pos]->getPlayer() != i || _board[pos]->getType() != PieceType::Joker) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
 	}
