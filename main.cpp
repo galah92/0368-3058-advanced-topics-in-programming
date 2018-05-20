@@ -9,7 +9,7 @@
 const std::string DELIMITER = "-vs-";
 const std::string USAGE = "Usage: ./ex2 <auto|file>-vs-<auto|file>";
 
-std::shared_ptr<PlayerAlgorithm> initPlayerAlgo(std::string str) {
+std::shared_ptr<PlayerAlgorithm> get_player_algo(std::string str) {
 	if (str == "auto") return std::make_shared<AutoPlayerAlgorithm>();
 	if (str == "file") return std::make_shared<FilePlayerAlgorithm>();
 	return nullptr;
@@ -23,14 +23,14 @@ int main(int argc, const char *argv[])
 	}
 	std::string arg(argv[1]);
 	unsigned int pos = arg.find(DELIMITER);
-	auto algo1 = initPlayerAlgo(arg.substr(0, pos));
+	auto algo1 = get_player_algo(arg.substr(0, pos));
 	arg.erase(0, pos + DELIMITER.length());
-	auto algo2 = initPlayerAlgo(arg.substr(0, pos));
+	auto algo2 = get_player_algo(arg.substr(0, pos));
 	if (!algo1 || !algo2) {
 		std::cout << USAGE << std::endl;
 		return -1;
 	}
-	GameManager game;
-	game.play(algo1, algo2);
+	GameManager game(algo1, algo2);
+	game.play_round();
 	return 0;
 }

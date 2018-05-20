@@ -17,7 +17,6 @@ enum class PlayerStatus {
 
 class Player {
 public:
-	Player() = default;
 	Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
 		algo(algo),
 		status(PlayerStatus::Playing),
@@ -34,15 +33,17 @@ public:
 
 class GameManager {
 public:
-	void play(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
+	GameManager(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
+	void play_round();
 private:
 	void position(Player& player);
-	void doMove(Player& player);
-	void changeJoker(Player& player);
+	void doMove(int i);
+	void changeJoker(int i);
 	void output();
 	std::shared_ptr<Piece> fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2);
+	void killPiece(std::shared_ptr<Piece> piece);
 	bool isGameOn();
-	Player _players[2];
+	std::unique_ptr<Player> _players[2];
 	BoardImpl _board;
 	unsigned int _numFights;
 };
