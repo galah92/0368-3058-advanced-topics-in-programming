@@ -12,6 +12,7 @@ enum class PieceType : char {
 	Scissors = 'S',
 	Bomb = 'B',
 	Joker = 'J',
+	Unknown = 'U',
 };
 
 class Piece {

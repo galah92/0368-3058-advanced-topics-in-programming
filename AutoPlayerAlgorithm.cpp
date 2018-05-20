@@ -60,7 +60,7 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 					// TODO : update map
 					// auto piece = getPiece(pos);
 				}
-				// setPiece(pos, (pieceType)opponentpiece);
+				setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); // Unknown opponent's piece
 			}
 		}
 	}
