@@ -81,17 +81,40 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-	while (true){
-		// auto from = getPosToMoveFrom();
-		for (int i = 0; i < 8; i++){ // for any possible pos
-			// auto to = getFreeNeighbor(from);
-
-
-		}
-	}
-	return nullptr;
+	auto from = getPosToMoveFrom();
+	auto to = getBestNeighbor(from);
+	return std::make_unique<MoveImpl>(PointImpl(from->getX(), from->getY()), PointImpl(to->getX(), to->getY()));
 }
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 	return nullptr;
+}
+
+void AutoPlayerAlgorithm::setPiece(int x, int y, std::shared_ptr<Piece> piece){
+	_board[x *  M + y] = piece;
+}
+
+void AutoPlayerAlgorithm::setPiece(const Point& pos, std::shared_ptr<Piece> piece){
+	_board[pos.getX() *  M + pos.getY()] = piece;
+}
+
+std::shared_ptr<Piece> AutoPlayerAlgorithm::getPiece(const Point& pos) const {
+	return _board[pos.getX() *  M + pos.getY()];
+}
+
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom(){
+	// TODO : implement
+	return std::make_unique<PointImpl>(5,5);
+}
+
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from){
+	// TODO : implement
+	(void)from;
+	return std::make_unique<PointImpl>(5,5);
+}
+
+bool AutoPlayerAlgorithm::isValidPosition(const Point& pos) const {
+	int x = pos.getX();
+	int y = pos.getY();
+	return x >= 0 && x < N && y >= 0 && y < M;
 }
