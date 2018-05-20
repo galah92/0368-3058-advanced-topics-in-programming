@@ -81,14 +81,12 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 		setPiece(pos, std::make_shared<Piece>(_player, (PieceType)player_piece, PieceType::Joker));	
 
 	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
-		auto iter = _piecesOnBoardCount.find((PieceType)player_piece);
-		iter->second--; // update map
+		_piecesOnBoardCount[(PieceType)player_piece]--; // update map
 		setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)opponent_piece, PieceType::Joker));	
 
 
 	} else { // both player and opponent lose
-		auto iter = _piecesOnBoardCount.find((PieceType)player_piece);
-		iter->second--;
+		_piecesOnBoardCount[(PieceType)player_piece]--;
 		setPiece(pos, Piece::Empty);
 	}
 
@@ -119,9 +117,8 @@ std::shared_ptr<Piece> AutoPlayerAlgorithm::getPiece(const Point& pos) const {
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom(){
 	// TODO : Implement
-	for (const auto piece : _movablePieces){
-		auto iter = _piecesOnBoardCount.find(piece);
-		if (iter->second == 0) continue;
+	for (const auto pieceType : _movablePieces){
+		if (_piecesOnBoardCount[pieceType] == 0) continue;
 		// TODO : find the piece in the board
 
 	}

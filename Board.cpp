@@ -26,7 +26,9 @@ std::shared_ptr<Piece>& BoardImpl::operator[](const Point& pos) {
 }
 
 std::shared_ptr<Piece> BoardImpl::operator[](const Point & pos) const {
-	return operator[](pos);
+	// return operator[](pos);
+	if (!isValidPosition(pos)) throw "BoardImpl::operator[]: Invalid const Point& given";
+	return _board[pos.getX() *  M + pos.getY()];
 }
 
 std::ostream & operator<<(std::ostream& os, const BoardImpl& board) {
