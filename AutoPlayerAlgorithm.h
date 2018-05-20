@@ -8,6 +8,7 @@
 #include "Board.h"
 #include "Move.h"
 #include "JokerChange.h"
+#include "Piece.h"
 
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm {
@@ -21,6 +22,7 @@ public:
 	{ PieceType::Bomb, 2 },
 	{ PieceType::Joker, 2 }
 	};
+	_board.fill(Piece::Empty);
 }
 	void getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) override;
 	void notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights) override;
@@ -29,6 +31,9 @@ public:
 	std::unique_ptr<Move> getMove() override;
 	std::unique_ptr<JokerChange> getJokerChange() override;
 private:
-	std::array<std::shared_ptr<Piece>, N * M> _opponentBoard;
+	std::array<std::shared_ptr<Piece>, N * M> _board;
 	std::unordered_map<PieceType, unsigned int> _piecesOnBoard;
+	void setPiece(int x, int y, std::shared_ptr<Piece> piece){
+		_board[x *  M + y] = piece;
+	};
 };
