@@ -121,6 +121,7 @@ int GameManager::output() {
 		default:
 			break;
 		}
+        fout << std::endl << _board;
         return winner;
 	} else { // tie
 		fout << "Winner:" << 0 << std::endl << "Reason: ";
@@ -129,9 +130,9 @@ int GameManager::output() {
 		} else { // _players[0].status == PlayerStatus::NoFlags
 			fout << "Bad move input for both players" << std::endl;
 		}
+        fout << std::endl << _board;
+        return 0;
 	}
-	fout << std::endl << _board;
-    return 0;
 }
 
 std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
