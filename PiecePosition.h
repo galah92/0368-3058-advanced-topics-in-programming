@@ -1,32 +1,31 @@
 #pragma once
 
-#include <memory>
 #include "Point.h"
 
 
 class PiecePosition {
 public:
 	virtual const Point& getPosition() const = 0;
-	virtual char getPiece() const = 0; // R, P, S, B, J or F
-	virtual char getJokerRep() const = 0; // ONLY for Joker: R, P, S or B -- non-Joker may return #
+	virtual char getPiece() const = 0;
+	virtual char getJokerRep() const = 0;
 	virtual ~PiecePosition() = default;
 };
 
 class PiecePositionImpl : public PiecePosition {
 public:
 	PiecePositionImpl(const PointImpl& pos, char piece, char jokerRep) :
-		_pos(std::make_unique<PointImpl>(pos)),
+		_pos(pos),
 		_piece(piece),
 		_jokerRep(jokerRep) {}
 	PiecePositionImpl(int x, int y, char piece, char jokerRep) :
-		_pos(std::make_unique<PointImpl>(x, y)),
+		_pos(PointImpl(x, y)),
 		_piece(piece),
 		_jokerRep(jokerRep) {}
-	const Point& getPosition() const override { return *_pos; };
+	const Point& getPosition() const override { return _pos; };
 	char getPiece() const override { return _piece; };
 	char getJokerRep() const override { return _jokerRep; };
 private:
-	std::unique_ptr<Point> _pos;
+	PointImpl _pos;
 	char _piece;
 	char _jokerRep;
 };

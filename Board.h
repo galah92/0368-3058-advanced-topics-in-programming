@@ -6,8 +6,8 @@
 #include "Point.h"
 #include "Piece.h"
 
-#define N 10
-#define M 10
+const int N = 10;
+const int M = 10;
 
 
 class Board {

@@ -139,15 +139,6 @@ int GameManager::output() {
 	}
 }
 
-std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
-	auto killPiece1 = piece2->canKill(*piece1);
-	auto killPiece2 = piece1->canKill(*piece2);
-	if (killPiece1 && piece1 != Piece::Empty) kill(piece1);
-	if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
-	if (killPiece1 && killPiece2) return Piece::Empty;
-	return killPiece1 ? piece2 : piece1;
-}
-
 std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::shared_ptr<Piece> piece1) {
 	auto piece2 = _board.getPiece(pos);
 	auto killPiece1 = piece2->canKill(*piece1);

@@ -13,11 +13,11 @@ public:
 class JokerChangeImpl : public JokerChange {
 public:
 	JokerChangeImpl(const PointImpl& pos, char rep) :
-		_pos(std::make_unique<PointImpl>(pos)),
+		_pos(pos),
 		_rep(rep) { }
-	const Point& getJokerChangePosition() const override { return *_pos; };
+	const Point& getJokerChangePosition() const override { return _pos; };
 	char getJokerNewRep() const override { return _rep; };
 private:
-	std::unique_ptr<Point> _pos;
+	PointImpl _pos;
 	char _rep;
 };
