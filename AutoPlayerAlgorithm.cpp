@@ -2,12 +2,23 @@
 #include "AutoPlayerAlgorithm.h"
 #include "Point.h"
 
+// AutoPlayerAlgorithm::AutoPlayerAlgorithm(){
+	
+// 	_piecesOnBoard = { // num of pieces currently hard-coded 
+// 	{ PieceType::Flag, 1 }, 
+// 	{ PieceType::Rock, 2 },
+// 	{ PieceType::Paper, 5 },
+// 	{ PieceType::Scissors, 1 },
+// 	{ PieceType::Bomb, 2 },
+// 	{ PieceType::Joker, 2 }
+// 	};
+// }
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
 	positions.clear(); // to make sure
 					   // random corner?
 					   // flag block
-	positions.push_back(std::make_unique<PiecePositionImpl>(0, 0, 'F', ' ')); // put the flag in the corner
+	positions.push_back(std::make_unique<PiecePositionImpl>(0, 0, player == 1 ? 'F' : 'f', ' ')); // put the flag in the corner
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 1, 'B', ' ')); // cover the flag 
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 0, 'B', ' ')); // cover the flag
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 1, 'J', 'B')); // cover the flag
@@ -22,7 +33,7 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 8, 'P', ' '));
 	positions.push_back(std::make_unique<PiecePositionImpl>(7, 4, 'P', ' '));
 	positions.push_back(std::make_unique<PiecePositionImpl>(6, 6, 'S', ' '));
-
+	
 	(void)player;
 }
 

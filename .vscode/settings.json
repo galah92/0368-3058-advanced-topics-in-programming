@@ -46,6 +46,7 @@
         "array": "cpp",
         "locale": "cpp",
         "__config": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "ratio": "cpp"
     }
 }
