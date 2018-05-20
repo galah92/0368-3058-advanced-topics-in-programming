@@ -24,6 +24,7 @@ public:
 	bool canKill(const Piece& piece) const;
 	static bool isValid(PieceType type);
 	static bool isValid(PieceType type, PieceType jokerType);
+	static bool maxCapacity(PieceType type);
 	static std::shared_ptr<Piece> Empty;
 	operator char() const;
 private:

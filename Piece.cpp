@@ -1,8 +1,16 @@
 #include <vector>
 #include <cctype>
+#include <limits>
 #include <algorithm>
 #include "Piece.h"
 
+
+const unsigned int F = 1;
+const unsigned int R = 2;
+const unsigned int P = 5;
+const unsigned int S = 1;
+const unsigned int B = 2;
+const unsigned int J = 1;
 
 std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, PieceType::None, PieceType::None);
 
@@ -73,6 +81,20 @@ bool Piece::isValid(PieceType type) {
 bool Piece::isValid(PieceType type, PieceType jokerType) {
 	if (type == PieceType::Joker) return canMoveMap.find(jokerType) != canMoveMap.end();
 	return type == PieceType::Joker ? isValid(jokerType) : isValid(type);
+}
+
+std::unordered_map<PieceType, unsigned int> maxCapacityMap{
+	{ PieceType::None, std::numeric_limits<unsigned int>::max() },
+	{ PieceType::Flag, F },
+	{ PieceType::Rock, R },
+	{ PieceType::Paper, P },
+	{ PieceType::Scissors, S },
+	{ PieceType::Bomb, B },
+	{ PieceType::Joker, J },
+};
+
+bool Piece::maxCapacity(PieceType type) {
+	return maxCapacityMap[type];
 }
 
 Piece::operator char() const {
