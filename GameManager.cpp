@@ -43,14 +43,14 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 		const auto& pos = piecePos->getPosition();
 		auto type = (PieceType)piecePos->getPiece();
 		auto jokerType = (PieceType)piecePos->getJokerRep();
-		if (_tmpBoard.getPlayer(pos) != 0 || !Piece::isValid(type, jokerType)) {
+		if (_tmpBoard[pos]->getPlayer() != 0 || !Piece::isValid(type, jokerType)) {
 			player->status = PlayerStatus::InvalidPos;
 			return;
 		} else {
-			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player->index, type, jokerType));
+			 _tmpBoard[pos] = std::make_shared<Piece>(player->index, type, jokerType);
 			player->numPieces[type]++;
-			if (piece->getType() == PieceType::Flag) player->numFlags++;
-			if (piece->canMove()) player->numMovable++;
+			if (_tmpBoard[pos]->getType() == PieceType::Flag) player->numFlags++;
+			if (_tmpBoard[pos]->canMove()) player->numMovable++;
 		}
 	}
 	if (player->numFlags == 0 || player->numMovable == 0) {
@@ -66,7 +66,7 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 	for (unsigned int i = 0; i < N; i++) {
 		for (unsigned int j = 0; j < N; j++) {
 			PointImpl pos(i, j);
-			auto fightInfo = fight(pos, _tmpBoard.getPiece(pos));
+			auto fightInfo = fight(pos, _tmpBoard[pos]);
 			if (fightInfo) fights.push_back(std::move(fightInfo));
 		}
 	}
@@ -77,16 +77,16 @@ void GameManager::doMove(int i) {
 	const auto move = player->algo->getMove();
 	const auto& from = move->getFrom();
 	const auto& to = move->getTo();
-	if (_board.getPlayer(from) != i + 1 || !_board.isValidPosition(to) || _board.getPlayer(to) == i + 1) {
+	if (_board[from]->getPlayer() != i + 1 || !_board.isValidPosition(to) || _board[to]->getPlayer() == i + 1) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
 	}
-	auto fightInfo = fight(to, _board.getPiece(from));
+	auto fightInfo = fight(to, _board[from]);
 	if (fightInfo) {
 		_players[0]->algo->notifyFightResult(*fightInfo);
 		_players[1]->algo->notifyFightResult(*fightInfo);
 	}
-	_board.setPiece(from, Piece::Empty);
+	_board[from] = Piece::Empty;
 	_players[1 - i]->algo->notifyOnOpponentMove(*move);
 }
 
@@ -95,7 +95,7 @@ void GameManager::changeJoker(int i) {
 	const auto jokerChange = player->algo->getJokerChange();
 	if (!jokerChange) return;
 	const auto rep = (PieceType)jokerChange->getJokerNewRep();
-	const auto piece = _board.getPiece(jokerChange->getJokerChangePosition());
+	const auto piece = _board[jokerChange->getJokerChangePosition()];
 	if (Piece::isValid(rep) || !piece || piece->getType() != PieceType::Joker) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
@@ -140,12 +140,12 @@ int GameManager::output() {
 }
 
 std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::shared_ptr<Piece> piece1) {
-	auto piece2 = _board.getPiece(pos);
+	auto piece2 = _board[pos];
 	auto killPiece1 = piece2->canKill(*piece1);
 	auto killPiece2 = piece1->canKill(*piece2);
 	if (killPiece1 && piece1 != Piece::Empty) kill(piece1);
 	if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
-	_board.setPiece(pos, killPiece1 && killPiece2 ? Piece::Empty : (killPiece1 ? piece2 : piece1));
+	_board[pos] = killPiece1 && killPiece2 ? Piece::Empty : (killPiece1 ? piece2 : piece1);
 	if (piece1 == Piece::Empty || piece2 == Piece::Empty) return nullptr;
 	auto winner = killPiece1 && killPiece2 ? 0 : (killPiece1 ? 2 : 1);
 	auto ch1 = piece1->getPlayer() == 1 ? piece1 : piece2;

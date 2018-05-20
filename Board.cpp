@@ -10,24 +10,23 @@ void BoardImpl::clear() {
 }
 
 int BoardImpl::getPlayer(const Point& pos) const {
-	auto piece = getPiece(pos);
-	return piece != nullptr ? piece->getPlayer() : 0;
-}
-
-std::shared_ptr<Piece> BoardImpl::getPiece(const Point& pos) const {
-	return isValidPosition(pos) ? _board[pos.getX() *  M + pos.getY()] : nullptr;
-}
-
-std::shared_ptr<Piece> BoardImpl::setPiece(const Point& pos, std::shared_ptr<Piece> piece) {
-	if (!isValidPosition(pos)) return nullptr;
-	_board[pos.getX() *  M + pos.getY()] = piece;
-	return piece;
+	if (!isValidPosition(pos)) throw "BoardImpl::getPlayer: Invalid const Point& given";
+	return operator[](pos)->getPlayer();
 }
 
 bool BoardImpl::isValidPosition(const Point& pos) const {
 	int x = pos.getX();
 	int y = pos.getY();
 	return x >= 0 && x < N && y >= 0 && y < M;
+}
+
+std::shared_ptr<Piece>& BoardImpl::operator[](const Point& pos) {
+	if (!isValidPosition(pos)) throw "BoardImpl::operator[]: Invalid const Point& given";
+	return _board[pos.getX() *  M + pos.getY()];
+}
+
+std::shared_ptr<Piece> BoardImpl::operator[](const Point & pos) const {
+	return operator[](pos);
 }
 
 std::ostream & operator<<(std::ostream& os, const BoardImpl& board) {

@@ -21,10 +21,10 @@ public:
 	BoardImpl();
 	void clear();
 	int getPlayer(const Point& pos) const override;
-	std::shared_ptr<Piece> getPiece(const Point& pos) const;
-	std::shared_ptr<Piece> setPiece(const Point& pos, std::shared_ptr<Piece> piece);
 	bool isValidPosition(const Point& pos) const;
 	friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
+	std::shared_ptr<Piece>& operator[](const Point& pos);
+	std::shared_ptr<Piece> operator[](const Point& pos) const;
 private:
 	std::array<std::shared_ptr<Piece>, N * M> _board;
 };
