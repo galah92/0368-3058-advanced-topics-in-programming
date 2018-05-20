@@ -81,11 +81,12 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move) {
-	// TODO : implement
-	(void)move;
+	setPiece(move.getTo(), std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); 
+	setPiece(move.getFrom(), Piece::Empty); 
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
+	// TODO : update _piecesOnBoard
 	const auto& pos = fightInfo.getPosition();
 	const auto player_piece = fightInfo.getPiece(_player); 
 	const auto opponent_piece = fightInfo.getPiece(1 - _player); 
