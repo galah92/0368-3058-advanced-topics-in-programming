@@ -55,15 +55,13 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 	for (unsigned int y = 0; y < M; y++){
 		for (unsigned int x = 0; x < N; x++){
 			PointImpl pos(x,y);
-			auto piece = getPiece(pos);
-			if (b.getPlayer(pos) != _player && piece->getPlayer() == _player){ // player lost a fight
-				auto iter = _piecesOnBoard.find(piece->getType());
-				if (iter != _piecesOnBoard.end()) iter->second--; // update map
+			const auto piece = getPiece(pos);
+			if (b.getPlayer(pos) != _player && piece->getPlayer() == _player){ // player lose a fight
 				setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); // Unknown opponent's piece
 			}
 		}
 	}
-	for (auto const &fight : fights){
+	for (const auto &fight : fights){
 		notifyFightResult(*fight);
 	}
 }
@@ -73,10 +71,23 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move) {
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
+	const auto& pos = fightInfo.getPosition();
+	const auto player_piece = fightInfo.getPiece(_player); 
+	const auto opponent_piece = fightInfo.getPiece(1 - _player); 
+
 	if (fightInfo.getWinner() == _player) {
 		// TODO : Implement
-	} else {
-		// TODO : Implement
+
+	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
+		auto iter = _piecesOnBoard.find((PieceType)player_piece);
+		if (iter != _piecesOnBoard.end()) iter->second--; // update map
+		setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)opponent_piece, PieceType::Joker));	
+
+
+	} else { // both player and opponent lose
+		auto iter = _piecesOnBoard.find((PieceType)player_piece);
+		if (iter != _piecesOnBoard.end()) iter->second--; // update map
+		setPiece(pos, Piece::Empty);
 	}
 
 }
