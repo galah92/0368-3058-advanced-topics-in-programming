@@ -16,19 +16,16 @@ enum class PieceType : char {
 
 class Piece {
 public:
-	Piece(int player, PieceType type, PieceType jokerType) :
-		_player(player),
-		_type(type),
-		_jokerType(jokerType) {}
+	Piece(int player, PieceType type, PieceType jokerType);
 	int getPlayer() const;
 	PieceType getType() const;
 	bool setJokerType(PieceType jokerType);
 	bool canMove() const;
-	bool canKill(PieceType piece) const;
+	bool canKill(const Piece& piece) const;
 	static bool isValid(PieceType type);
 	static bool isValid(PieceType type, PieceType jokerType);
-	operator char() const;
 	static std::shared_ptr<Piece> Empty;
+	operator char() const;
 private:
 	int _player;
 	PieceType _type;

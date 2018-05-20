@@ -6,6 +6,11 @@
 
 std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, PieceType::None, PieceType::None);
 
+Piece::Piece(int player, PieceType type, PieceType jokerType) :
+	_player(player),
+	_type(type),
+	_jokerType(jokerType) {}
+
 int Piece::getPlayer() const {
 	return _player;
 }
@@ -43,9 +48,10 @@ std::unordered_map<PieceType, std::vector<PieceType>> canKillMap = {
 	{ PieceType::Bomb, { PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Paper, PieceType::Scissors, PieceType::Bomb } },
 };
 
-bool Piece::canKill(PieceType piece) const {
-    auto const& vec = canKillMap[_type == PieceType::Joker ? _jokerType : _type];
-    return std::find(vec.begin(), vec.end(), piece) != vec.end();
+bool Piece::canKill(const Piece& piece) const {
+	const auto& type = piece._type == PieceType::Joker ? piece._jokerType : piece._type;
+	const auto& vec = canKillMap[_type == PieceType::Joker ? _jokerType : _type];
+	return std::find(vec.begin(), vec.end(), type) != vec.end();
 }
 
 bool Piece::isValid(PieceType type) {

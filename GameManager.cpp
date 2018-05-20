@@ -114,8 +114,8 @@ void GameManager::output() {
 }
 
 std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
-	auto killPiece1 = piece2->canKill(piece1->getType());
-	auto killPiece2 = piece1->canKill(piece2->getType());
+	auto killPiece1 = piece2->canKill(*piece1);
+	auto killPiece2 = piece1->canKill(*piece2);
 	if (killPiece1 && piece1 != Piece::Empty) {
 		auto& player = _players[piece1->getPlayer() - 1];
 		if (piece1->getType() == PieceType::Flag) {
