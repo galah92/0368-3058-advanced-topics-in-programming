@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <map>
 #include "PlayerAlgorithm.h"
 #include "Piece.h"
 
@@ -25,6 +26,7 @@ public:
 		index(index) {}
 	std::shared_ptr<PlayerAlgorithm> algo;
 	PlayerStatus status = PlayerStatus::Playing;
+	std::map<PieceType, unsigned int> numPieces;
 	unsigned int numFlags;
 	unsigned int numMovable;
 	int index;

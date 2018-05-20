@@ -40,6 +40,7 @@ void GameManager::position(Player& player) {
 			return;
 		} else {
 			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player.index, type, jokerType));
+			player.numPieces[type]++;
 			if (piece->getType() == PieceType::Flag) player.numFlags++;
 			if (piece->canMove()) player.numMovable++;
 		}
@@ -118,6 +119,7 @@ std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::sh
 	auto killPiece2 = piece1->canKill(*piece2);
 	if (killPiece1 && piece1 != Piece::Empty) {
 		auto& player = _players[piece1->getPlayer() - 1];
+		player.numPieces[piece1->getType()]--;
 		if (piece1->getType() == PieceType::Flag) {
 			player.numFlags--;
 			if (player.numFlags == 0) player.status = PlayerStatus::NoFlags;
@@ -129,6 +131,7 @@ std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::sh
 	}
 	if (killPiece2 && piece2 != Piece::Empty) {
 		auto& player = _players[piece2->getPlayer() - 1];
+		player.numPieces[piece2->getType()]--;
 		if (piece2->getType() == PieceType::Flag) {
 			player.numFlags--;
 			if (player.numFlags == 0) player.status = PlayerStatus::NoFlags;
