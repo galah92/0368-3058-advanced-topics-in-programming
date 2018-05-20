@@ -66,8 +66,8 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 	for (unsigned int i = 0; i < N; i++) {
 		for (unsigned int j = 0; j < N; j++) {
 			PointImpl pos(i, j);
-			_board.setPiece(pos, fight(_board.getPiece(pos), _tmpBoard.getPiece(pos)));
-            (void)fights; // TODO: append to fights somehow
+			auto fightInfo = fight(pos, _tmpBoard.getPiece(pos));
+			if (fightInfo) fights.push_back(std::move(fightInfo));
 		}
 	}
 }
@@ -81,7 +81,11 @@ void GameManager::doMove(int i) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
 	}
-	_board.setPiece(to, fight(_board.getPiece(from), _board.getPiece(to)));
+	auto fightInfo = fight(to, _board.getPiece(from));
+	if (fightInfo) {
+		_players[0]->algo->notifyFightResult(*fightInfo);
+		_players[1]->algo->notifyFightResult(*fightInfo);
+	}
 	_board.setPiece(from, Piece::Empty);
 	_players[1 - i]->algo->notifyOnOpponentMove(*move);
 }
@@ -142,6 +146,20 @@ std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::sh
 	if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
 	if (killPiece1 && killPiece2) return Piece::Empty;
 	return killPiece1 ? piece2 : piece1;
+}
+
+std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::shared_ptr<Piece> piece1) {
+	auto piece2 = _board.getPiece(pos);
+	auto killPiece1 = piece2->canKill(*piece1);
+	auto killPiece2 = piece1->canKill(*piece2);
+	if (killPiece1 && piece1 != Piece::Empty) kill(piece1);
+	if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
+	_board.setPiece(pos, killPiece1 && killPiece2 ? Piece::Empty : (killPiece1 ? piece2 : piece1));
+	if (piece1 == Piece::Empty || piece2 == Piece::Empty) return nullptr;
+	auto winner = killPiece1 && killPiece2 ? 0 : (killPiece1 ? 2 : 1);
+	auto ch1 = piece1->getPlayer() == 1 ? piece1 : piece2;
+	auto ch2 = piece1->getPlayer() == 2 ? piece1 : piece2;
+	return std::make_unique<FightInfoImpl>((const PointImpl&)pos, *ch1, *ch2, winner);
 }
 
 void GameManager::kill(std::shared_ptr<Piece> piece) {

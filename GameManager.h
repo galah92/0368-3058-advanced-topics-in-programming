@@ -4,6 +4,7 @@
 #include <map>
 #include "PlayerAlgorithm.h"
 #include "Piece.h"
+#include "FightInfo.h"
 
 
 enum class PlayerStatus {
@@ -40,6 +41,7 @@ private:
 	void changeJoker(int i);
 	int output();
 	std::shared_ptr<Piece> fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2);
+	std::unique_ptr<FightInfo> fight(const Point& pos, const std::shared_ptr<Piece> piece1);
 	void kill(std::shared_ptr<Piece> piece);
 	bool isGameOn();
 	std::unique_ptr<Player> _players[2];
