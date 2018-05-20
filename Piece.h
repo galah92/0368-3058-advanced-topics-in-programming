@@ -16,21 +16,21 @@ enum class PieceType : char {
 
 class Piece {
 public:
-	Piece(int player, PieceType type, bool isJoker = false) :
+	Piece(int player, PieceType type, PieceType jokerType) :
 		_player(player),
 		_type(type),
-		_isJoker(isJoker) {}
+		_jokerType(jokerType) {}
 	int getPlayer() const;
 	PieceType getType() const;
-	bool setType(PieceType type);
-	bool isJoker() const;
+	bool setJokerType(PieceType jokerType);
 	bool canMove() const;
 	bool canKill(PieceType piece) const;
-	static bool isValid(PieceType piece);
+	static bool isValid(PieceType type);
+	static bool isValid(PieceType type, PieceType jokerType);
 	operator char() const;
 	static std::shared_ptr<Piece> Empty;
 private:
 	int _player;
 	PieceType _type;
-	bool _isJoker;
+	PieceType _jokerType;
 };

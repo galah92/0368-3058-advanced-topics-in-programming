@@ -33,13 +33,13 @@ void GameManager::position(Player& player) {
 	for (const auto& piecePos : positions) {
 		if (player.status != PlayerStatus::Playing) return;
 		const auto& pos = piecePos->getPosition();
-		auto isJoker = piecePos->getPiece() == 'J';
-		auto pieceType = (PieceType)(isJoker ? piecePos->getJokerRep() : piecePos->getPiece());
-		if (_tmpBoard.getPlayer(pos) != 0 || !Piece::isValid(pieceType)) {
+		auto type = (PieceType)piecePos->getPiece();
+		auto jokerType = (PieceType)piecePos->getJokerRep();
+		if (_tmpBoard.getPlayer(pos) != 0 || !Piece::isValid(type, jokerType)) {
 			player.status = PlayerStatus::InvalidPos;
 			return;
 		} else {
-			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player.index, pieceType, isJoker));
+			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player.index, type, jokerType));
 			if (piece->getType() == PieceType::Flag) player.numFlags++;
 			if (piece->canMove()) player.numMovable++;
 		}
@@ -73,11 +73,11 @@ void GameManager::changeJoker(Player& player) {
 	if (!jokerChange) return;
 	const auto rep = (PieceType)jokerChange->getJokerNewRep();
 	const auto piece = _board.getPiece(jokerChange->getJokerChangePosition());
-	if (Piece::isValid(rep) || !piece || !piece->isJoker()) {
+	if (Piece::isValid(rep) || !piece || piece->getType() != PieceType::Joker) {
 		player.status = PlayerStatus::InvalidMove;
 		return;
 	}
-	piece->setType(rep);
+	piece->setJokerType(rep);
 }
 
 void GameManager::output() {

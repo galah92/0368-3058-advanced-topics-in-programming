@@ -4,7 +4,7 @@
 #include "Piece.h"
 
 
-std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, PieceType::None, false);
+std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, PieceType::None, PieceType::None);
 
 int Piece::getPlayer() const {
 	return _player;
@@ -14,14 +14,10 @@ PieceType Piece::getType() const {
 	return _type;
 }
 
-bool Piece::setType(PieceType type) {
-	if (!_isJoker) return false;
-	_type = type;
+bool Piece::setJokerType(PieceType jokerType) {
+	if (_type != PieceType::Joker) return false;
+	_jokerType = jokerType;
 	return true;
-}
-
-bool Piece::isJoker() const {
-	return _isJoker;
 }
 
 std::unordered_map<PieceType, bool> canMoveMap = {
@@ -34,7 +30,8 @@ std::unordered_map<PieceType, bool> canMoveMap = {
 };
 
 bool Piece::canMove() const {
-	return canMoveMap[_type];
+	const auto& type = _type == PieceType::Joker ? _jokerType : _type;
+	return canMoveMap[type];
 }
 
 std::unordered_map<PieceType, std::vector<PieceType>> canKillMap = {
@@ -47,15 +44,31 @@ std::unordered_map<PieceType, std::vector<PieceType>> canKillMap = {
 };
 
 bool Piece::canKill(PieceType piece) const {
-    auto const& vec = canKillMap[_type];
+    auto const& vec = canKillMap[_type == PieceType::Joker ? _jokerType : _type];
     return std::find(vec.begin(), vec.end(), piece) != vec.end();
 }
 
-bool Piece::isValid(PieceType piece) {
-	return canMoveMap.find(piece) != canMoveMap.end();
+bool Piece::isValid(PieceType type) {
+	switch (type) {
+	case PieceType::Flag:
+	case PieceType::Rock:
+	case PieceType::Paper:
+	case PieceType::Scissors:
+	case PieceType::Bomb:
+		return true;
+	case PieceType::None:
+	case PieceType::Joker:
+	default:
+		return false;
+	}
+	return false;
+}
+
+bool Piece::isValid(PieceType type, PieceType jokerType) {
+	if (type == PieceType::Joker) return canMoveMap.find(jokerType) != canMoveMap.end();
+	return type == PieceType::Joker ? isValid(jokerType) : isValid(type);
 }
 
 Piece::operator char() const {
-	char ch = _isJoker ? 'J' : (char)_type;
-	return _player == 1 ? std::toupper(ch) : std::tolower(ch);
+	return _player == 1 ? std::toupper((char)_type) : std::tolower((char)_type);
 }
