@@ -31,9 +31,16 @@ public:
 	std::unique_ptr<Move> getMove() override;
 	std::unique_ptr<JokerChange> getJokerChange() override;
 private:
+	int _player;
 	std::array<std::shared_ptr<Piece>, N * M> _board;
 	std::unordered_map<PieceType, unsigned int> _piecesOnBoard;
 	void setPiece(int x, int y, std::shared_ptr<Piece> piece){
 		_board[x *  M + y] = piece;
 	};
+	void setPiece(const Point& pos, std::shared_ptr<Piece> piece){
+		_board[pos.getX() *  M + pos.getY()] = piece;
+	};
+	std::shared_ptr<Piece> getPiece(const Point& pos) const {
+		return _board[pos.getX() *  M + pos.getY()];
+	}
 };

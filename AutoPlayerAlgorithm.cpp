@@ -15,6 +15,7 @@
 // }
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
+	_player = player;
 	positions.clear(); // to make sure
 					   // random corner?
 					   // flag block
@@ -51,8 +52,22 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<std::unique_ptr<FightInfo>>& fights) {
-	(void)b;
-	(void)fights;
+	for (unsigned int y = 0; y < M; y++){
+		for (unsigned int x = 0; x < N; x++){
+			PointImpl pos(x,y);
+			if (b.getPlayer(pos) != _player){ // opponent's piece
+				if (getPiece(pos)->getPlayer() == _player){ // player lost a fight
+					// TODO : update map
+					// auto piece = getPiece(pos);
+				}
+				// setPiece(pos, (pieceType)opponentpiece);
+			}
+		}
+	}
+
+	for (auto const &fight : fights){
+		notifyFightResult(*fight);
+	}
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move) {
@@ -60,7 +75,12 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move) {
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
-	(void)fightInfo;
+	if (fightInfo.getWinner() == _player) {
+		// TODO : Implement
+	} else {
+		// TODO : Implement
+	}
+
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
