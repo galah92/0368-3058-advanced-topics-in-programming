@@ -11,8 +11,11 @@ enum class PieceType : char {
 	Paper = 'P',
 	Scissors = 'S',
 	Bomb = 'B',
+<<<<<<< HEAD
 	Unknown = '#',
 	Joker = 'J'
+=======
+>>>>>>> GameManager flow fixed - simpletest work!
 };
 
 class Piece {

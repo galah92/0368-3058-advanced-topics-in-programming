@@ -31,7 +31,6 @@ std::unordered_map<PieceType, bool> canMoveMap = {
 	{ PieceType::Paper, true },
 	{ PieceType::Scissors, true },
 	{ PieceType::Bomb, false },
-	{ PieceType::Unknown, false },
 };
 
 bool Piece::canMove() const {
@@ -39,13 +38,12 @@ bool Piece::canMove() const {
 }
 
 std::unordered_map<PieceType, std::vector<PieceType>> canKillMap = {
-	{ PieceType::None,{ PieceType::None } },
-	{ PieceType::Flag,{ PieceType::None, PieceType::Flag } },
-	{ PieceType::Rock,{ PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Scissors } },
-	{ PieceType::Paper,{ PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Paper } },
-	{ PieceType::Scissors,{ PieceType::None, PieceType::Flag, PieceType::Paper, PieceType::Scissors } },
-	{ PieceType::Bomb,{ PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Paper, PieceType::Scissors, PieceType::Bomb } },
-	{ PieceType::Unknown,{} },
+	{ PieceType::None, { PieceType::None } },
+	{ PieceType::Flag, { PieceType::None, PieceType::Flag } },
+	{ PieceType::Rock, { PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Scissors, PieceType::Bomb } },
+	{ PieceType::Paper, { PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Paper, PieceType::Bomb } },
+	{ PieceType::Scissors, { PieceType::None, PieceType::Flag, PieceType::Paper, PieceType::Scissors, PieceType::Bomb } },
+	{ PieceType::Bomb, { PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Paper, PieceType::Scissors, PieceType::Bomb } },
 };
 
 bool Piece::canKill(PieceType piece) const {

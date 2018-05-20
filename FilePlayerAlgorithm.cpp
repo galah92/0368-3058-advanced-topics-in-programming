@@ -19,7 +19,7 @@ void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 		char piece, joker;
 		int x, y;
 		ss >> piece >> x >> y >> joker;
-		positions.push_back(std::make_unique<PiecePositionImpl>(PointImpl(x - 1, y - 1), piece, joker));
+		positions.push_back(std::make_unique<PiecePositionImpl>(PointImpl(y - 1, x - 1), piece, joker));
 	}
 }
 
@@ -42,7 +42,7 @@ std::unique_ptr<Move> FilePlayerAlgorithm::getMove() {
 	_movestream = std::istringstream(line);
 	int fromX, fromY, toX, toY;
 	_movestream >> fromX >> fromY >> toX >> toY;
-	return std::make_unique<MoveImpl>(PointImpl(fromX - 1, fromY - 1), PointImpl(toX - 1, toY - 1));
+	return std::make_unique<MoveImpl>(PointImpl(fromY - 1, fromX - 1), PointImpl(toY - 1, toX - 1));
 }
 
 std::unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
@@ -52,5 +52,5 @@ std::unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
 	int jokerX, jokerY;
 	char newRep;
 	_movesstream >> jokerX >> jokerY >> newRep;
-	return std::make_unique<JokerChangeImpl>(PointImpl(jokerX, jokerY), newRep);
+	return std::make_unique<JokerChangeImpl>(PointImpl(jokerY, jokerX), newRep);
 }

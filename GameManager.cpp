@@ -69,6 +69,7 @@ void GameManager::doMove(Player& player) {
 	} else { // no fight
 		_board.setPiece(to, _board.getPiece(from));
 	}
+	_board.setPiece(from, Piece::Empty);
 }
 
 void GameManager::changeJoker(Player& player) {
@@ -119,8 +120,8 @@ void GameManager::output() {
 std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
 	auto killPiece1 = piece2->canKill(piece1->getType());
 	auto killPiece2 = piece1->canKill(piece2->getType());
-	if (killPiece1) {
-		auto player = _players[piece1->getPlayer()];
+	if (killPiece1 && piece1 != Piece::Empty) {
+		auto& player = _players[piece1->getPlayer() - 1];
 		if (piece1->getType() == PieceType::Flag) {
 			player.numFlags--;
 			if (player.numFlags == 0) player.status = PlayerStatus::NoFlags;
@@ -130,8 +131,8 @@ std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::sh
 			if (player.numMovable == 0) player.status = PlayerStatus::CantMove;
 		}
 	}
-	if (killPiece2) {
-		auto player = _players[piece2->getPlayer()];
+	if (killPiece2 && piece2 != Piece::Empty) {
+		auto& player = _players[piece2->getPlayer() - 1];
 		if (piece2->getType() == PieceType::Flag) {
 			player.numFlags--;
 			if (player.numFlags == 0) player.status = PlayerStatus::NoFlags;
