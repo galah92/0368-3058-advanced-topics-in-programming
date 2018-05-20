@@ -55,17 +55,14 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 	for (unsigned int y = 0; y < M; y++){
 		for (unsigned int x = 0; x < N; x++){
 			PointImpl pos(x,y);
-			if (b.getPlayer(pos) != _player){ // opponent's piece
-				auto piece = getPiece(pos);
-				if (piece->getPlayer() == _player){ // player lost a fight
-					auto iter = _piecesOnBoard.find(piece->getType());
-					if (iter != _piecesOnBoard.end()) iter->second--; // update map
-					setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); // Unknown opponent's piece
-				}
+			auto piece = getPiece(pos);
+			if (b.getPlayer(pos) != _player && piece->getPlayer() == _player){ // player lost a fight
+				auto iter = _piecesOnBoard.find(piece->getType());
+				if (iter != _piecesOnBoard.end()) iter->second--; // update map
+				setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); // Unknown opponent's piece
 			}
 		}
 	}
-
 	for (auto const &fight : fights){
 		notifyFightResult(*fight);
 	}
