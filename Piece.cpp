@@ -93,7 +93,7 @@ std::unordered_map<PieceType, unsigned int> maxCapacityMap{
 	{ PieceType::Joker, J },
 };
 
-bool Piece::maxCapacity(PieceType type) {
+unsigned int Piece::maxCapacity(PieceType type) {
 	return maxCapacityMap[type];
 }
 
