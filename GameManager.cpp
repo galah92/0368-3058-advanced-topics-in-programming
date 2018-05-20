@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "GameManager.h"
 
 
@@ -10,51 +11,55 @@ GameManager::GameManager(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr
 	_players[1] = std::make_unique<Player>(2, algo2);
 }
 
-void GameManager::play_round() {
+int GameManager::play_round() {
 	// init
 	_board.clear();
 	_numFights = 0;
 	// positioning
-	position(*_players[0]);
-	position(*_players[1]);
+    std::vector<std::unique_ptr<FightInfo>> fights;
+	position(0, fights);
+	position(1, fights);
+    _players[0]->algo->notifyOnInitialBoard(_board, fights);
+    _players[1]->algo->notifyOnInitialBoard(_board, fights);
 	// moves
-	unsigned int playerIndex = 0;
+	auto i = 0;
 	while (_numFights < FIGHTS_THRESHOLD) {
 		if (!isGameOn()) break;
-		doMove(playerIndex);
+		doMove(i);
 		if (!isGameOn()) break;
-		changeJoker(playerIndex);
-		playerIndex = 1 - playerIndex; // switch player
+		changeJoker(i);
+		i = 1 - i; // switch player
 	}
-	output();
+	return output();
 }
 
-void GameManager::position(Player& player) {
+void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fights) {
+    auto& player = _players[i];
 	BoardImpl _tmpBoard;
 	std::vector<std::unique_ptr<PiecePosition>> positions;
-	player.algo->getInitialPositions(player.index, positions);
+	player->algo->getInitialPositions(player->index, positions);
 	for (const auto& piecePos : positions) {
-		if (player.status != PlayerStatus::Playing) return;
+		if (player->status != PlayerStatus::Playing) return;
 		const auto& pos = piecePos->getPosition();
 		auto type = (PieceType)piecePos->getPiece();
 		auto jokerType = (PieceType)piecePos->getJokerRep();
 		if (_tmpBoard.getPlayer(pos) != 0 || !Piece::isValid(type, jokerType)) {
-			player.status = PlayerStatus::InvalidPos;
+			player->status = PlayerStatus::InvalidPos;
 			return;
 		} else {
-			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player.index, type, jokerType));
-			player.numPieces[type]++;
-			if (piece->getType() == PieceType::Flag) player.numFlags++;
-			if (piece->canMove()) player.numMovable++;
+			auto piece = _tmpBoard.setPiece(pos, std::make_shared<Piece>(player->index, type, jokerType));
+			player->numPieces[type]++;
+			if (piece->getType() == PieceType::Flag) player->numFlags++;
+			if (piece->canMove()) player->numMovable++;
 		}
 	}
-	if (player.numFlags == 0 || player.numMovable == 0) {
-		player.status = PlayerStatus::InvalidPos;
+	if (player->numFlags == 0 || player->numMovable == 0) {
+		player->status = PlayerStatus::InvalidPos;
 		return;
 	}
-	for (const auto& type : player.numPieces) {
+	for (const auto& type : player->numPieces) {
 		if (type.second > Piece::maxCapacity(type.first)) {
-			player.status = PlayerStatus::InvalidPos;
+			player->status = PlayerStatus::InvalidPos;
 			return;
 		}
 	}
@@ -62,6 +67,7 @@ void GameManager::position(Player& player) {
 		for (unsigned int j = 0; j < N; j++) {
 			PointImpl pos(i, j);
 			_board.setPiece(pos, fight(_board.getPiece(pos), _tmpBoard.getPiece(pos)));
+            (void)fights; // TODO: append to fights somehow
 		}
 	}
 }
@@ -93,7 +99,7 @@ void GameManager::changeJoker(int i) {
 	piece->setJokerType(rep);
 }
 
-void GameManager::output() {
+int GameManager::output() {
 	std::ofstream fout("rps.output");
 	if (_players[0]->status == PlayerStatus::Playing || _players[1]->status == PlayerStatus::Playing) {
 		int winner = _players[0]->status == PlayerStatus::Playing ? 0 : 1;
@@ -115,6 +121,7 @@ void GameManager::output() {
 		default:
 			break;
 		}
+        return winner;
 	} else { // tie
 		fout << "Winner:" << 0 << std::endl << "Reason: ";
 		if (_players[0]->status == PlayerStatus::InvalidPos) {
@@ -124,18 +131,19 @@ void GameManager::output() {
 		}
 	}
 	fout << std::endl << _board;
+    return 0;
 }
 
 std::shared_ptr<Piece> GameManager::fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2) {
 	auto killPiece1 = piece2->canKill(*piece1);
 	auto killPiece2 = piece1->canKill(*piece2);
-	if (killPiece1 && piece1 != Piece::Empty) killPiece(piece1);
-	if (killPiece2 && piece2 != Piece::Empty) killPiece(piece2);
+	if (killPiece1 && piece1 != Piece::Empty) kill(piece1);
+	if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
 	if (killPiece1 && killPiece2) return Piece::Empty;
 	return killPiece1 ? piece2 : piece1;
 }
 
-void GameManager::killPiece(std::shared_ptr<Piece> piece) {
+void GameManager::kill(std::shared_ptr<Piece> piece) {
 	auto& player = _players[piece->getPlayer() - 1];
 	player->numPieces[piece->getType()]--;
 	if (piece->getType() == PieceType::Flag) {
