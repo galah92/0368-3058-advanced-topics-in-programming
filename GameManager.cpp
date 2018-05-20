@@ -64,11 +64,7 @@ void GameManager::doMove(Player& player) {
 		player.status = PlayerStatus::InvalidMove;
 		return;
 	}
-	if (_board.getPlayer(to) != 0) { // fight
-		_board.setPiece(to, fight(_board.getPiece(from), _board.getPiece(to)));
-	} else { // no fight
-		_board.setPiece(to, _board.getPiece(from));
-	}
+	_board.setPiece(to, fight(_board.getPiece(from), _board.getPiece(to)));
 	_board.setPiece(from, Piece::Empty);
 }
 
