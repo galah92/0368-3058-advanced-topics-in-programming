@@ -2,18 +2,6 @@
 #include "AutoPlayerAlgorithm.h"
 #include "Point.h"
 
-// AutoPlayerAlgorithm::AutoPlayerAlgorithm(){
-	
-// 	_piecesOnBoard = { // num of pieces currently hard-coded 
-// 	{ PieceType::Flag, 1 }, 
-// 	{ PieceType::Rock, 2 },
-// 	{ PieceType::Paper, 5 },
-// 	{ PieceType::Scissors, 1 },
-// 	{ PieceType::Bomb, 2 },
-// 	{ PieceType::Joker, 2 }
-// 	};
-// }
-
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
 	_player = player;
 	positions.clear(); // to make sure
@@ -74,9 +62,9 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 	const auto& pos = fightInfo.getPosition();
 	const auto player_piece = fightInfo.getPiece(_player); 
 	const auto opponent_piece = fightInfo.getPiece(1 - _player); 
-
+	// TODO : handle joker scenario
 	if (fightInfo.getWinner() == _player) {
-		// TODO : Implement
+		setPiece(pos, std::make_shared<Piece>(_player, (PieceType)player_piece, PieceType::Joker));	
 
 	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
 		auto iter = _piecesOnBoard.find((PieceType)player_piece);
@@ -86,13 +74,21 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 
 	} else { // both player and opponent lose
 		auto iter = _piecesOnBoard.find((PieceType)player_piece);
-		if (iter != _piecesOnBoard.end()) iter->second--; // update map
+		if (iter != _piecesOnBoard.end()) iter->second--;
 		setPiece(pos, Piece::Empty);
 	}
 
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
+	while (true){
+		// auto from = getPosToMoveFrom();
+		for (int i = 0; i < 8; i++){ // for any possible pos
+			// auto to = getFreeNeighbor(from);
+
+
+		}
+	}
 	return nullptr;
 }
 

@@ -43,4 +43,15 @@ private:
 	std::shared_ptr<Piece> getPiece(const Point& pos) const {
 		return _board[pos.getX() *  M + pos.getY()];
 	}
+	// const Point& getPosToMoveFrom(){
+	// 	// TODO : implement
+	// }
+	bool isValidPosition(const Point& pos) const {
+		int x = pos.getX();
+		int y = pos.getY();
+		return x >= 0 && x < N && y >= 0 && y < M;
+	}
+	// const Point& getFreeNeighbor(){
+	// 	// TODO : implement
+	// }
 };
