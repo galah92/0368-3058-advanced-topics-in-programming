@@ -371,4 +371,4 @@ ASALocalRun/
 .mfractor/
 
 # Mac system files
-*.DB_Store
+*.DS_Store
