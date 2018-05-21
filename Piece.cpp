@@ -10,7 +10,7 @@ const unsigned int R = 2;
 const unsigned int P = 5;
 const unsigned int S = 1;
 const unsigned int B = 2;
-const unsigned int J = 1;
+const unsigned int J = 2;
 
 std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, PieceType::None, PieceType::None);
 
