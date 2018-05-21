@@ -1,30 +1,25 @@
-#pragma once
+#ifndef __BOARD_H_
+#define __BOARD_H_
 
-#include <iostream>
-#include <memory>
-#include <array>
-#include "Point.h"
-#include "Piece.h"
+//--------------------------
+// Board Interface
+//--------------------------
+// abstract class Board should be the base class for your "Board" implementation
+// sent from "Game" to PlayerAlgorithm in the flow:
+// "Game" -> PlayerAlgorithm : notifyOnInitialBoard(const Board& b, const std::vector<unique_ptr<FightInfo>>& fights);
+// Note that "Game" is in parantheses because this is your class and you can choose its name
 
-const int N = 10;
-const int M = 10;
+// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
 
+//--------------------------
+// forward declaration
+class Point;
+//--------------------------
 
 class Board {
 public:
-	virtual int getPlayer(const Point& pos) const = 0;
+	virtual int getPlayer(const Point& pos) const = 0; // 1 for player 1’s piece, 2 for 2, 0 if empty
 	virtual ~Board() {}
 };
 
-class BoardImpl : public Board {
-public:
-	BoardImpl();
-	void clear();
-	int getPlayer(const Point& pos) const override;
-	bool isValidPosition(const Point& pos) const;
-	friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
-	std::shared_ptr<Piece>& operator[](const Point& pos);
-	std::shared_ptr<Piece> operator[](const Point& pos) const;
-private:
-	std::array<std::shared_ptr<Piece>, N * M> _board;
-};
+#endif

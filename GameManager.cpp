@@ -2,6 +2,12 @@
 #include <fstream>
 #include <vector>
 #include "GameManager.h"
+#include "Piece.h"
+#include "Point.h"
+#include "Move.h"
+#include "JokerChange.h"
+#include "PiecePosition.h"
+#include "GameContainers.h"
 
 
 const unsigned int FIGHTS_THRESHOLD = 100;
@@ -11,7 +17,7 @@ GameManager::GameManager(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr
 	_players[1] = std::make_unique<Player>(2, algo2);
 }
 
-int GameManager::play_round() {
+int GameManager::playRound() {
 	// init
 	_board.clear();
 	_numFights = 0;
@@ -70,8 +76,6 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 			if (fightInfo) fights.push_back(std::move(fightInfo));
 		}
 	}
-	// if (_players[0]->status != PlayerStatus::Playing) _players[0]->status = PlayerStatus::InvalidPos;
-	// if (_players[1]->status != PlayerStatus::Playing) _players[1]->status = PlayerStatus::InvalidPos;
 }
 
 void GameManager::doMove(int i) {

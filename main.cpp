@@ -31,6 +31,6 @@ int main(int argc, const char *argv[])
 		return -1;
 	}
 	GameManager game(algo1, algo2);
-	game.play_round();
+	game.playRound();
 	return 0;
 }

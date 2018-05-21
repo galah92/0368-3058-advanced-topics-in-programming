@@ -1,6 +1,6 @@
 #include <string>
 #include "AutoPlayerAlgorithm.h"
-#include "Point.h"
+
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
 	_player = player;

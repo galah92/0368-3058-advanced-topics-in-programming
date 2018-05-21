@@ -5,6 +5,8 @@
 #include "PlayerAlgorithm.h"
 #include "Piece.h"
 #include "FightInfo.h"
+#include "Board.h"
+#include "BoardImpl.h"
 
 
 enum class PlayerStatus {
@@ -34,13 +36,12 @@ public:
 class GameManager {
 public:
 	GameManager(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
-	int play_round();
+	int playRound();
 private:
 	void position(int i, std::vector<std::unique_ptr<FightInfo>>& fights);
 	void doMove(int i);
 	void changeJoker(int i);
 	int output();
-	std::shared_ptr<Piece> fight(std::shared_ptr<Piece> piece1, std::shared_ptr<Piece> piece2);
 	std::unique_ptr<FightInfo> fight(const Point& pos, const std::shared_ptr<Piece> piece1);
 	void kill(std::shared_ptr<Piece> piece);
 	bool isGameOn();

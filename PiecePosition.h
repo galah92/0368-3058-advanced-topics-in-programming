@@ -1,31 +1,28 @@
-#pragma once
+#ifndef __PIECE_POSITION_H_
+#define __PIECE_POSITION_H_
 
-#include "Point.h"
+//--------------------------
+// PiecePosition Interface
+//--------------------------
+// abstract class PiecePosition should be the base class for your "PiecePosition" implementation
+// This interface is in use in the flow:
+// "Game" -> PlayerAlgorithm : getInitialPositions(int player, std::vector<unique_ptr<PiecePosition>>& vectorToFill);
+// PlayerAlgorithm is responsible of filling the vector sent to it with the initial positions of all his pieces 
+// Note that "Game" is in parantheses because this is your class and you can choose its name
 
+// @author Amir Kirsh, TAU - Advanced Topics in Programming - 2018 Semester B
+
+//--------------------------
+// forward declaration
+class Point;
+//--------------------------
 
 class PiecePosition {
 public:
 	virtual const Point& getPosition() const = 0;
-	virtual char getPiece() const = 0;
-	virtual char getJokerRep() const = 0;
-	virtual ~PiecePosition() = default;
+	virtual char getPiece() const = 0; // R, P, S, B, J or F
+	virtual char getJokerRep() const = 0; // ONLY for Joker: R, P, S or B -- non-Joker may return ‘#’
+	virtual ~PiecePosition() {}
 };
 
-class PiecePositionImpl : public PiecePosition {
-public:
-	PiecePositionImpl(const PointImpl& pos, char piece, char jokerRep) :
-		_pos(pos),
-		_piece(piece),
-		_jokerRep(jokerRep) {}
-	PiecePositionImpl(int x, int y, char piece, char jokerRep) :
-		_pos(PointImpl(x, y)),
-		_piece(piece),
-		_jokerRep(jokerRep) {}
-	const Point& getPosition() const override { return _pos; };
-	char getPiece() const override { return _piece; };
-	char getJokerRep() const override { return _jokerRep; };
-private:
-	PointImpl _pos;
-	char _piece;
-	char _jokerRep;
-};
+#endif

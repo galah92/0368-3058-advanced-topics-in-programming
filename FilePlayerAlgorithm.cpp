@@ -1,6 +1,6 @@
 #include <string>
 #include "FilePlayerAlgorithm.h"
-#include "Point.h"
+#include "GameContainers.h"
 
 
 const std::string FILES_PREFIX = "player";

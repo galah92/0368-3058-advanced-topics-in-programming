@@ -9,6 +9,7 @@
 #include "Move.h"
 #include "JokerChange.h"
 #include "Piece.h"
+#include "GameContainers.h"
 
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm {
