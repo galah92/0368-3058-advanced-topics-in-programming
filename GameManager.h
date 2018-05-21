@@ -17,8 +17,7 @@ enum class PlayerStatus {
 	CantMove,
 };
 
-class Player {
-public:
+struct Player {
 	Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
 		algo(algo),
 		status(PlayerStatus::Playing),

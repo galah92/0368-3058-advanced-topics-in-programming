@@ -17,9 +17,9 @@ public:
 	void clear();
 	int getPlayer(const Point& pos) const override;
 	bool isValidPosition(const Point& pos) const;
-	friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
 	std::shared_ptr<Piece>& operator[](const Point& pos);
 	std::shared_ptr<Piece> operator[](const Point& pos) const;
+	friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
 private:
-	std::array<std::shared_ptr<Piece>, N * M> _board;
+	std::array<std::shared_ptr<Piece>, N * M> _arr;
 };

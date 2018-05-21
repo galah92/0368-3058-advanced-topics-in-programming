@@ -6,7 +6,7 @@ BoardImpl::BoardImpl() {
 }
 
 void BoardImpl::clear() {
-	_board.fill(Piece::Empty);
+	_arr.fill(Piece::Empty);
 }
 
 int BoardImpl::getPlayer(const Point& pos) const {
@@ -22,19 +22,18 @@ bool BoardImpl::isValidPosition(const Point& pos) const {
 
 std::shared_ptr<Piece>& BoardImpl::operator[](const Point& pos) {
 	if (!isValidPosition(pos)) throw "BoardImpl::operator[]: Invalid const Point& given";
-	return _board[pos.getX() *  M + pos.getY()];
+	return _arr[pos.getX() *  M + pos.getY()];
 }
 
 std::shared_ptr<Piece> BoardImpl::operator[](const Point & pos) const {
-	// return operator[](pos);
 	if (!isValidPosition(pos)) throw "BoardImpl::operator[]: Invalid const Point& given";
-	return _board[pos.getX() *  M + pos.getY()];
+	return _arr[pos.getX() *  M + pos.getY()];
 }
 
 std::ostream & operator<<(std::ostream& os, const BoardImpl& board) {
 	for (unsigned int i = 0; i < N; i++) {
 		for (unsigned int j = 0; j < M; j++) {
-			os << *board._board[i * M + j];
+			os << *board._arr[i * M + j];
 		}
 		os << std::endl;
 	}
