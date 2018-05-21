@@ -31,7 +31,7 @@ int GameManager::playRound() {
 	auto i = 0;
 	while (_numFights < FIGHTS_THRESHOLD) {
 		if (!isGameOn()) break;
-		doMove(i, _numFights);
+		doMove(i);
 		if (!isGameOn()) break;
 		changeJoker(i);
 		i = 1 - i; // switch player
@@ -78,7 +78,7 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 	}
 }
 
-void GameManager::doMove(int i, int &numFights) {
+void GameManager::doMove(int i) {
 	auto& player = _players[i];
 	const auto move = player->algo->getMove();
 	const auto& from = move->getFrom();
@@ -91,9 +91,9 @@ void GameManager::doMove(int i, int &numFights) {
 	if (fightInfo) {
 		_players[0]->algo->notifyFightResult(*fightInfo);
 		_players[1]->algo->notifyFightResult(*fightInfo);
-		numFights = 0;
+		_numFights = 0;
 	} else {
-		numFights++;
+		_numFights++;
 
 	}
 	_board[from] = Piece::Empty;

@@ -38,7 +38,7 @@ public:
 	int playRound();
 private:
 	void position(int i, std::vector<std::unique_ptr<FightInfo>>& fights);
-	void doMove(int i, int &numFights);
+	void doMove(int i);
 	void changeJoker(int i);
 	int output();
 	std::unique_ptr<FightInfo> fight(const Point& pos, const std::shared_ptr<Piece> piece1);
