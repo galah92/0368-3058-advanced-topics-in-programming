@@ -10,6 +10,7 @@
 #include "JokerChange.h"
 #include "Piece.h"
 #include "GameContainers.h"
+#include "BoardImpl.h"
 
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm {
