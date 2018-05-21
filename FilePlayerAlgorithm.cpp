@@ -52,5 +52,5 @@ std::unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
 	int jokerX, jokerY;
 	char newRep;
 	_movestream >> jokerX >> jokerY >> newRep;
-	return std::make_unique<JokerChangeImpl>(PointImpl(jokerY, jokerX), newRep);
+	return std::make_unique<JokerChangeImpl>(PointImpl(jokerY - 1, jokerX - 1), newRep);
 }

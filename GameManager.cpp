@@ -70,6 +70,8 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 			if (fightInfo) fights.push_back(std::move(fightInfo));
 		}
 	}
+	// if (_players[0]->status != PlayerStatus::Playing) _players[0]->status = PlayerStatus::InvalidPos;
+	// if (_players[1]->status != PlayerStatus::Playing) _players[1]->status = PlayerStatus::InvalidPos;
 }
 
 void GameManager::doMove(int i) {
@@ -101,7 +103,7 @@ void GameManager::changeJoker(int i) {
 		return;
 	}
 	const auto piece = _board[pos];
-	if (_board[pos]->getPlayer() != i || _board[pos]->getType() != PieceType::Joker) {
+	if (piece->getPlayer() != i + 1 || piece->getType() != PieceType::Joker) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
 	}
@@ -137,7 +139,7 @@ int GameManager::output() {
 		if (_players[0]->status == PlayerStatus::InvalidPos) {
 			fout << "Bad positioning input for both players" << std::endl;
 		} else { // _players[0].status == PlayerStatus::NoFlags
-			fout << "Bad move input for both players" << std::endl;
+			fout << "Both players cannot play (no flags / cannot move)" << std::endl;
 		}
         fout << std::endl << _board;
         return 0;
