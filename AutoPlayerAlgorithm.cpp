@@ -170,13 +170,13 @@ std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(std::unique_ptr<Po
 	std::vector<PointImpl> vec;
 	int x = from->getX();
 	int y = from->getY();
-	if (isValidPosition(x-1, y-1)) vec.push_back(PointImpl(x-1,y-1));
-	if (isValidPosition(x-1, y)) vec.push_back(PointImpl(x-1,y));
-	if (isValidPosition(x-1, y+1)) vec.push_back(PointImpl(x-1,y+1));
-	if (isValidPosition(x, y-1)) vec.push_back(PointImpl(x,y-1));
-	if (isValidPosition(x, y+1)) vec.push_back(PointImpl(x-1,y+1));
-	if (isValidPosition(x+1, y-1)) vec.push_back(PointImpl(x+1,y-1));
-	if (isValidPosition(x+1, y)) vec.push_back(PointImpl(x+1,y));
-	if (isValidPosition(x+1, y+1)) vec.push_back(PointImpl(x+1,y+1));
+	if (isValidPosition(x-1, y-1)) vec.push_back(PointImpl(x-1, y-1));
+	if (isValidPosition(x-1, y)) vec.push_back(PointImpl(x-1, y));
+	if (isValidPosition(x-1, y+1)) vec.push_back(PointImpl(x-1, y+1));
+	if (isValidPosition(x, y-1)) vec.push_back(PointImpl(x, y-1));
+	if (isValidPosition(x, y+1)) vec.push_back(PointImpl(x, y+1));
+	if (isValidPosition(x+1, y-1)) vec.push_back(PointImpl(x+1, y-1));
+	if (isValidPosition(x+1, y)) vec.push_back(PointImpl(x+1, y));
+	if (isValidPosition(x+1, y+1)) vec.push_back(PointImpl(x+1, y+1));
 	return vec;
 }
