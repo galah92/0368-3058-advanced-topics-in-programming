@@ -51,6 +51,7 @@ private:
 	std::shared_ptr<Piece> getPiece(int x, int y) const;
 	std::unique_ptr<PointImpl> getPosToMoveFrom();
 	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
+	bool isValidPosition(int x, int y) const;
 	bool isValidPosition(const Point& pos) const;
-
+	std::vector<PointImpl> validPermutations(std::unique_ptr<PointImpl>& from);
 };

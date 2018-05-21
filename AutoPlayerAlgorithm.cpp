@@ -148,14 +148,35 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom(){
 	return nullptr;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from){
-	// TODO : Implement
-	(void)from;
-	return std::make_unique<PointImpl>(5,5);
-}
-
 bool AutoPlayerAlgorithm::isValidPosition(const Point& pos) const {
 	int x = pos.getX();
 	int y = pos.getY();
+	return isValidPosition(x,y);
+}
+
+bool AutoPlayerAlgorithm::isValidPosition(int x, int y) const{
 	return x >= 0 && x < N && y >= 0 && y < M;
+}
+
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from){
+	for (const auto pos : validPermutations(from)){
+		if (getPiece(pos)->getPlayer() == _player) continue;
+		return std::make_unique<PointImpl>(pos.getX(), pos.getY());
+	}
+	return nullptr;
+}
+
+std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(std::unique_ptr<PointImpl>& from){
+	std::vector<PointImpl> vec;
+	int x = from->getX();
+	int y = from->getY();
+	if (isValidPosition(x-1, y-1)) vec.push_back(PointImpl(x-1,y-1));
+	if (isValidPosition(x-1, y)) vec.push_back(PointImpl(x-1,y));
+	if (isValidPosition(x-1, y+1)) vec.push_back(PointImpl(x-1,y+1));
+	if (isValidPosition(x, y-1)) vec.push_back(PointImpl(x,y-1));
+	if (isValidPosition(x, y+1)) vec.push_back(PointImpl(x-1,y+1));
+	if (isValidPosition(x+1, y-1)) vec.push_back(PointImpl(x+1,y-1));
+	if (isValidPosition(x+1, y)) vec.push_back(PointImpl(x+1,y));
+	if (isValidPosition(x+1, y+1)) vec.push_back(PointImpl(x+1,y+1));
+	return vec;
 }
