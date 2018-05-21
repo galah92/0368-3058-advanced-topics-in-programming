@@ -47,10 +47,10 @@ std::unique_ptr<Move> FilePlayerAlgorithm::getMove() {
 
 std::unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
 	std::string jokerPrefix;
-	_movesstream >> jokerPrefix;
+	_movestream >> jokerPrefix;
 	if (jokerPrefix != "J:") return nullptr;
 	int jokerX, jokerY;
 	char newRep;
-	_movesstream >> jokerX >> jokerY >> newRep;
+	_movestream >> jokerX >> jokerY >> newRep;
 	return std::make_unique<JokerChangeImpl>(PointImpl(jokerY, jokerX), newRep);
 }
