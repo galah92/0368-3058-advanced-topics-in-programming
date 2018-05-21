@@ -33,7 +33,7 @@ bool Piece::setJokerType(PieceType jokerType) {
 	return true;
 }
 
-std::unordered_map<PieceType, bool> canMoveMap = {
+std::map<PieceType, bool> canMoveMap = {
 	{ PieceType::None, false },
 	{ PieceType::Flag, false },
 	{ PieceType::Rock, true },
@@ -47,7 +47,7 @@ bool Piece::canMove() const {
 	return canMoveMap[type];
 }
 
-std::unordered_map<PieceType, std::vector<PieceType>> canKillMap = {
+std::map<PieceType, std::vector<PieceType>> canKillMap = {
 	{ PieceType::None, { PieceType::None } },
 	{ PieceType::Flag, { PieceType::None, PieceType::Flag } },
 	{ PieceType::Rock, { PieceType::None, PieceType::Flag, PieceType::Rock, PieceType::Scissors, PieceType::Bomb } },
@@ -83,7 +83,7 @@ bool Piece::isValid(PieceType type, PieceType jokerType) {
 	return type == PieceType::Joker ? isValid(jokerType) : isValid(type);
 }
 
-std::unordered_map<PieceType, unsigned int> maxCapacityMap{
+std::map<PieceType, unsigned int> maxCapacityMap{
 	{ PieceType::None, std::numeric_limits<unsigned int>::max() },
 	{ PieceType::Flag, F },
 	{ PieceType::Rock, R },

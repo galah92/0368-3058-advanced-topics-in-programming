@@ -44,8 +44,8 @@ public:
 private:
 	int _player;
 	BoardImpl _board;
-	std::unordered_map<PieceType, unsigned int> _piecesOnBoardCount;
-	std::unordered_map<PieceType, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
+	std::map<PieceType, unsigned int> _piecesOnBoardCount;
+	std::map<PieceType, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
 	std::array<PieceType, 3> _movablePieces;
 	std::unique_ptr<PointImpl> getPosToMoveFrom();
 	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
