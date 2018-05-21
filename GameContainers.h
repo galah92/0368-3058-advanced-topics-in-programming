@@ -22,22 +22,25 @@ public:
 	MoveImpl(const PointImpl& from, const PointImpl& to) :
 		_from(from),
 		_to(to) {}
+	MoveImpl(int fromX, int fromY, int toX, int toY) :
+		_from(PointImpl(fromX, fromY)),
+		_to(PointImpl(toX, toY)) {}
 	const Point& getFrom() const override { return _from; };
 	const Point& getTo() const override { return _to; };
 private:
-	PointImpl _from;
-	PointImpl _to;
+	const PointImpl _from;
+	const PointImpl _to;
 };
 
 class JokerChangeImpl : public JokerChange {
 public:
 	JokerChangeImpl(const PointImpl& pos, char rep) :
 		_pos(pos),
-		_rep(rep) { }
+		_rep(rep) {}
 	const Point& getJokerChangePosition() const override { return _pos; };
 	char getJokerNewRep() const override { return _rep; };
 private:
-	PointImpl _pos;
+	const PointImpl _pos;
 	char _rep;
 };
 
@@ -52,7 +55,7 @@ public:
 	char getPiece(int player) const override { return player == 1 ? _piece1 : _piece2; };
 	int getWinner() const override { return _winner; };
 private:
-	PointImpl _pos;
+	const PointImpl _pos;
 	char _piece1;
 	char _piece2;
 	int _winner;
@@ -60,10 +63,6 @@ private:
 
 class PiecePositionImpl : public PiecePosition {
 public:
-	PiecePositionImpl(const PointImpl& pos, char piece, char jokerRep) :
-		_pos(pos),
-		_piece(piece),
-		_jokerRep(jokerRep) {}
 	PiecePositionImpl(int x, int y, char piece, char jokerRep) :
 		_pos(PointImpl(x, y)),
 		_piece(piece),
@@ -72,7 +71,7 @@ public:
 	char getPiece() const override { return _piece; };
 	char getJokerRep() const override { return _jokerRep; };
 private:
-	PointImpl _pos;
+	const PointImpl _pos;
 	char _piece;
 	char _jokerRep;
 };
