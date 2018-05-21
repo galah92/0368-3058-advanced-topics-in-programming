@@ -11,57 +11,57 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 0, 'F', ' ')); // put the flag in the corner
 	auto piece = std::make_shared<Piece>(player, (PieceType)'F', PieceType::Joker);
 	setPiece(0, 0, piece);
-	_piecesOnBoard[(PieceType)'F'].push_back(piece);
+	// _piecesOnBoard[(PieceType)'F'].push_back(piece);
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 1, 'B', ' ')); // cover the flag 
 	piece = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
 	setPiece(0, 1, piece);	
-	_piecesOnBoard[(PieceType)'B'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'B'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 0, 'B', ' ')); // cover the flag
 	piece = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
 	setPiece(1, 0, piece);
-	_piecesOnBoard[(PieceType)'B'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'B'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 1, 'J', 'B')); // cover the flag
 	piece = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
 	setPiece(1, 1, piece);
-	_piecesOnBoard[(PieceType)'J'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'J'].push_back(piece);	
 
 																			  // randomize other pieces?
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 5, 'J', 'B'));
 	piece = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
 	setPiece(5, 5, piece);
-	_piecesOnBoard[(PieceType)'J'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'J'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(2, 7, 'R', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
 	setPiece(2, 7, piece);
-	_piecesOnBoard[(PieceType)'R'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'R'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(8, 2, 'R', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
 	setPiece(8, 2, piece);
-	_piecesOnBoard[(PieceType)'R'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'R'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(2, 2, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(2, 2, piece);
-	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(3, 7, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(3, 7, piece);
-	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(4, 4, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(4, 4, piece);
-	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 8, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(5, 8, piece);
-	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(7, 4, 'P', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	setPiece(7, 4, piece);
-	_piecesOnBoard[(PieceType)'P'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'P'].push_back(piece);	
 	positions.push_back(std::make_unique<PiecePositionImpl>(6, 6, 'S', ' '));
 	piece = std::make_shared<Piece>(player, (PieceType)'S', PieceType::Joker);
 	setPiece(6, 6, piece);
-	_piecesOnBoard[(PieceType)'S'].push_back(piece);	
+	// _piecesOnBoard[(PieceType)'S'].push_back(piece);	
 
 }
 
@@ -81,8 +81,8 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vecto
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move) {
-	setPiece(move.getTo(), std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); 
-	setPiece(move.getFrom(), Piece::Empty); 
+	setPiece(move.getTo(), std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); // update board 
+	setPiece(move.getFrom(), Piece::Empty); // update board
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
@@ -96,6 +96,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 
 	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
 		_piecesOnBoardCount[(PieceType)player_piece]--; // update map
+		
 		setPiece(pos, std::make_shared<Piece>(1 - _player, (PieceType)opponent_piece, PieceType::Joker));	
 
 
@@ -129,14 +130,22 @@ std::shared_ptr<Piece> AutoPlayerAlgorithm::getPiece(const Point& pos) const {
 	return _board[pos.getX() *  M + pos.getY()];
 }
 
+std::shared_ptr<Piece> AutoPlayerAlgorithm::getPiece(int x, int y) const {
+	return _board[x *  M + y];
+}
+
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom(){
-	// TODO : Implement
 	for (const auto pieceType : _movablePieces){
 		if (_piecesOnBoardCount[pieceType] == 0) continue;
-		// TODO : find the piece in the board
-
+		for (unsigned int y = 0; y < M; y++){
+			for (unsigned int x = 0; x < N; x++){	
+				const auto piece = getPiece(x,y);		
+				if (piece->getPlayer() != _player) continue;
+				return std::make_unique<PointImpl>(x,y);
+			}
+		}
 	}
-	return std::make_unique<PointImpl>(5,5);
+	return nullptr;
 }
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from){

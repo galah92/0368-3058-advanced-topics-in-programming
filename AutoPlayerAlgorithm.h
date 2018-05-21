@@ -48,6 +48,7 @@ private:
 	void setPiece(int x, int y, std::shared_ptr<Piece> piece);
 	void setPiece(const Point& pos, std::shared_ptr<Piece> piece);
 	std::shared_ptr<Piece> getPiece(const Point& pos) const;
+	std::shared_ptr<Piece> getPiece(int x, int y) const;
 	std::unique_ptr<PointImpl> getPosToMoveFrom();
 	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
 	bool isValidPosition(const Point& pos) const;
