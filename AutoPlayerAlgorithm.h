@@ -32,7 +32,7 @@ public:
 	{ PieceType::Bomb, {} },
 	{ PieceType::Joker, {} }
 	};
-	_board.fill(Piece::Empty);
+	// _board.fill(Piece::Empty);
 	_movablePieces = {{PieceType::Rock, PieceType::Paper, PieceType::Scissors}};
 	}
 	void getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) override;
@@ -43,17 +43,11 @@ public:
 	std::unique_ptr<JokerChange> getJokerChange() override;
 private:
 	int _player;
-	std::array<std::shared_ptr<Piece>, N * M> _board;
+	BoardImpl _board;
 	std::unordered_map<PieceType, unsigned int> _piecesOnBoardCount;
 	std::unordered_map<PieceType, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
 	std::array<PieceType, 3> _movablePieces;
-	void setPiece(int x, int y, std::shared_ptr<Piece> piece);
-	void setPiece(const Point& pos, std::shared_ptr<Piece> piece);
-	std::shared_ptr<Piece> getPiece(const Point& pos) const;
-	std::shared_ptr<Piece> getPiece(int x, int y) const;
 	std::unique_ptr<PointImpl> getPosToMoveFrom();
 	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
-	bool isValidPosition(int x, int y) const;
-	bool isValidPosition(const Point& pos) const;
 	std::vector<PointImpl> validPermutations(std::unique_ptr<PointImpl>& from);
 };
