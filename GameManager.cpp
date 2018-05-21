@@ -31,7 +31,7 @@ int GameManager::playRound() {
 	auto i = 0;
 	while (_numFights < FIGHTS_THRESHOLD) {
 		if (!isGameOn()) break;
-		doMove(i);
+		doMove(i, _numFights);
 		if (!isGameOn()) break;
 		changeJoker(i);
 		i = 1 - i; // switch player
@@ -78,7 +78,7 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 	}
 }
 
-void GameManager::doMove(int i) {
+void GameManager::doMove(int i, int &numFights) {
 	auto& player = _players[i];
 	const auto move = player->algo->getMove();
 	const auto& from = move->getFrom();
@@ -91,6 +91,10 @@ void GameManager::doMove(int i) {
 	if (fightInfo) {
 		_players[0]->algo->notifyFightResult(*fightInfo);
 		_players[1]->algo->notifyFightResult(*fightInfo);
+		numFights = 0;
+	} else {
+		numFights++;
+
 	}
 	_board[from] = Piece::Empty;
 	_players[1 - i]->algo->notifyOnOpponentMove(*move);
@@ -145,6 +149,7 @@ int GameManager::output() {
 		} else { // _players[0].status == PlayerStatus::NoFlags
 			fout << "Both players cannot play (no flags / cannot move)" << std::endl;
 		}
+		// TODO: handle numFights exceeded
         fout << std::endl << _board;
         return 0;
 	}
