@@ -108,8 +108,19 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-	auto from = getPosToMoveFrom();
-	auto to = getBestNeighbor(from);
+	std::unique_ptr<PointImpl> from;
+	std::unique_ptr<PointImpl> to;
+	while (true){
+		from = getPosToMoveFrom();
+		if (from == nullptr) continue;
+		to = getBestNeighbor(from);
+		if (to == nullptr) continue;
+		break;
+	}
+	setPiece(*from, Piece::Empty); // update board
+	if (getPiece(*to)->getPlayer() != 1 - _player){ // there will be no fight
+		setPiece(*to, std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker)); // update board 
+	}
 	return std::make_unique<MoveImpl>(PointImpl(from->getX(), from->getY()), PointImpl(to->getX(), to->getY()));
 }
 
