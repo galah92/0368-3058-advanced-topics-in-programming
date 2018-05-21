@@ -77,7 +77,7 @@ void GameManager::doMove(int i) {
 	const auto move = player->algo->getMove();
 	const auto& from = move->getFrom();
 	const auto& to = move->getTo();
-	if (_board[from]->getPlayer() != i + 1 || !_board.isValidPosition(to) || _board[to]->getPlayer() == i + 1) {
+	if (!_board.isValidPosition(from) || _board[from]->getPlayer() != i + 1 || !_board.isValidPosition(to) || _board[to]->getPlayer() == i + 1) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
 	}
