@@ -4,22 +4,22 @@
 
 AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
 	_piecesOnBoardCount = { // num of pieces currently hard-coded 
-		{ PieceType::Flag, 1 }, 
-		{ PieceType::Rock, 2 },
-		{ PieceType::Paper, 5 },
-		{ PieceType::Scissors, 1 },
-		{ PieceType::Bomb, 2 },
-		{ PieceType::Joker, 2 }
+		{ 'F', 1 }, 
+		{ 'R', 2 },
+		{ 'P', 5 },
+		{ 'S', 1 },
+		{ 'B', 2 },
+		{ 'J', 2 }
 	};
 	_piecesOnBoard = { 
-		{ PieceType::Flag, {} }, 
-		{ PieceType::Rock, {} },
-		{ PieceType::Paper, {} },
-		{ PieceType::Scissors, {} },
-		{ PieceType::Bomb, {} },
-		{ PieceType::Joker, {} }
+		{ 'F', {} }, 
+		{ 'R', {} },
+		{ 'P', {} },
+		{ 'S', {} },
+		{ 'B', {} },
+		{ 'J', {} }
 	};
-	_movablePieces = {{PieceType::Rock, PieceType::Paper, PieceType::Scissors}};
+	_movablePieces = {{'R', 'P', 'S'}};
 }
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
@@ -83,10 +83,10 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 	if (fightInfo.getWinner() == _player) {
 		_board[pos] = std::make_shared<Piece>(_player, player_piece);
 	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
-		_piecesOnBoardCount[(PieceType)player_piece]--; // update map
+		_piecesOnBoardCount[player_piece]--; // update map
 		_board[pos] = std::make_shared<Piece>(1 - _player, opponent_piece);
 	} else { // both player and opponent lose
-		_piecesOnBoardCount[(PieceType)player_piece]--;
+		_piecesOnBoardCount[player_piece]--;
 		_board[pos] = Piece::Empty;
 	}
 }

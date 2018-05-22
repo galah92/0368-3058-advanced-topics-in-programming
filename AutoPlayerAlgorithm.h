@@ -28,7 +28,7 @@ private:
 	std::vector<PointImpl> validPermutations(std::unique_ptr<PointImpl>& from);
 	int _player;
 	BoardImpl _board;
-	std::map<PieceType, unsigned int> _piecesOnBoardCount;
-	std::map<PieceType, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
-	std::array<PieceType, 3> _movablePieces;
+	std::map<char, unsigned int> _piecesOnBoardCount;
+	std::map<char, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
+	std::array<char, 3> _movablePieces;
 };

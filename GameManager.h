@@ -26,7 +26,7 @@ struct Player {
 		index(index) {}
 	std::shared_ptr<PlayerAlgorithm> algo;
 	PlayerStatus status = PlayerStatus::Playing;
-	std::map<PieceType, unsigned int> numPieces;
+	std::map<char, unsigned int> numPieces;
 	unsigned int numFlags;
 	unsigned int numMovable;
 	int index;
