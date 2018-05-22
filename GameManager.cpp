@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cmath>
 #include "GameManager.h"
 #include "Piece.h"
 #include "Point.h"
@@ -79,24 +80,20 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 }
 
 void GameManager::doMove(int i) {
-	auto& player = _players[i];
-	const auto move = player->algo->getMove();
-	const auto& from = move->getFrom();
-	const auto& to = move->getTo();
-	if (!_board.isValidPosition(from) || _board[from]->getPlayer() != i + 1 || !_board.isValidPosition(to) || _board[to]->getPlayer() == i + 1) {
-		player->status = PlayerStatus::InvalidMove;
+	const auto move = _players[i]->algo->getMove();
+	if (!isValid(move, i)) {
+		_players[i]->status = PlayerStatus::InvalidMove;
 		return;
 	}
-	auto fightInfo = fight(to, _board[from]);
+	auto fightInfo = fight(move->getTo(), _board[move->getFrom()]);
 	if (fightInfo) {
 		_players[0]->algo->notifyFightResult(*fightInfo);
 		_players[1]->algo->notifyFightResult(*fightInfo);
 		_numFights = 0;
 	} else {
 		_numFights++;
-
 	}
-	_board[from] = Piece::Empty;
+	_board[move->getFrom()] = Piece::Empty;
 	_players[1 - i]->algo->notifyOnOpponentMove(*move);
 }
 
@@ -180,6 +177,25 @@ void GameManager::kill(std::shared_ptr<Piece> piece) {
 		player->numMovable--;
 		if (player->numMovable == 0) player->status = PlayerStatus::CantMove;
 	}
+}
+
+bool GameManager::isValid(const std::unique_ptr<Move>& move, int i) const {
+	const auto& from = move->getFrom();
+	const auto& to = move->getTo();
+	// check that points on board
+	if (!_board.isValidPosition(to)) return false;
+	if (!_board.isValidPosition(from)) return false;
+	// check  that points are next to each other
+	auto horizontal = std::abs(from.getX() - to.getX());
+	auto vertical = std::abs(from.getY() - to.getY());
+	if (horizontal > 1 || vertical > 1) return false;
+	if (horizontal == 0 && vertical == 0) return false;
+	// check that that piece is the player's piece and that it can move
+	if (_board[from]->getPlayer() != i + 1) return false;
+	if (!_board[from]->canMove()) return false;
+	// check that the destination doesn't contain a player's piece
+	if (_board[to]->getPlayer() == i + 1) return false;
+	return true;
 }
 
 bool GameManager::isGameOn() {
