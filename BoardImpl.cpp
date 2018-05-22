@@ -21,13 +21,19 @@ bool BoardImpl::isValidPosition(const Point& pos) const {
 }
 
 std::shared_ptr<Piece>& BoardImpl::operator[](const Point& pos) {
-	if (!isValidPosition(pos)) throw "BoardImpl::operator[]: Invalid const Point& given";
 	return _arr[pos.getX() *  M + pos.getY()];
 }
 
 std::shared_ptr<Piece> BoardImpl::operator[](const Point & pos) const {
-	if (!isValidPosition(pos)) throw "BoardImpl::operator[]: Invalid const Point& given";
 	return _arr[pos.getX() *  M + pos.getY()];
+}
+
+std::shared_ptr<Piece>& BoardImpl::operator[](const std::pair<int, int> pos) {
+	return _arr[pos.first *  M + pos.second];
+}
+
+std::shared_ptr<Piece> BoardImpl::operator[](const std::pair<int, int> pos) const {
+	return _arr[pos.first *  M + pos.second];
 }
 
 std::ostream & operator<<(std::ostream& os, const BoardImpl& board) {

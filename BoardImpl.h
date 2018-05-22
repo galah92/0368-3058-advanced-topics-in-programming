@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <array>
+#include <utility>
 #include "Board.h"
 #include "Point.h"
 #include "Piece.h"
@@ -19,6 +20,8 @@ public:
 	bool isValidPosition(const Point& pos) const;
 	std::shared_ptr<Piece>& operator[](const Point& pos);
 	std::shared_ptr<Piece> operator[](const Point& pos) const;
+	std::shared_ptr<Piece>& operator[](const std::pair<int, int> pos);
+	std::shared_ptr<Piece> operator[](const std::pair<int, int> pos) const;
 	friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
 private:
 	std::array<std::shared_ptr<Piece>, N * M> _arr;

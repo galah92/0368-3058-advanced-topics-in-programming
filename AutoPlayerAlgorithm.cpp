@@ -28,32 +28,32 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 					   // random corner?
 					   // flag block
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 0, 'F', ' ')); // put the flag in the corner
-	_board[PointImpl(0, 0)] = std::make_shared<Piece>(player, (PieceType)'F', PieceType::Joker);
+	_board[{0, 0}] = std::make_shared<Piece>(player, (PieceType)'F', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(0, 1, 'B', ' ')); // cover the flag 
-	_board[PointImpl(0, 1)] = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
+	_board[{0, 1}] = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 0, 'B', ' ')); // cover the flag
-	_board[PointImpl(1, 0)] = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
+	_board[{1, 0}] = std::make_shared<Piece>(player, (PieceType)'B', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(1, 1, 'J', 'B')); // cover the flag
-	_board[PointImpl(1, 1)] = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
+	_board[{1, 1}] = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
 	// randomize other pieces?
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 5, 'J', 'B'));
-	_board[PointImpl(5, 5)] = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
+	_board[{5, 5}] = std::make_shared<Piece>(player, PieceType::Joker, (PieceType)'B');
 	positions.push_back(std::make_unique<PiecePositionImpl>(2, 7, 'R', ' '));
-	_board[PointImpl(2, 7)] = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
+	_board[{2, 7}] = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(8, 2, 'R', ' '));
-	_board[PointImpl(8, 2)] = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
+	_board[{8, 2}] = std::make_shared<Piece>(player, (PieceType)'R', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(2, 2, 'P', ' '));
-	_board[PointImpl(2, 2)] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
+	_board[{2, 2}] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(3, 7, 'P', ' '));
-	_board[PointImpl(3, 7)] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
+	_board[{3, 7}] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(4, 4, 'P', ' '));
-	_board[PointImpl(4, 4)] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
+	_board[{4, 4}] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(5, 8, 'P', ' '));
-	_board[PointImpl(5, 8)] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
+	_board[{5, 8}] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(7, 4, 'P', ' '));
-	_board[PointImpl(7, 4)] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
+	_board[{7, 4}] = std::make_shared<Piece>(player, (PieceType)'P', PieceType::Joker);
 	positions.push_back(std::make_unique<PiecePositionImpl>(6, 6, 'S', ' '));
-	_board[PointImpl(6, 6)] = std::make_shared<Piece>(player, (PieceType)'S', PieceType::Joker);
+	_board[{6, 6}] = std::make_shared<Piece>(player, (PieceType)'S', PieceType::Joker);
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights) {
