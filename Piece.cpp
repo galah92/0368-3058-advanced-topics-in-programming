@@ -19,6 +19,11 @@ Piece::Piece(int player, PieceType type, PieceType jokerType) :
 	_type(type),
 	_jokerType(jokerType) {}
 
+Piece::Piece(int player, char type, char jokerType) :
+	_player(player),
+	_type((PieceType)type),
+	_jokerType((PieceType)jokerType) {}
+
 int Piece::getPlayer() const {
 	return _player;
 }
