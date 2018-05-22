@@ -100,19 +100,12 @@ void GameManager::doMove(int i) {
 void GameManager::changeJoker(int i) {
 	auto& player = _players[i];
 	const auto jokerChange = player->algo->getJokerChange();
-	if (!jokerChange) return;
-	const auto rep = (PieceType)jokerChange->getJokerNewRep();
-	const auto& pos = jokerChange->getJokerChangePosition();
-	if (!Piece::isValid(rep) || !_board.isValidPosition(pos)) {
+	if (!isValid(jokerChange, i)) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
 	}
-	const auto piece = _board[pos];
-	if (piece->getPlayer() != i + 1 || piece->getType() != PieceType::Joker) {
-		player->status = PlayerStatus::InvalidMove;
-		return;
-	}
-	piece->setJokerType(rep);
+	const auto& piece = _board[jokerChange->getJokerChangePosition()];
+	piece->setJokerType((PieceType)jokerChange->getJokerNewRep());
 }
 
 int GameManager::output() {
@@ -180,6 +173,7 @@ void GameManager::kill(std::shared_ptr<Piece> piece) {
 }
 
 bool GameManager::isValid(const std::unique_ptr<Move>& move, int i) const {
+	if (!move) return false;
 	const auto& from = move->getFrom();
 	const auto& to = move->getTo();
 	// check that points on board
@@ -195,6 +189,20 @@ bool GameManager::isValid(const std::unique_ptr<Move>& move, int i) const {
 	if (!_board[from]->canMove()) return false;
 	// check that the destination doesn't contain a player's piece
 	if (_board[to]->getPlayer() == i + 1) return false;
+	return true;
+}
+
+bool GameManager::isValid(const std::unique_ptr<JokerChange>& jokerChange, int i) const {
+	if (!jokerChange) return false;
+	const auto rep = (PieceType)jokerChange->getJokerNewRep();
+	const auto& pos = jokerChange->getJokerChangePosition();
+	// check that point on board
+	if (!_board.isValidPosition(pos)) return false;
+	// check that rep is valid
+	if (!Piece::isValid(rep)) return false;
+	// check that that piece is the player's piece and that it's a Joker
+	if (_board[pos]->getPlayer() != i + 1) return false;
+	if (_board[pos]->getType() != PieceType::Joker) return false;
 	return true;
 }
 

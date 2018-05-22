@@ -44,6 +44,7 @@ private:
 	std::unique_ptr<FightInfo> fight(const Point& pos, const std::shared_ptr<Piece> piece1);
 	void kill(std::shared_ptr<Piece> piece);
 	bool isValid(const std::unique_ptr<Move>& move, int i) const;
+	bool isValid(const std::unique_ptr<JokerChange>& jokerChange, int i) const;
 	bool isGameOn();
 	std::unique_ptr<Player> _players[2];
 	BoardImpl _board;
