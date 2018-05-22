@@ -22,9 +22,6 @@ public:
 	MoveImpl(const PointImpl& from, const PointImpl& to) :
 		_from(from),
 		_to(to) {}
-	MoveImpl(int fromX, int fromY, int toX, int toY) :
-		_from(PointImpl(fromX, fromY)),
-		_to(PointImpl(toX, toY)) {}
 	const Point& getFrom() const override { return _from; };
 	const Point& getTo() const override { return _to; };
 private:
