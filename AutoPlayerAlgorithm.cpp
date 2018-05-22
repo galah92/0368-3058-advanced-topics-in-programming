@@ -2,6 +2,26 @@
 #include "AutoPlayerAlgorithm.h"
 
 
+AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
+	_piecesOnBoardCount = { // num of pieces currently hard-coded 
+		{ PieceType::Flag, 1 }, 
+		{ PieceType::Rock, 2 },
+		{ PieceType::Paper, 5 },
+		{ PieceType::Scissors, 1 },
+		{ PieceType::Bomb, 2 },
+		{ PieceType::Joker, 2 }
+	};
+	_piecesOnBoard = { 
+		{ PieceType::Flag, {} }, 
+		{ PieceType::Rock, {} },
+		{ PieceType::Paper, {} },
+		{ PieceType::Scissors, {} },
+		{ PieceType::Bomb, {} },
+		{ PieceType::Joker, {} }
+	};
+	_movablePieces = {{PieceType::Rock, PieceType::Paper, PieceType::Scissors}};
+}
+
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
 	_player = player;
 	positions.clear(); // to make sure
@@ -52,27 +72,27 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 
 }
 
-void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board & b, const std::vector<std::unique_ptr<FightInfo>>& fights) {
-	for (unsigned int y = 0; y < M; y++){
-		for (unsigned int x = 0; x < N; x++){
+void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights) {
+	for (unsigned int y = 0; y < M; y++) {
+		for (unsigned int x = 0; x < N; x++) {
 			PointImpl pos(x,y);
 			const auto piece = _board[pos];
-			if (b.getPlayer(pos) != _player && piece->getPlayer() == _player){ // player lose a fight
+			if (b.getPlayer(pos) != _player && piece->getPlayer() == _player) { // player lose a fight
 				_board[pos] = std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker); // Unknown opponent's piece
 			}
 		}
 	}
-	for (const auto &fight : fights){
+	for (const auto& fight : fights) {
 		notifyFightResult(*fight);
 	}
 }
 
-void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move & move) {
+void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
 	_board[move.getTo()] = std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker); // update board 
 	_board[move.getFrom()] = Piece::Empty; // update board
 }
 
-void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
+void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 	const auto& pos = fightInfo.getPosition();
 	const auto player_piece = fightInfo.getPiece(_player); 
 	const auto opponent_piece = fightInfo.getPiece(1 - _player); 
@@ -81,21 +101,17 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo & fightInfo) {
 
 	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
 		_piecesOnBoardCount[(PieceType)player_piece]--; // update map
-		
-		_board[pos] = std::make_shared<Piece>(1 - _player, (PieceType)opponent_piece, PieceType::Joker);	
-
-
+		_board[pos] = std::make_shared<Piece>(1 - _player, (PieceType)opponent_piece, PieceType::Joker);
 	} else { // both player and opponent lose
 		_piecesOnBoardCount[(PieceType)player_piece]--;
 		_board[pos] = Piece::Empty;
 	}
-
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 	std::unique_ptr<PointImpl> from;
 	std::unique_ptr<PointImpl> to;
-	while (true){
+	while (true) {
 		from = getPosToMoveFrom();
 		if (from == nullptr) continue;
 		to = getBestNeighbor(from);
@@ -103,7 +119,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 		break;
 	}
 	_board[*from] = Piece::Empty; // update board
-	if (_board[*to]->getPlayer() != 1 - _player){ // there will be no fight
+	if (_board[*to]->getPlayer() != 1 - _player) { // there will be no fight
 		_board[*to] = std::make_shared<Piece>(1 - _player, (PieceType)'U', PieceType::Joker); // update board 
 	}
 	return std::make_unique<MoveImpl>(PointImpl(from->getX(), from->getY()), PointImpl(to->getX(), to->getY()));
@@ -114,12 +130,12 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 	return nullptr;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom(){
-	for (const auto pieceType : _movablePieces){
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
+	for (const auto& pieceType : _movablePieces){
 		if (_piecesOnBoardCount[pieceType] == 0) continue;
-		for (unsigned int y = 0; y < M; y++){
-			for (unsigned int x = 0; x < N; x++){	
-				const auto piece = _board[PointImpl(x,y)];		
+		for (unsigned int y = 0; y < M; y++) {
+			for (unsigned int x = 0; x < N; x++) {
+				const auto& piece = _board[PointImpl(x,y)];		
 				if (piece->getPlayer() != _player) continue;
 				return std::make_unique<PointImpl>(x,y);
 			}
@@ -128,15 +144,15 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom(){
 	return nullptr;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from){
-	for (const auto pos : validPermutations(from)){
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from) {
+	for (const auto& pos : validPermutations(from)) {
 		if (_board[pos]->getPlayer() == _player) continue;
 		return std::make_unique<PointImpl>(pos.getX(), pos.getY());
 	}
 	return nullptr;
 }
 
-std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(std::unique_ptr<PointImpl>& from){
+std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(std::unique_ptr<PointImpl>& from) {
 	std::vector<PointImpl> vec;
 	int x = from->getX();
 	int y = from->getY();

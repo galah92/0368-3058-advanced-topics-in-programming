@@ -15,26 +15,7 @@
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm {
 public:
-	AutoPlayerAlgorithm(){
-	_piecesOnBoardCount = { // num of pieces currently hard-coded 
-	{ PieceType::Flag, 1 }, 
-	{ PieceType::Rock, 2 },
-	{ PieceType::Paper, 5 },
-	{ PieceType::Scissors, 1 },
-	{ PieceType::Bomb, 2 },
-	{ PieceType::Joker, 2 }
-	};
-	_piecesOnBoard = { 
-	{ PieceType::Flag, {} }, 
-	{ PieceType::Rock, {} },
-	{ PieceType::Paper, {} },
-	{ PieceType::Scissors, {} },
-	{ PieceType::Bomb, {} },
-	{ PieceType::Joker, {} }
-	};
-	// _board.fill(Piece::Empty);
-	_movablePieces = {{PieceType::Rock, PieceType::Paper, PieceType::Scissors}};
-	}
+	AutoPlayerAlgorithm();
 	void getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) override;
 	void notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights) override;
 	void notifyOnOpponentMove(const Move& move) override;
@@ -42,12 +23,12 @@ public:
 	std::unique_ptr<Move> getMove() override;
 	std::unique_ptr<JokerChange> getJokerChange() override;
 private:
+	std::unique_ptr<PointImpl> getPosToMoveFrom();
+	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
+	std::vector<PointImpl> validPermutations(std::unique_ptr<PointImpl>& from);
 	int _player;
 	BoardImpl _board;
 	std::map<PieceType, unsigned int> _piecesOnBoardCount;
 	std::map<PieceType, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
 	std::array<PieceType, 3> _movablePieces;
-	std::unique_ptr<PointImpl> getPosToMoveFrom();
-	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
-	std::vector<PointImpl> validPermutations(std::unique_ptr<PointImpl>& from);
 };
