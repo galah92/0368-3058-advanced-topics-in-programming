@@ -88,7 +88,7 @@ bool Piece::isValid(PieceType type, PieceType jokerType) {
 	return type == PieceType::Joker ? isValid(jokerType) : isValid(type);
 }
 
-std::map<PieceType, unsigned int> maxCapacityMap{
+const std::map<PieceType, unsigned int> Piece::maxCapacity = {
 	{ PieceType::None, std::numeric_limits<unsigned int>::max() },
 	{ PieceType::Flag, F },
 	{ PieceType::Rock, R },
@@ -97,10 +97,6 @@ std::map<PieceType, unsigned int> maxCapacityMap{
 	{ PieceType::Bomb, B },
 	{ PieceType::Joker, J },
 };
-
-unsigned int Piece::maxCapacity(PieceType type) {
-	return maxCapacityMap[type];
-}
 
 Piece::operator char() const {
 	return _player == 1 ? std::toupper((char)_type) : std::tolower((char)_type);

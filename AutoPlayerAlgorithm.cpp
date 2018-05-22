@@ -78,11 +78,10 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 	const auto& pos = fightInfo.getPosition();
-	const auto player_piece = fightInfo.getPiece(_player); 
-	const auto opponent_piece = fightInfo.getPiece(1 - _player); 
+	const auto player_piece = fightInfo.getPiece(_player);
+	const auto opponent_piece = fightInfo.getPiece(1 - _player);
 	if (fightInfo.getWinner() == _player) {
-		_board[pos] = std::make_shared<Piece>(_player, player_piece);	
-
+		_board[pos] = std::make_shared<Piece>(_player, player_piece);
 	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
 		_piecesOnBoardCount[(PieceType)player_piece]--; // update map
 		_board[pos] = std::make_shared<Piece>(1 - _player, opponent_piece);

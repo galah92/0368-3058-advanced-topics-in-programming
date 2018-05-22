@@ -212,7 +212,7 @@ bool GameManager::isValid(const std::unique_ptr<PiecePosition>& piecePos, const 
 bool GameManager::isValid(std::unique_ptr<Player>& player) const {
 	if (player->numFlags == 0 || player->numMovable == 0) return false;
 	for (const auto& type : player->numPieces) {
-		if (type.second > Piece::maxCapacity(type.first)) return false;
+		if (type.second > Piece::maxCapacity.at(type.first)) return false;
 	}
 	return true;
 }
