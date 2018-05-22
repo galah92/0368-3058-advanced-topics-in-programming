@@ -17,7 +17,7 @@ enum class PieceType : char {
 
 class Piece {
 public:
-	Piece(int player, PieceType type, PieceType jokerType);
+	Piece(int player, PieceType type, PieceType jokerType = PieceType::None);
 	int getPlayer() const;
 	PieceType getType() const;
 	bool setJokerType(PieceType jokerType);

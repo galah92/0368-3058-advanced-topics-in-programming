@@ -63,7 +63,7 @@ private:
 
 class PiecePositionImpl : public PiecePosition {
 public:
-	PiecePositionImpl(int x, int y, char piece, char jokerRep) :
+	PiecePositionImpl(int x, int y, char piece, char jokerRep = ' ') :
 		_pos(PointImpl(x, y)),
 		_piece(piece),
 		_jokerRep(jokerRep) {}
