@@ -72,10 +72,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 	std::unique_ptr<PointImpl> from;
 	std::unique_ptr<PointImpl> to;
-	while (true){
-		from = getPosToMoveFrom();
-		if (from == nullptr) continue;
-	}
+	from = getPosToMoveFrom();
 	to = getBestNeighbor(from);
 	
 	_board[*from] = Piece::Empty; // update board
@@ -111,7 +108,9 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
 				const auto& piece = _board[{x,y}];	
 				if (piece->getType() != pieceType) continue;	
 				if (piece->getPlayer() != _player) continue;
-				if (hasValidMove(x, y)) return std::make_unique<PointImpl>(x,y);
+				if (hasValidMove(x, y)){
+					return std::make_unique<PointImpl>(x,y);
+				}
 			}
 		}
 	}
