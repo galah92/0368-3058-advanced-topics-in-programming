@@ -73,6 +73,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 	std::unique_ptr<PointImpl> from;
 	std::unique_ptr<PointImpl> to;
 	from = getPosToMoveFrom();
+	if (from == nullptr) return nullptr;
 	to = getBestNeighbor(from);
 	
 	_board[*from] = Piece::Empty; // update board
