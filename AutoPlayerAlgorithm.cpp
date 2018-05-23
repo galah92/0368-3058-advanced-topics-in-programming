@@ -1,4 +1,5 @@
 #include <string>
+#include <algorithm>
 #include "AutoPlayerAlgorithm.h"
 
 static bool isSeedDefined = false;
