@@ -72,13 +72,12 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 	std::unique_ptr<PointImpl> from;
 	std::unique_ptr<PointImpl> to;
-	while (true) {
+	while (true){
 		from = getPosToMoveFrom();
 		if (from == nullptr) continue;
-		to = getBestNeighbor(from);
-		if (to == nullptr) continue;
-		break;
 	}
+	to = getBestNeighbor(from);
+	
 	_board[*from] = Piece::Empty; // update board
 	if (_board[*to]->getPlayer() != 1 - _player) { // there will be no fight
 		_board[*to] = _board[*from];
@@ -112,12 +111,21 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
 				const auto& piece = _board[{x,y}];	
 				if (piece->getType() != pieceType) continue;	
 				if (piece->getPlayer() != _player) continue;
-				return std::make_unique<PointImpl>(x,y);
+				if (hasValidMove(x, y)) return std::make_unique<PointImpl>(x,y);
 			}
 		}
 	}
 	// there are no possible moves of movable 
+	// TODO : handle Joker move
 	return nullptr;
+}
+
+bool AutoPlayerAlgorithm::hasValidMove(int x, int y){
+	auto from = std::make_unique<PointImpl>(x, y);
+	for (const auto& pos : validPermutations(from)) {
+		if (_board[pos]->getPlayer() != _player) return true;
+	}
+	return false;
 }
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from) {
