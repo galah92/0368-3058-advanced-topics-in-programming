@@ -15,8 +15,8 @@ AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
 		{ 'J', 2 }
 	};
 	if (!isSeedDefined) {
-	srand(time(NULL)); // the seed - a bit biased according to Stackoverflow, but good enough
-	isSeedDefined = true;
+		srand(time(NULL)); // the seed - a bit biased according to Stackoverflow, but good enough
+		isSeedDefined = true;
 	}
 }
 
