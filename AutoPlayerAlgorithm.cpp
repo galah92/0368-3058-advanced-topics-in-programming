@@ -116,7 +116,19 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
 		}
 	}
 	// there are no possible moves of movable 
-	// TODO : handle Joker move
+	// handle Joker move
+	for (unsigned int y = 0; y < M; y++) {
+		for (unsigned int x = 0; x < N; x++) {
+			const auto& piece = _board[{x,y}];	
+			if (piece->getType() != 'J') continue;	
+			if (std::find(MOVABLE_PIECES.begin(), MOVABLE_PIECES.begin(), piece->getJokerType())
+					   == MOVABLE_PIECES.end()) continue; // joker rep isn't movable
+			if (piece->getPlayer() != _player) continue;
+			if (hasValidMove(x, y)){
+				return std::make_unique<PointImpl>(x,y);
+			}
+		}
+	}
 	return nullptr;
 }
 
