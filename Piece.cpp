@@ -16,6 +16,11 @@ int Piece::getPlayer() const {
 	return _player;
 }
 
+char Piece::getUnderlyingType() const {
+	if (_type == 'J') return _jokerType;
+	return _type;
+}
+
 char Piece::getType() const {
 	return _type;
 }

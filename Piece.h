@@ -8,6 +8,7 @@ class Piece {
 public:
 	Piece(int player, char type, char jokerType = 'J');
 	int getPlayer() const;
+	char getUnderlyingType() const;
 	char getType() const;
 	char getJokerType() const;
 	bool setJokerType(char jokerType);
