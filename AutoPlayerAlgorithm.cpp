@@ -87,7 +87,20 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 }
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
-	// currently no need to change Jokers (Jokers are bombs and protect the flag)
+
+	for (const auto& pieceType : MOVABLE_PIECES){
+		if (_piecesOnBoardCount[pieceType] > 0) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
+	}
+	// there are no movable pieces
+	for (unsigned int y = 0; y < M; y++) {
+		for (unsigned int x = 0; x < N; x++) {
+			const auto& piece = _board[{x,y}];	
+			if (piece->getType() == 'J' && piece->getPlayer() == _player) // reach joker pos
+			    if (piece->getJokerType() == 'B'){ // joker isn't movable rep
+					return std::make_unique<JokerChangeImpl>(PointImpl(x,y),'S');
+			}
+		}
+	}
 	return nullptr;
 }
 
@@ -96,7 +109,7 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
 		if (_piecesOnBoardCount[pieceType] == 0) continue;
 		for (unsigned int y = 0; y < M; y++) {
 			for (unsigned int x = 0; x < N; x++) {
-				const auto& piece = _board[PointImpl(x,y)];	
+				const auto& piece = _board[{x,y}];	
 				if (piece->getType() != pieceType) continue;	
 				if (piece->getPlayer() != _player) continue;
 				return std::make_unique<PointImpl>(x,y);
