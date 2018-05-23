@@ -2,6 +2,8 @@
 #include "AutoPlayerAlgorithm.h"
 
 
+const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
+
 AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
 	_piecesOnBoardCount = { // num of pieces currently hard-coded 
 		{ 'F', 1 }, 
@@ -11,15 +13,6 @@ AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
 		{ 'B', 2 },
 		{ 'J', 2 }
 	};
-	_piecesOnBoard = { 
-		{ 'F', {} }, 
-		{ 'R', {} },
-		{ 'P', {} },
-		{ 'S', {} },
-		{ 'B', {} },
-		{ 'J', {} }
-	};
-	_movablePieces = {{'R', 'P', 'S'}};
 }
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
@@ -47,26 +40,28 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
 		}
 	}
 	for (const auto& fight : fights) notifyFightResult(*fight);
+	// TODO: can deduce the number opponent pieces and their type!
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
-	_board[move.getTo()] = std::make_shared<Piece>(1 - _player, 'U'); // update board 
-	_board[move.getFrom()] = Piece::Empty; // update board
+	_board[move.getTo()] = _board[move.getFrom()];
+	_board[move.getFrom()] = Piece::Empty;
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 	const auto& pos = fightInfo.getPosition();
-	const auto player_piece = fightInfo.getPiece(_player);
-	const auto opponent_piece = fightInfo.getPiece(1 - _player);
+	const auto ourPiece = fightInfo.getPiece(_player);
+	const auto oppPiece = fightInfo.getPiece(1 - _player);
 	if (fightInfo.getWinner() == _player) {
-		_board[pos] = std::make_shared<Piece>(_player, player_piece);
-	} else if (fightInfo.getWinner() == 1 - _player) { // player lose
-		_piecesOnBoardCount[player_piece]--; // update map
-		_board[pos] = std::make_shared<Piece>(1 - _player, opponent_piece);
-	} else { // both player and opponent lose
-		_piecesOnBoardCount[player_piece]--;
+		_board[pos] = std::make_shared<Piece>(_player, ourPiece);
+	} else if (fightInfo.getWinner() == 1 - _player) { // we lost
+		_piecesOnBoardCount[ourPiece]--;
+		_board[pos] = std::make_shared<Piece>(1 - _player, oppPiece);
+	} else { // both pieces killed
+		_piecesOnBoardCount[ourPiece]--;
 		_board[pos] = Piece::Empty;
 	}
+	// TODO: can deduce the number opponent pieces and their type!
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
@@ -92,7 +87,7 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 }
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
-	for (const auto& pieceType : _movablePieces){
+	for (const auto& pieceType : MOVABLE_PIECES){
 		if (_piecesOnBoardCount[pieceType] == 0) continue;
 		for (unsigned int y = 0; y < M; y++) {
 			for (unsigned int x = 0; x < N; x++) {
@@ -145,7 +140,7 @@ void AutoPlayerAlgorithm::initBoard() {
 	_board[{7, 4}] = std::make_shared<Piece>(_player, 'P');
 	_board[{6, 6}] = std::make_shared<Piece>(_player, 'S');
 	// rotate the board by 90deg - flag can be on any edge
-	srand(time(NULL));
+	srand(time(NULL)); // a bit biased according to Stackoverflow, but good enough
 	auto n = rand() % 4;
 	for (auto i = 0; i < n; i++) rotateBoard();
 }

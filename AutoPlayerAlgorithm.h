@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <map>
 #include "PlayerAlgorithm.h"
 #include "PiecePosition.h"
 #include "FightInfo.h"
@@ -31,6 +32,4 @@ private:
 	int _player;
 	BoardImpl _board;
 	std::map<char, unsigned int> _piecesOnBoardCount;
-	std::map<char, std::vector<std::shared_ptr<Piece>>> _piecesOnBoard;
-	std::array<char, 3> _movablePieces;
 };
