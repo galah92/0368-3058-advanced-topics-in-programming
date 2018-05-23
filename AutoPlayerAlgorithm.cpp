@@ -24,51 +24,29 @@ AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
 	_player = player;
-	positions.clear(); // to make sure
-					   // random corner?
-					   // flag block
-	positions.push_back(std::make_unique<PiecePositionImpl>(0, 0, 'F')); // put the flag in the corner
-	_board[{0, 0}] = std::make_shared<Piece>(player, 'F');
-	positions.push_back(std::make_unique<PiecePositionImpl>(0, 1, 'B')); // cover the flag 
-	_board[{0, 1}] = std::make_shared<Piece>(player, 'B');
-	positions.push_back(std::make_unique<PiecePositionImpl>(1, 0, 'B')); // cover the flag
-	_board[{1, 0}] = std::make_shared<Piece>(player, 'B');
-	positions.push_back(std::make_unique<PiecePositionImpl>(1, 1, 'J', 'B')); // cover the flag
-	_board[{1, 1}] = std::make_shared<Piece>(player, 'J', 'B');
-	// randomize other pieces?
-	positions.push_back(std::make_unique<PiecePositionImpl>(5, 5, 'J', 'B'));
-	_board[{5, 5}] = std::make_shared<Piece>(player, 'J', 'B');
-	positions.push_back(std::make_unique<PiecePositionImpl>(2, 7, 'R'));
-	_board[{2, 7}] = std::make_shared<Piece>(player, 'R');
-	positions.push_back(std::make_unique<PiecePositionImpl>(8, 2, 'R'));
-	_board[{8, 2}] = std::make_shared<Piece>(player, 'R');
-	positions.push_back(std::make_unique<PiecePositionImpl>(2, 2, 'P'));
-	_board[{2, 2}] = std::make_shared<Piece>(player, 'P');
-	positions.push_back(std::make_unique<PiecePositionImpl>(3, 7, 'P'));
-	_board[{3, 7}] = std::make_shared<Piece>(player, 'P');
-	positions.push_back(std::make_unique<PiecePositionImpl>(4, 4, 'P'));
-	_board[{4, 4}] = std::make_shared<Piece>(player, 'P');
-	positions.push_back(std::make_unique<PiecePositionImpl>(5, 8, 'P'));
-	_board[{5, 8}] = std::make_shared<Piece>(player, 'P');
-	positions.push_back(std::make_unique<PiecePositionImpl>(7, 4, 'P'));
-	_board[{7, 4}] = std::make_shared<Piece>(player, 'P');
-	positions.push_back(std::make_unique<PiecePositionImpl>(6, 6, 'S'));
-	_board[{6, 6}] = std::make_shared<Piece>(player, 'S');
+	_board.clear();
+	positions.clear();
+	initBoard();
+	for (auto i = 0; i < N; i++) {
+		for (auto j = 0; j < M; j++) {
+			const auto& piece = _board[{i, j}];
+			if (piece->getPlayer() == player) {
+				positions.push_back(std::make_unique<PiecePositionImpl>(i, j, piece->getType(), piece->getJokerType()));
+			}
+		}
+	}
 }
 
-void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& b, const std::vector<std::unique_ptr<FightInfo>>& fights) {
-	for (unsigned int y = 0; y < M; y++) {
-		for (unsigned int x = 0; x < N; x++) {
+void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::vector<std::unique_ptr<FightInfo>>& fights) {
+	for (auto y = 0; y < M; y++) {
+		for (auto x = 0; x < N; x++) {
 			PointImpl pos(x,y);
-			const auto piece = _board[pos];
-			if (b.getPlayer(pos) != _player && piece->getPlayer() == _player) { // player lose a fight
+			if (board.getPlayer(pos) != _player && _board[pos]->getPlayer() == _player) { // player lose a fight
 				_board[pos] = std::make_shared<Piece>(1 - _player, 'U'); // Unknown opponent's piece
 			}
 		}
 	}
-	for (const auto& fight : fights) {
-		notifyFightResult(*fight);
-	}
+	for (const auto& fight : fights) notifyFightResult(*fight);
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
@@ -148,4 +126,35 @@ std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(std::unique_ptr<Po
 	if (_board.isValidPosition(PointImpl(x+1, y  ))) vec.push_back(PointImpl(x+1, y));
 	if (_board.isValidPosition(PointImpl(x+1, y+1))) vec.push_back(PointImpl(x+1, y+1));
 	return vec;
+}
+
+void AutoPlayerAlgorithm::initBoard() {
+	// flag in edge surrounded by bombs & joker
+	_board[{0, 0}] = std::make_shared<Piece>(_player, 'F');
+	_board[{0, 1}] = std::make_shared<Piece>(_player, 'B');
+	_board[{1, 0}] = std::make_shared<Piece>(_player, 'B');
+	_board[{1, 1}] = std::make_shared<Piece>(_player, 'J', 'B');
+	// currently all other pieces positions are hardcoded
+	_board[{5, 5}] = std::make_shared<Piece>(_player, 'J', 'B');
+	_board[{2, 7}] = std::make_shared<Piece>(_player, 'R');
+	_board[{8, 2}] = std::make_shared<Piece>(_player, 'R');
+	_board[{2, 2}] = std::make_shared<Piece>(_player, 'P');
+	_board[{3, 7}] = std::make_shared<Piece>(_player, 'P');
+	_board[{4, 4}] = std::make_shared<Piece>(_player, 'P');
+	_board[{5, 8}] = std::make_shared<Piece>(_player, 'P');
+	_board[{7, 4}] = std::make_shared<Piece>(_player, 'P');
+	_board[{6, 6}] = std::make_shared<Piece>(_player, 'S');
+	// rotate the board by 90deg - flag can be on any edge
+	srand(time(NULL));
+	auto n = rand() % 4;
+	for (auto i = 0; i < n; i++) rotateBoard();
+}
+
+void AutoPlayerAlgorithm::rotateBoard() {
+	BoardImpl oldBoard = _board;
+	for (auto i = 0; i < N; i++) {
+		for (auto j = 0; j < M; j++) {
+			_board[{i, j}] = oldBoard[{N - 1 - j, i}];
+		}
+	}
 }

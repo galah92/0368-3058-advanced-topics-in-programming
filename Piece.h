@@ -9,6 +9,7 @@ public:
 	Piece(int player, char type, char jokerType = 'J');
 	int getPlayer() const;
 	char getType() const;
+	char getJokerType() const;
 	bool setJokerType(char jokerType);
 	bool canMove() const;
 	bool canKill(const Piece& piece) const;

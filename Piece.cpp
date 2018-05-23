@@ -20,6 +20,10 @@ char Piece::getType() const {
 	return _type;
 }
 
+char Piece::getJokerType() const {
+	return _jokerType;
+}
+
 bool Piece::setJokerType(char jokerType) {
 	if (_type != 'J') return false;
 	_jokerType = jokerType;

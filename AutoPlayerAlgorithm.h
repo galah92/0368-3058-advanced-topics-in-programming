@@ -26,6 +26,8 @@ private:
 	std::unique_ptr<PointImpl> getPosToMoveFrom();
 	std::unique_ptr<PointImpl> getBestNeighbor(std::unique_ptr<PointImpl>& from);
 	std::vector<PointImpl> validPermutations(std::unique_ptr<PointImpl>& from);
+	void initBoard();
+	void rotateBoard();
 	int _player;
 	BoardImpl _board;
 	std::map<char, unsigned int> _piecesOnBoardCount;
