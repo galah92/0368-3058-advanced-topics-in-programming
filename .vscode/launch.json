@@ -22,7 +22,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "/mnt/c/Users/galah/source/repos/RPSGame/ex2",
-            "args": ["auto-vs-file"],
+            "args": ["auto-vs-auto"],
             "stopAtEntry": false,
             "cwd": "/mnt/c/Users/galah/source/repos/RPSGame",
             "environment": [],
