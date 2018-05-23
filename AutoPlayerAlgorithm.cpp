@@ -91,7 +91,8 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
 		if (_piecesOnBoardCount[pieceType] == 0) continue;
 		for (unsigned int y = 0; y < M; y++) {
 			for (unsigned int x = 0; x < N; x++) {
-				const auto& piece = _board[PointImpl(x,y)];		
+				const auto& piece = _board[PointImpl(x,y)];	
+				if (piece->getType() != pieceType) continue;	
 				if (piece->getPlayer() != _player) continue;
 				return std::make_unique<PointImpl>(x,y);
 			}
