@@ -27,7 +27,7 @@ bool Piece::setJokerType(char jokerType) {
 }
 
 std::map<char, bool> canMoveMap = {
-	{ 'N', false },
+	{ ' ', false },
 	{ 'F', false },
 	{ 'R', true },
 	{ 'P', true },
@@ -41,12 +41,12 @@ bool Piece::canMove() const {
 }
 
 std::map<char, std::vector<char>> canKillMap = {
-	{ 'N', { 'N' } },
-	{ 'F', { 'N', 'F' } },
-	{ 'R', { 'N', 'F', 'R', 'S', 'B' } },
-	{ 'P', { 'N', 'F', 'R', 'P', 'B' } },
-	{ 'S', { 'N', 'F', 'P', 'S', 'B' } },
-	{ 'B', { 'N', 'F', 'R', 'P', 'S', 'B' } },
+	{ ' ', { ' ' } },
+	{ 'F', { ' ', 'F' } },
+	{ 'R', { ' ', 'F', 'R', 'S', 'B' } },
+	{ 'P', { ' ', 'F', 'R', 'P', 'B' } },
+	{ 'S', { ' ', 'F', 'P', 'S', 'B' } },
+	{ 'B', { ' ', 'F', 'R', 'P', 'S', 'B' } },
 };
 
 bool Piece::canKill(const Piece& piece) const {
@@ -63,7 +63,7 @@ bool Piece::isValid(char type) {
 	case 'S':
 	case 'B':
 		return true;
-	case 'N':
+	case ' ':
 	case 'J':
 	default:
 		return false;
@@ -77,7 +77,7 @@ bool Piece::isValid(char type, char jokerType) {
 }
 
 const std::map<char, unsigned int> Piece::maxCapacity = {
-	{ 'N', std::numeric_limits<unsigned int>::max() },
+	{ ' ', std::numeric_limits<unsigned int>::max() },
 	{ 'F', 1 },
 	{ 'R', 2 },
 	{ 'P', 5 },

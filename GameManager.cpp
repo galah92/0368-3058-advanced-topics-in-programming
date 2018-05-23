@@ -94,6 +94,7 @@ void GameManager::doMove(int i) {
 void GameManager::changeJoker(int i) {
 	auto& player = _players[i];
 	const auto jokerChange = player->algo->getJokerChange();
+	if (!jokerChange) return;
 	if (!isValid(jokerChange, i)) {
 		player->status = PlayerStatus::InvalidMove;
 		return;
@@ -187,7 +188,6 @@ bool GameManager::isValid(const std::unique_ptr<Move>& move, int i) const {
 }
 
 bool GameManager::isValid(const std::unique_ptr<JokerChange>& jokerChange, int i) const {
-	if (!jokerChange) return false;
 	const auto rep = jokerChange->getJokerNewRep();
 	const auto& pos = jokerChange->getJokerChangePosition();
 	// check that point on board
