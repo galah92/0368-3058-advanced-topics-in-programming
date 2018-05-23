@@ -16,6 +16,36 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb"
+        },
+        {
+            "name": "C++ Launch (WSL)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/mnt/c/Users/galah/source/repos/RPSGame/ex2",
+            "args": ["auto-vs-file"],
+            "stopAtEntry": false,
+            "cwd": "/mnt/c/Users/galah/source/repos/RPSGame",
+            "environment": [],
+            "externalConsole": true,
+            "windows": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ]
+            },
+            "pipeTransport": {
+                "pipeCwd": "",
+                "pipeProgram": "c:\\windows\\sysnative\\bash.exe",
+                "pipeArgs": ["-c"],
+                "debuggerPath": "/usr/bin/gdb"
+            },
+            "sourceFileMap": {
+                "/mnt/c": "c:\\"
+            }
         }
     ]
 }
