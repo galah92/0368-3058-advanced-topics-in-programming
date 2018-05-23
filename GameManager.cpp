@@ -79,6 +79,7 @@ void GameManager::doMove(int i) {
 		_players[i]->status = PlayerStatus::InvalidMove;
 		return;
 	}
+	_players[1 - i]->algo->notifyOnOpponentMove(*move);
 	auto fightInfo = fight(move->getTo(), _board[move->getFrom()]);
 	if (fightInfo) {
 		_players[0]->algo->notifyFightResult(*fightInfo);
@@ -88,7 +89,6 @@ void GameManager::doMove(int i) {
 		_numFights++;
 	}
 	_board[move->getFrom()] = Piece::Empty;
-	_players[1 - i]->algo->notifyOnOpponentMove(*move);
 }
 
 void GameManager::changeJoker(int i) {

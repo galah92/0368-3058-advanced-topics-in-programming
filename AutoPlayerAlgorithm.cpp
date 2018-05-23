@@ -76,9 +76,9 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 	}
 	_board[*from] = Piece::Empty; // update board
 	if (_board[*to]->getPlayer() != 1 - _player) { // there will be no fight
-		_board[*to] = std::make_shared<Piece>(1 - _player, 'U'); // update board 
+		_board[*to] = _board[*from];
 	}
-	return std::make_unique<MoveImpl>(PointImpl(from->getX(), from->getY()), PointImpl(to->getX(), to->getY()));
+	return std::make_unique<MoveImpl>(from->getX(), from->getY(), to->getX(), to->getY());
 }
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
