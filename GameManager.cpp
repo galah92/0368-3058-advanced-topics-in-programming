@@ -128,7 +128,7 @@ int GameManager::output() {
         fout << std::endl << _board;
         return winner;
 	} else { // tie
-		fout << "Winner:" << 0 << std::endl << "Reason: ";
+		fout << "Winner: " << 0 << std::endl << "Reason: ";
 		if (_players[0]->status == PlayerStatus::InvalidPos) {
 			fout << "Bad positioning input for both players" << std::endl;
 		} else { // _players[0].status == PlayerStatus::NoFlags
