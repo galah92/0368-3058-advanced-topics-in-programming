@@ -1,6 +1,7 @@
 #include <string>
 #include "AutoPlayerAlgorithm.h"
 
+static bool isSeedDefined = false;
 
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
 
@@ -13,6 +14,10 @@ AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
 		{ 'B', 2 },
 		{ 'J', 2 }
 	};
+	if (!isSeedDefined) {
+	srand(time(NULL)); // the seed - a bit biased according to Stackoverflow, but good enough
+	isSeedDefined = true;
+	}
 }
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
@@ -141,7 +146,6 @@ void AutoPlayerAlgorithm::initBoard() {
 	_board[{7, 4}] = std::make_shared<Piece>(_player, 'P');
 	_board[{6, 6}] = std::make_shared<Piece>(_player, 'S');
 	// rotate the board by 90deg - flag can be on any edge
-	srand(time(NULL)); // a bit biased according to Stackoverflow, but good enough
 	auto n = rand() % 4;
 	for (auto i = 0; i < n; i++) rotateBoard();
 }
