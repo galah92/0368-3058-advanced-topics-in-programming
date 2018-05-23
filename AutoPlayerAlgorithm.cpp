@@ -89,7 +89,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 
 	for (const auto& pieceType : MOVABLE_PIECES){
-		if (_piecesOnBoardCount[pieceType] > 0) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
+		if (_piecesOnBoardCount[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
 	}
 	// there are no movable pieces
 	for (unsigned int y = 0; y < M; y++) {
@@ -116,6 +116,7 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
 			}
 		}
 	}
+	// there are no possible moves of movable 
 	return nullptr;
 }
 
