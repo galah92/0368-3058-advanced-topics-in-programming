@@ -21,10 +21,10 @@
             "name": "C++ Launch (WSL)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/mnt/c/Users/galah/source/repos/RPSGame/ex2",
+            "program": "/mnt/c/Users/gal/source/repos/RPSGame/ex2",
             "args": ["auto-vs-auto"],
             "stopAtEntry": false,
-            "cwd": "/mnt/c/Users/galah/source/repos/RPSGame",
+            "cwd": "/mnt/c/Users/gal/source/repos/RPSGame",
             "environment": [],
             "externalConsole": true,
             "windows": {

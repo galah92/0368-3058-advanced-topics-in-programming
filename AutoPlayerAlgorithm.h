@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <random>
 #include "PlayerAlgorithm.h"
 #include "PiecePosition.h"
 #include "FightInfo.h"
@@ -33,4 +34,5 @@ private:
 	int _player;
 	BoardImpl _board;
 	std::map<char, unsigned int> _piecesOnBoardCount;
+	std::mt19937 _rg;
 };
