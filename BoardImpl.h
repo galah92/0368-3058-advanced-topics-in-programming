@@ -14,15 +14,15 @@ const int M = 10;
 
 class BoardImpl : public Board {
 public:
-	BoardImpl();
-	void clear();
-	int getPlayer(const Point& pos) const override;
-	bool isValidPosition(const Point& pos) const;
-	std::shared_ptr<Piece>& operator[](const Point& pos);
-	std::shared_ptr<Piece> operator[](const Point& pos) const;
-	std::shared_ptr<Piece>& operator[](const std::pair<int, int> pos);
-	std::shared_ptr<Piece> operator[](const std::pair<int, int> pos) const;
-	friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
+    BoardImpl();
+    void clear();
+    int getPlayer(const Point& pos) const override;
+    bool isValidPosition(const Point& pos) const;
+    std::shared_ptr<Piece>& operator[](const Point& pos);
+    std::shared_ptr<Piece> operator[](const Point& pos) const;
+    std::shared_ptr<Piece>& operator[](const std::pair<int, int> pos);
+    std::shared_ptr<Piece> operator[](const std::pair<int, int> pos) const;
+    friend std::ostream& operator<<(std::ostream& os, const BoardImpl& board);
 private:
-	std::array<std::shared_ptr<Piece>, N * M> _arr;
+    std::array<std::shared_ptr<Piece>, N * M> _arr;
 };
