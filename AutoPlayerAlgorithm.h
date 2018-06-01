@@ -36,3 +36,5 @@ private:
     std::map<char, unsigned int> _piecesOnBoardCount;
     std::mt19937 _rg;
 };
+
+using RPSPlayer_203521984 = AutoPlayerAlgorithm;

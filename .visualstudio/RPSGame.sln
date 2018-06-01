@@ -7,11 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPSGame.Shared", "RPSGame.S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPSGame.windows", "RPSGame.windows.vcxproj", "{8D4F76C8-CB50-4F67-BD05-082D569D56BA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPSGame.linux", "RPSGame.linux.vcxproj", "{46742E5D-5499-47AA-BF97-92A61D178250}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		RPSGame.Shared.vcxitems*{46742e5d-5499-47aa-bf97-92a61d178250}*SharedItemsImports = 4
 		RPSGame.Shared.vcxitems*{8d4f76c8-cb50-4f67-bd05-082d569d56ba}*SharedItemsImports = 4
 		RPSGame.Shared.vcxitems*{9de62972-8a37-43c2-b3f2-c982332d0949}*SharedItemsImports = 9
 	EndGlobalSection
@@ -34,18 +31,6 @@ Global
 		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x64.Build.0 = Release|x64
 		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x86.ActiveCfg = Release|Win32
 		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x86.Build.0 = Release|Win32
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Debug|ARM.ActiveCfg = Debug|ARM
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Debug|ARM.Build.0 = Debug|ARM
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Debug|x64.ActiveCfg = Debug|x64
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Debug|x64.Build.0 = Debug|x64
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Debug|x86.ActiveCfg = Debug|x86
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Debug|x86.Build.0 = Debug|x86
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Release|ARM.ActiveCfg = Release|ARM
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Release|ARM.Build.0 = Release|ARM
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Release|x64.ActiveCfg = Release|x64
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Release|x64.Build.0 = Release|x64
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Release|x86.ActiveCfg = Release|x86
-		{46742E5D-5499-47AA-BF97-92A61D178250}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

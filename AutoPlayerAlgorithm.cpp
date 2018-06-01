@@ -1,11 +1,14 @@
 #include <string>
 #include <algorithm>
 #include "AutoPlayerAlgorithm.h"
+#include "AlgorithmRegistration.h"
 
+
+// REGISTER_ALGORITHM(203521984);
 
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
 
-AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
+AutoPlayerAlgorithm::AutoPlayerAlgorithm() : _rg(std::mt19937(std::random_device{}())) {
     _piecesOnBoardCount = { // num of pieces currently hard-coded 
         { 'F', 1 },
         { 'R', 2 },
@@ -14,7 +17,6 @@ AutoPlayerAlgorithm::AutoPlayerAlgorithm() {
         { 'B', 2 },
         { 'J', 2 }
     };
-    _rg = std::mt19937(std::random_device{}());
 }
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
