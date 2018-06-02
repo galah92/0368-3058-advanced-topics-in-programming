@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <deque>
 #include <memory>
 #include <sstream>
 #include <fstream>
@@ -21,7 +22,6 @@ public:
     std::unique_ptr<Move> getMove() override;
     std::unique_ptr<JokerChange> getJokerChange() override;
 private:
-    std::ifstream _boardstream;
-    std::ifstream _movesstream;
-    std::istringstream _movestream; // store each line in moves file
+    std::deque<std::unique_ptr<Move>> _moves;
+    std::deque<std::unique_ptr<JokerChange>> _jokerChanges;
 };

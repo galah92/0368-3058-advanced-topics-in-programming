@@ -3,23 +3,30 @@
 #include "GameContainers.h"
 
 
-const std::string FILES_PREFIX = "player";
-const std::string BOARD_FILE_EXT = ".rps_board";
-const std::string MOVES_FILE_EXT = ".rps_moves";
+const std::string PREFIX = "player";
+const std::string BOARD_FILE = ".rps_board";
+const std::string MOVES_FILE = ".rps_moves";
 
 
 void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>> &positions) {
-    _boardstream = std::ifstream(FILES_PREFIX + std::to_string(player) + BOARD_FILE_EXT);
-    _movesstream = std::ifstream(FILES_PREFIX + std::to_string(player) + MOVES_FILE_EXT);
-    positions.clear(); // just to make sure
+    // fill positions
+    std::ifstream _boardstream(PREFIX + std::to_string(player) + BOARD_FILE);
+    positions.clear(); // just to be safe
     std::string line;
     while (std::getline(_boardstream, line))
     {
-        std::istringstream ss(line);
-        char piece, joker;
-        int x, y;
-        ss >> piece >> x >> y >> joker;
-        positions.push_back(std::make_unique<PiecePositionImpl>(y - 1, x - 1, piece, joker));
+        std::istringstream iss(line);
+        positions.push_back(std::make_unique<PiecePositionImpl>(iss));
+    }
+    // fill _moves & _jokerChanges
+    std::ifstream _movesstream(PREFIX + std::to_string(player) + MOVES_FILE);
+    while (std::getline(_movesstream, line))
+    {
+        std::istringstream iss(line);
+        _moves.push_back(std::make_unique<MoveImpl>(iss));
+        std::string token;
+        iss >> token;
+        _jokerChanges.push_back(token == "J:" ? std::make_unique<JokerChangeImpl>(iss) : nullptr);
     }
 }
 
@@ -37,20 +44,15 @@ void FilePlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 }
 
 std::unique_ptr<Move> FilePlayerAlgorithm::getMove() {
-    std::string line;
-    getline(_movesstream, line);
-    _movestream = std::istringstream(line);
-    int fromX, fromY, toX, toY;
-    _movestream >> fromX >> fromY >> toX >> toY;
-    return std::make_unique<MoveImpl>(fromY - 1, fromX - 1, toY - 1, toX - 1);
+    if (_moves.empty()) return nullptr;
+    auto move = std::move(_moves.front());
+    _moves.pop_front();
+    return move;
 }
 
 std::unique_ptr<JokerChange> FilePlayerAlgorithm::getJokerChange() {
-    std::string jokerPrefix;
-    _movestream >> jokerPrefix;
-    if (jokerPrefix != "J:") return nullptr;
-    int jokerX, jokerY;
-    char newRep;
-    _movestream >> jokerX >> jokerY >> newRep;
-    return std::make_unique<JokerChangeImpl>(PointImpl(jokerY - 1, jokerX - 1), newRep);
+    if (_jokerChanges.empty()) return nullptr;
+    auto jokerChange = std::move(_jokerChanges.front());
+    _jokerChanges.pop_front();
+    return jokerChange;
 }
