@@ -37,4 +37,4 @@ private:
     std::mt19937 _rg;
 };
 
-using RPSPlayer_203521984 = AutoPlayerAlgorithm;
+using RSPPlayer_203521984 = AutoPlayerAlgorithm;

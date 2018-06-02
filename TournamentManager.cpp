@@ -1,15 +1,12 @@
 #include "TournamentManager.h"
 
 
-TournamentManager TournamentManager::_instance;
+TournamentManager TournamentManager::_singleton;
 
-TournamentManager& TournamentManager::getInstance() {
-    return _instance;
+TournamentManager& TournamentManager::get() {
+    return _singleton;
 }
 
 void TournamentManager::registerAlgorithm(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod) {
-    if (algos.find(id) == algos.end()) {
-        // TODO: error - algo already exist!
-    }
-    algos[id] = factoryMethod;
+    id2factory[id] = factoryMethod;
 }
