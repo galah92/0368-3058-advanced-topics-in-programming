@@ -32,7 +32,7 @@ void TournamentManager::run() {
 }
 
 void TournamentManager::initGames() {
-    // TODO: populate 
+    // TODO: populate _games
 }
 
 void TournamentManager::workerThread() {
