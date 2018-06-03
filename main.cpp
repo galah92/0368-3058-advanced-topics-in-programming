@@ -1,6 +1,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <map>
+#include <vector>
 #include "TournamentManager.h"
 #include "GameManager.h"
 #include "AutoPlayerAlgorithm.h"
@@ -16,8 +18,26 @@ std::shared_ptr<PlayerAlgorithm> PlayerAlgorithmFactory(std::string str) {
     return nullptr;
 }
 
+std::map<std::string, std::string> getArgs(int argc, const char *argv[]) {
+    std::vector<std::string> vec(argv + 1, argv + argc);
+    std::map<std::string, std::string> args;
+    for (unsigned int i = 0; i < vec.size(); i += 2) {
+        args[vec[i]] = vec[i + 1];
+    }
+    return args;
+}
+
+const std::string DEFAULT_PATH = "./";
+const unsigned int DEFAULT_THREADS = 4;
+
 int main(int argc, const char *argv[])
 {
+    auto args = getArgs(argc, argv);
+    auto& manager = TournamentManager::get();
+    manager.path = args.find("-path") == args.end() ? DEFAULT_PATH : args["-path"];
+    manager.maxThreads = args.find("-path") == args.end() ? DEFAULT_THREADS : std::stoi(args["-path"]);
+    manager.run();
+
     if (argc < 2) {
         std::cout << USAGE << std::endl;
         return -1;
