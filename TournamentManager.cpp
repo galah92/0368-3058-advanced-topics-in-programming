@@ -2,9 +2,41 @@
 #include <algorithm>
 #include <iterator>
 #include <thread>
+#include <experimental/filesystem>
 #include "TournamentManager.h"
 #include "GameManager.h"
 
+#ifdef __linux__
+#include <dlfcn.h>
+#endif // __linux__
+
+
+class shared_lib {
+public:
+    shared_lib(const std::experimental::filesystem::v1::path& path) {
+#ifdef __linux__
+        if (path.extension() != ".so") return;
+        _lib = dlopen(path.c_str(), RTLD_LAZY);
+#endif // __linux__
+    }
+    ~shared_lib() {
+#ifdef __linux__
+        if (_lib) dlclose(_lib);
+#endif // __linux__
+        _lib = nullptr;
+    }
+    shared_lib(const shared_lib& lib) = default;
+    shared_lib(shared_lib&& lib) = default;
+    operator bool() const { return _lib; }
+    static bool valid(const std::experimental::filesystem::v1::path& path) {
+#ifdef __linux__
+        return path.extension() == ".so";
+#endif // __linux__
+        return true;
+    }
+private:
+    void* _lib = nullptr;
+};
 
 TournamentManager TournamentManager::_singleton;
 
@@ -18,17 +50,32 @@ void TournamentManager::registerAlgorithm(std::string id, std::function<std::uni
 }
 
 void TournamentManager::run() {
-    // TODO: load all alogs
+    const auto sharedLibs = loadSharedLibs(); // registering all algorithms
     initGames();
     // init all worker threads
     std::vector<std::thread> threads;
-    for (unsigned int i = 0; i < maxThreads - 1; i++) {
+    for (auto i = 0; i < maxThreads - 1; i++) {
         threads.emplace_back(&TournamentManager::workerThread, this);
     }
     workerThread(); // main thread should also participate
-    // join all threads
-    std::for_each(threads.begin(), threads.end(), [](auto& t) { t.join(); });
+    for (auto& thread : threads) thread.join();
     output();
+}
+
+std::vector<shared_lib> TournamentManager::loadSharedLibs() {
+    std::vector<shared_lib> libs;
+    const auto& it = std::experimental::filesystem::directory_iterator(path);
+    for (const auto& file : it) {
+        const auto& fpath = file.path();
+        if (!shared_lib::valid(fpath)) continue;
+        shared_lib lib(fpath);
+        if (lib) {
+            libs.push_back(lib);
+        } else {
+            std::cout << "Error loading " << fpath.string() << std::endl;
+        }
+    }
+    return libs;
 }
 
 void TournamentManager::initGames() {
@@ -60,9 +107,9 @@ void TournamentManager::output() {
     std::vector<std::pair<std::string, std::shared_ptr<std::atomic<unsigned int>>>> vec;
     copy(_scores.begin(), _scores.end(), std::back_inserter(vec));
     std::sort(vec.begin(), vec.end(), [](const auto& lhs, const auto& rhs) {
-        return lhs.second < rhs.second;
+        return lhs.second < rhs.second; // sort by score
     });
-    std::for_each(vec.begin(), vec.end(), [](const auto& pair) {
+    for (const auto& pair : vec) {
         std::cout << pair.first << " " << *pair.second << std::endl;
-    });
+    }
 }

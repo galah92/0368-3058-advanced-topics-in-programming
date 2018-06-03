@@ -1,6 +1,6 @@
 EXEC	:= ex3
 CC		:= g++
-CFLAGS	:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -pthread -DNDEBUG -g
+CFLAGS	:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -pthread -ldl -lstdc++fs -DNDEBUG -g
 SRCDIR	:= .
 OBJDIR	:= .
 BINDIR	:= .
@@ -26,10 +26,10 @@ all: rps_tournament
 rps_tournament: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $@
+	$(CC) $(OBJECTS) -o $@ $(CFLAGS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) -c $< -o $@ $(CFLAGS)
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)

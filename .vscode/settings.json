@@ -36,6 +36,8 @@
         "utility": "cpp",
         "tuple": "cpp",
         "typeinfo": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "thread": "cpp",
+        "filesystem": "cpp"
     }
 }
