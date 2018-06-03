@@ -36,7 +36,12 @@ int main(int argc, const char *argv[])
     auto& manager = TournamentManager::get();
     manager.path = args.find("-path") == args.end() ? DEFAULT_PATH : args["-path"];
     manager.maxThreads = args.find("-threads") == args.end() ? DEFAULT_THREADS : std::stoi(args["-threads"]);
-    manager.run();  
+    std::cout << manager.path << " " << manager.maxThreads << std::endl;
+    bool result = manager.run();
+    if (!result) {
+        std::cout << "Error: no shared libraries loaded" << std::endl;
+        return -1;
+    }
 
     if (argc < 2) {
         std::cout << USAGE << std::endl;

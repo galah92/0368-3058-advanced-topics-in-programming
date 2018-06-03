@@ -18,7 +18,7 @@ class TournamentManager {
 public:
     static TournamentManager& get();
     void registerAlgorithm(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod);
-    void run();
+    bool run();
     int maxThreads;
     std::string path;
 private:

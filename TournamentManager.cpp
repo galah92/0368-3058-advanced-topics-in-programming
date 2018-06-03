@@ -55,8 +55,9 @@ void TournamentManager::registerAlgorithm(std::string id, std::function<std::uni
     _scores.emplace(id, std::make_shared<std::atomic<unsigned int>>(0));
 }
 
-void TournamentManager::run() {
+bool TournamentManager::run() {
     const auto sharedLibs = loadSharedLibs(); // registering all algorithms
+    if (sharedLibs.empty()) return false;
     initGames();
     // init all worker threads
     std::vector<std::thread> threads;
@@ -66,10 +67,12 @@ void TournamentManager::run() {
     workerThread(); // main thread should also participate
     for (auto& thread : threads) thread.join();
     output();
+    return true;
 }
 
 std::vector<shared_lib> TournamentManager::loadSharedLibs() {
     std::vector<shared_lib> libs;
+    if (!std::experimental::filesystem::is_directory(path)) return libs;
     const auto& it = std::experimental::filesystem::directory_iterator(path);
     for (const auto& file : it) {
         const auto& fpath = file.path();
@@ -78,7 +81,7 @@ std::vector<shared_lib> TournamentManager::loadSharedLibs() {
         if (lib) {
             libs.push_back(lib);
         } else {
-            std::cout << "Error loading " << fpath.string() << std::endl;
+            std::cout << "Error: failed loading " << fpath.string() << std::endl;
         }
     }
     return libs;
@@ -92,7 +95,7 @@ void TournamentManager::workerThread() {
     GameManager gameManager;
     while (true) {
         _gamesMutex.lock();
-        if (!_games.size()) break; // no games left
+        if (_games.empty()) break; // no games left
         auto ids = _games.front();
         _games.pop_front();
         _gamesMutex.unlock();
