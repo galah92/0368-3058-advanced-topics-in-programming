@@ -35,8 +35,8 @@ int main(int argc, const char *argv[])
     auto args = getArgs(argc, argv);
     auto& manager = TournamentManager::get();
     manager.path = args.find("-path") == args.end() ? DEFAULT_PATH : args["-path"];
-    manager.maxThreads = args.find("-path") == args.end() ? DEFAULT_THREADS : std::stoi(args["-path"]);
-    manager.run();
+    manager.maxThreads = args.find("-threads") == args.end() ? DEFAULT_THREADS : std::stoi(args["-threads"]);
+    manager.run();  
 
     if (argc < 2) {
         std::cout << USAGE << std::endl;
