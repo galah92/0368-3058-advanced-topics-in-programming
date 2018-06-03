@@ -1,6 +1,6 @@
-EXEC	:= ex2
+EXEC	:= ex3
 CC		:= g++
-CFLAGS	:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -ggdb
+CFLAGS	:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -pthread -DNDEBUG -g
 SRCDIR	:= .
 OBJDIR	:= .
 BINDIR	:= .
@@ -21,13 +21,15 @@ endif
 
 default : all
 
-all: $(TARGET)
+all: rps_tournament
+
+rps_tournament: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) $(SDLLIB) -o $@
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	$(CC) $(CFLAGS) $(SDLINC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(TARGET) $(OBJECTS)
