@@ -8,7 +8,9 @@
 
 #ifdef __linux__
 #include <dlfcn.h>
-#endif // __linux__
+#elif _WIN32
+#include <Windows.h>
+#endif
 
 
 class shared_lib {
@@ -16,12 +18,17 @@ public:
     shared_lib(const std::experimental::filesystem::v1::path& path) {
 #ifdef __linux__
         _lib = dlopen(path.c_str(), RTLD_LAZY);
-#endif // __linux__
+#elif _WIN32
+        _lib = LoadLibrary(path.string().c_str());
+#endif
     }
     ~shared_lib() {
+        if (!_lib) return;
 #ifdef __linux__
-        if (_lib) dlclose(_lib);
-#endif // __linux__
+        dlclose(_lib);
+#elif _WIN32
+        FreeLibrary((HMODULE)_lib); // TODO: change to dynamic_cast
+#endif
         _lib = nullptr;
     }
     shared_lib(const shared_lib& lib) = default;
@@ -30,7 +37,9 @@ public:
     static bool valid(const std::experimental::filesystem::v1::path& path) {
 #ifdef __linux__
         return path.extension() == ".so";
-#endif // __linux__
+#elif _WIN32
+        return path.extension() == ".dll";
+#endif
         return true;
     }
 private:
