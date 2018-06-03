@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <iterator>
 #include <thread>
-#include <utility>
 #include "TournamentManager.h"
+#include "GameManager.h"
 
 
 TournamentManager TournamentManager::_singleton;
@@ -34,6 +34,23 @@ void TournamentManager::run() {
 void TournamentManager::worker() {
     for (const auto& pair : _algorithms) {
         std::cout << pair.first << std::endl;
+    }
+    GameManager gameManager;
+    while (true) {
+        _gamesMutex.lock();
+        if (!_games.size()) return; // no games left
+        auto ids = _games.front();
+        _games.pop_front();
+        _gamesMutex.unlock();
+        auto winner = gameManager.playRound(_algorithms[ids.first](), _algorithms[ids.second]());
+        if (winner == 1) {
+            _scores[ids.first]->operator+=(3);
+        } else if (winner == 2) {
+            _scores[ids.second]->operator+=(3);
+        } else { // tie
+            _scores[ids.first]->operator++();
+            _scores[ids.second]->operator++();
+        }
     }
 }
 

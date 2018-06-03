@@ -31,7 +31,7 @@ int main(int argc, const char *argv[])
         std::cout << USAGE << std::endl;
         return -1;
     }
-    GameManager game(algo1, algo2);
-    game.playRound();
+    GameManager game;
+    game.playRound(algo1, algo2);
     return 0;
 }

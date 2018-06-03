@@ -34,8 +34,7 @@ struct Player {
 
 class GameManager {
 public:
-    GameManager(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
-    int playRound();
+    int playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
 private:
     void position(int i, std::vector<std::unique_ptr<FightInfo>>& fights);
     void doMove(int i);

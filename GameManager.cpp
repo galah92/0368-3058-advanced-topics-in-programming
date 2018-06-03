@@ -13,13 +13,10 @@
 
 const unsigned int FIGHTS_THRESHOLD = 100;
 
-GameManager::GameManager(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
+int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
+    // init
     _players[0] = std::make_unique<Player>(1, algo1);
     _players[1] = std::make_unique<Player>(2, algo2);
-}
-
-int GameManager::playRound() {
-    // init
     _board.clear();
     _numFights = 0;
     // positioning
