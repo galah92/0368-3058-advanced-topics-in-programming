@@ -20,7 +20,8 @@ public:
     unsigned int maxThreads;
     std::string path;
 private:
-    void worker();
+    void initGames();
+    void workerThread();
     void output();
     static TournamentManager _singleton;
     TournamentManager() = default;

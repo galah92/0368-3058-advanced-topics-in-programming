@@ -19,22 +19,23 @@ void TournamentManager::registerAlgorithm(std::string id, std::function<std::uni
 
 void TournamentManager::run() {
     // TODO: load all alogs
-    // TODO: create deque of games to play
+    initGames();
     // init all worker threads
     std::vector<std::thread> threads;
     for (unsigned int i = 0; i < maxThreads - 1; i++) {
-        threads.emplace_back(&TournamentManager::worker, this);
+        threads.emplace_back(&TournamentManager::workerThread, this);
     }
-    worker(); // main thread should also participate
+    workerThread(); // main thread should also participate
     // join all threads
     std::for_each(threads.begin(), threads.end(), [](auto& t) { t.join(); });
     output();
 }
 
-void TournamentManager::worker() {
-    for (const auto& pair : _algorithms) {
-        std::cout << pair.first << std::endl;
-    }
+void TournamentManager::initGames() {
+    // TODO: populate 
+}
+
+void TournamentManager::workerThread() {
     GameManager gameManager;
     while (true) {
         _gamesMutex.lock();
