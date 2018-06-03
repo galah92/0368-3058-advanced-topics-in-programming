@@ -31,8 +31,6 @@ public:
 #endif
         _lib = nullptr;
     }
-    shared_lib(const shared_lib& lib) = default;
-    shared_lib(shared_lib&& lib) = default;
     operator bool() const { return _lib; }
     static bool valid(const std::experimental::filesystem::v1::path& path) {
 #ifdef __linux__
