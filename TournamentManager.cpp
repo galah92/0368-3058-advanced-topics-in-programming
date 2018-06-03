@@ -38,7 +38,7 @@ void TournamentManager::worker() {
     GameManager gameManager;
     while (true) {
         _gamesMutex.lock();
-        if (!_games.size()) return; // no games left
+        if (!_games.size()) break; // no games left
         auto ids = _games.front();
         _games.pop_front();
         _gamesMutex.unlock();
@@ -52,6 +52,7 @@ void TournamentManager::worker() {
             _scores[ids.second]->operator++();
         }
     }
+    _gamesMutex.unlock(); // cause we're still aquiring it
 }
 
 void TournamentManager::output() {
