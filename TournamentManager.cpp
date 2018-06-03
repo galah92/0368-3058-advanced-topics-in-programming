@@ -15,7 +15,6 @@ class shared_lib {
 public:
     shared_lib(const std::experimental::filesystem::v1::path& path) {
 #ifdef __linux__
-        if (path.extension() != ".so") return;
         _lib = dlopen(path.c_str(), RTLD_LAZY);
 #endif // __linux__
     }

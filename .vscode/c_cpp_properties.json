@@ -18,8 +18,7 @@
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "msvc-x64",
-            "compilerPath": "/usr/bin/clang"
+            "intelliSenseMode": "msvc-x64"
         },
         {
             "name": "WSL",
@@ -34,6 +33,26 @@
             },
             "cStandard": "c99",
             "cppStandard": "c++14"
+        },
+        {
+            "name": "Mac",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "${workspaceFolder}"
+            ],
+            "macFrameworkPath": [ "/System/Library/Frameworks" ],
+            "defines": [
+                "__linux__"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64",
+            "compilerPath": "/usr/bin/clang"
         }
     ],
     "version": 4
