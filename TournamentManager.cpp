@@ -6,7 +6,7 @@
 #include "TournamentManager.h"
 #include "GameManager.h"
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
 #include <dlfcn.h>
 #elif _WIN32
 #include <Windows.h>
@@ -16,7 +16,7 @@
 class shared_lib {
 public:
     shared_lib(const std::experimental::filesystem::v1::path& path) {
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
         _lib = dlopen(path.c_str(), RTLD_LAZY);
 #elif _WIN32
         _lib = LoadLibrary(path.string().c_str());
@@ -24,7 +24,7 @@ public:
     }
     ~shared_lib() {
         if (!_lib) return;
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
         dlclose(_lib);
 #elif _WIN32
         FreeLibrary((HMODULE)_lib); // TODO: change to dynamic_cast
@@ -33,7 +33,7 @@ public:
     }
     operator bool() const { return _lib; }
     static bool valid(const std::experimental::filesystem::v1::path& path) {
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
         return path.extension() == ".so";
 #elif _WIN32
         return path.extension() == ".dll";

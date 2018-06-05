@@ -10,9 +10,12 @@ SOURCES	= $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 TARGET	= $(BINDIR)/$(EXEC)
 
-OSNAME	:= $(shell uname -n)
-ifeq ($(OSNAME), nova)
+PCNAME	:= $(shell uname -n)
+OSNAME	:= $(shell uname)
+ifeq ($(PCNAME), nova)
 	CC	:= g++-5.3.0
+else ifeq ($(OSNAME), Darwin)
+	CC	:= g++-8
 else
 	CC	:= g++
 endif
