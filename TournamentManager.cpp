@@ -89,9 +89,13 @@ std::vector<SharedLib> TournamentManager::loadSharedLibs() {
     return libs;
 }
 std::pair<int, int> chooseTwoGames(const std::unique_ptr<std::vector<std::pair<std::string, int>>> &cgPointer){
-    //TODO : implement
-    (void) cgPointer;
-    return std::make_pair(0,0);
+    auto _rg = std::mt19937(std::random_device{}());
+    auto n = std::uniform_int_distribution<int>(0, cgPointer->size())(_rg);
+    auto k = std::uniform_int_distribution<int>(0, cgPointer->size())(_rg);
+    while (n == k){
+        k = std::uniform_int_distribution<int>(0, cgPointer->size())(_rg);
+    }
+    return std::make_pair(n,k);
 }
 
 void TournamentManager::initGames() {
@@ -138,7 +142,6 @@ void TournamentManager::workerThread() {
         }
         auto idsPair = _games.front();
         // idsPair is pair of pair<string, bool>
-        auto ids = _games.front();
         _games.pop_front();
         _gamesMutex.unlock();
         auto winner = gameManager.playRound(_algorithms[idsPair.first.first](), _algorithms[idsPair.second.first]());

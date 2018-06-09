@@ -6,6 +6,7 @@
 #include <string>
 #include <atomic>
 #include <memory>
+#include <random>
 #include <deque>
 #include <mutex>
 #include <map>
