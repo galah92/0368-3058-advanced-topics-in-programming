@@ -95,10 +95,6 @@ std::pair<int, int> chooseTwoGames(const std::unique_ptr<std::vector<std::pair<s
 }
 
 void TournamentManager::initGames() {
-<<<<<<< HEAD
-    // TODO: populate _games
-    
-=======
     _games.clear();
     std::vector<std::pair<std::string,int>> currentGames;
     for (const auto &algo : _algorithms){ // initialize every algorithm to 30 games
@@ -118,16 +114,19 @@ void TournamentManager::initGames() {
     if (currentGames.size() == 0) return;
     // there is one algo in currentGames
     // while()
->>>>>>> _games signature updated, initGames() WIP
 }
 
 void TournamentManager::workerThread() {
     GameManager gameManager;
     while (true) {
         _gamesMutex.lock();
-        if (_games.empty()) break; // no games left
+        if (_games.empty()) { // no games left
+            _gamesMutex.unlock();
+            return;        
+        }
         auto idsPair = _games.front();
         // idsPair is pair of pair<string, bool>
+        auto ids = _games.front();
         _games.pop_front();
         _gamesMutex.unlock();
         auto winner = gameManager.playRound(_algorithms[idsPair.first.first](), _algorithms[idsPair.second.first]());
@@ -140,7 +139,6 @@ void TournamentManager::workerThread() {
             if(idsPair.second.second == true) _scores[idsPair.second.first]->operator++();
         }
     }
-    _gamesMutex.unlock(); // cause we're still aquiring it
 }
 
 void TournamentManager::output() {

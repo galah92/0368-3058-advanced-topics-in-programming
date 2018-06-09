@@ -4,7 +4,7 @@
 #include "AlgorithmRegistration.h"
 
 
-// REGISTER_ALGORITHM(203521984)
+REGISTER_ALGORITHM(203521984)
 
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
 

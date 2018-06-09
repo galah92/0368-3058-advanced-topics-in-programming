@@ -1,20 +1,3 @@
-EXE_NAME	:= ex3
-EXE_FLAGS	:= -pthread -ldl -lstdc++fs
-
-LIB_NAME	:= RSPPlayer_203521984.so
-LIB_FLAGS	:= -shared -lstdc++fs
-
-CC			:= g++
-CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -g
-SRCDIR		:= .
-OBJDIR		:= .
-BINDIR		:= .
-
-SOURCES	= $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-EXE_TARGET	:= $(BINDIR)/$(EXE_NAME)
-LIB_TARGET	:= $(BINDIR)/$(LIB_NAME)
-
 PCNAME	:= $(shell uname -n)
 OSNAME	:= $(shell uname)
 ifeq ($(PCNAME), nova)
@@ -24,6 +7,23 @@ else ifeq ($(OSNAME), Darwin)
 else
 	CC	:= g++
 endif
+CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -fPIC -DNDEBUG -g
+SRCDIR		:= .
+OBJDIR		:= .
+BINDIR		:= .
+
+EXE_NAME	:= ex3
+EXE_OBJS	:= main.o TournamentManager.o GameManager.o AlgorithmRegistration.o Piece.o BoardImpl.o
+EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs
+
+LIB_NAME	:= RSPPlayer_203521984.so
+LIB_OBJS	:= AutoPlayerAlgorithm.o AlgorithmRegistration.o Piece.o BoardImpl.o
+LIB_FLAGS	:= -shared
+
+SOURCES	= $(wildcard $(SRCDIR)/*.cpp)
+OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+EXE_TARGET	:= $(BINDIR)/$(EXE_NAME)
+LIB_TARGET	:= $(BINDIR)/$(LIB_NAME)
 
 .PHONY: clean zip
 
@@ -33,13 +33,13 @@ all: rps_tournament rps_lib
 
 rps_tournament: $(EXE_TARGET)
 
-$(EXE_TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(EXE_FLAGS)
+$(EXE_TARGET): $(EXE_OBJS)
+	$(CC) $(EXE_OBJS) -o $@ $(EXE_FLAGS)
 
 rps_lib: $(LIB_TARGET)
 
-$(LIB_TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LIB_FLAGS)
+$(LIB_TARGET): $(LIB_OBJS)
+	$(CC) $(LIB_OBJS) -o $@ $(LIB_FLAGS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
