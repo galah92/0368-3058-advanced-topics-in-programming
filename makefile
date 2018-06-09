@@ -8,22 +8,17 @@ else
 	CC	:= g++
 endif
 CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -fPIC -DNDEBUG -g
-SRCDIR		:= .
-OBJDIR		:= .
-BINDIR		:= .
 
-EXE_NAME	:= ex3
+EXE_TARGET	:= ex3
 EXE_OBJS	:= main.o TournamentManager.o GameManager.o AlgorithmRegistration.o Piece.o BoardImpl.o
-EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs
+EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs -g
 
-LIB_NAME	:= RSPPlayer_203521984.so
+LIB_TARGET	:= RSPPlayer_203521984.so
 LIB_OBJS	:= AutoPlayerAlgorithm.o AlgorithmRegistration.o Piece.o BoardImpl.o
-LIB_FLAGS	:= -shared
+LIB_FLAGS	:= -shared -g
 
-SOURCES	= $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-EXE_TARGET	:= $(BINDIR)/$(EXE_NAME)
-LIB_TARGET	:= $(BINDIR)/$(LIB_NAME)
+SOURCES	= $(wildcard *.cpp)
+OBJECTS = $(SOURCES:%.cpp=%.o)
 
 .PHONY: clean zip
 
@@ -41,7 +36,7 @@ rps_lib: $(LIB_TARGET)
 $(LIB_TARGET): $(LIB_OBJS)
 	$(CC) $(LIB_OBJS) -o $@ $(LIB_FLAGS)
 
-$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+$(OBJECTS): %.o : %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
