@@ -19,8 +19,8 @@ public:
     static TournamentManager& get();
     void registerAlgorithm(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod);
     void run();
-    int maxThreads;
-    std::string path;
+    int maxThreads = 4;
+    std::string path = "./";
 private:
     TournamentManager() = default;
     std::vector<SharedLib> loadSharedLibs();

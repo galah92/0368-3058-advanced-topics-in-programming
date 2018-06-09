@@ -27,15 +27,16 @@ std::map<std::string, std::string> parseArgs(int argc, const char *argv[]) {
     return args;
 }
 
-const std::string DEFAULT_PATH = "./";
-const unsigned int DEFAULT_THREADS = 4;
-
 int main(int argc, const char *argv[])
 {
     auto args = parseArgs(argc, argv);
     auto& manager = TournamentManager::get();
-    manager.path = args.find("-path") == args.end() ? DEFAULT_PATH : args["-path"];
-    manager.maxThreads = args.find("-threads") == args.end() ? DEFAULT_THREADS : std::stoi(args["-threads"]);
+    if (args.find("-path") != args.end()) {
+        manager.path = args["-path"];
+    }
+    if (args.find("-threads") != args.end()) {
+        manager.maxThreads = std::stoi(args["-threads"]);
+    }
     manager.run();
 
     // if (argc < 2) {
