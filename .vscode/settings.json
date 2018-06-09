@@ -43,6 +43,14 @@
         "__config": "cpp",
         "__nullptr": "cpp",
         "cstddef": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__split_buffer": "cpp",
+        "string": "cpp",
+        "__hash_table": "cpp",
+        "__tree": "cpp",
+        "bitset": "cpp",
+        "iterator": "cpp",
+        "map": "cpp",
+        "random": "cpp"
     }
 }

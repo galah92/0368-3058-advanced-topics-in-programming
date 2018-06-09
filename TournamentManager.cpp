@@ -108,12 +108,24 @@ void TournamentManager::initGames() {
                             std::make_pair(currentGames[gamesIndices.second].first, true)); 
         currentGames[gamesIndices.first].second--;
         currentGames[gamesIndices.second].second--;
+        // remove algo's which complete 30 games
         if (currentGames[gamesIndices.first].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.first);
         if (currentGames[gamesIndices.second].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.second);
     }
-    if (currentGames.size() == 0) return;
-    // there is one algo in currentGames
-    // while()
+    if (currentGames.size() == 0) return; // there is one algo in currentGames
+    auto algo = currentGames.back();
+    // find opponent
+    std::string opponent;
+    for (const auto &op : _algorithms){
+        if (op.first != algo.first){
+            opponent = std::move(op.first);
+            break;
+        }
+    }
+    while(algo.second > 0){
+        _games.emplace_back(std::make_pair(algo.first, true),std::make_pair(opponent, false));
+        algo.second--;
+    }
 }
 
 void TournamentManager::workerThread() {
