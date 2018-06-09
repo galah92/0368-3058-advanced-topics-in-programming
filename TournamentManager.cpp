@@ -13,16 +13,16 @@
 #endif
 
 
-class shared_lib {
+class SharedLib {
 public:
-    shared_lib(const std::experimental::filesystem::v1::path& path) {
+    SharedLib(const std::experimental::filesystem::v1::path& path) {
 #if defined(__linux__) || defined(__APPLE__)
         _lib = dlopen(path.c_str(), RTLD_LAZY);
 #elif _WIN32
         _lib = LoadLibrary(path.string().c_str());
 #endif
     }
-    ~shared_lib() {
+    ~SharedLib() {
         if (!_lib) return;
 #if defined(__linux__) || defined(__APPLE__)
         dlclose(_lib);
@@ -55,9 +55,12 @@ void TournamentManager::registerAlgorithm(std::string id, std::function<std::uni
     _scores.emplace(id, std::make_shared<std::atomic<unsigned int>>(0));
 }
 
-bool TournamentManager::run() {
+void TournamentManager::run() {
     const auto sharedLibs = loadSharedLibs(); // registering all algorithms
-    if (sharedLibs.empty()) return false;
+    if (sharedLibs.empty()) {
+        std::cout << "Error: no shared libraries loaded" << std::endl;
+        return;
+    }
     initGames();
     // init all worker threads
     std::vector<std::thread> threads;
@@ -67,17 +70,16 @@ bool TournamentManager::run() {
     workerThread(); // main thread should also participate
     for (auto& thread : threads) thread.join();
     output();
-    return true;
 }
 
-std::vector<shared_lib> TournamentManager::loadSharedLibs() {
-    std::vector<shared_lib> libs;
+std::vector<SharedLib> TournamentManager::loadSharedLibs() {
+    std::vector<SharedLib> libs;
     if (!std::experimental::filesystem::is_directory(path)) return libs;
     const auto& it = std::experimental::filesystem::directory_iterator(path);
     for (const auto& file : it) {
         const auto& fpath = file.path();
-        if (!shared_lib::valid(fpath)) continue;
-        shared_lib lib(fpath);
+        if (!SharedLib::valid(fpath)) continue;
+        SharedLib lib(fpath);
         if (lib) {
             libs.push_back(lib);
         } else {
@@ -89,6 +91,7 @@ std::vector<shared_lib> TournamentManager::loadSharedLibs() {
 
 void TournamentManager::initGames() {
     // TODO: populate _games
+    
 }
 
 void TournamentManager::workerThread() {

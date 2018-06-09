@@ -12,18 +12,18 @@
 #include "PlayerAlgorithm.h"
 
 
-class shared_lib;
+class SharedLib;
 
 class TournamentManager {
 public:
     static TournamentManager& get();
     void registerAlgorithm(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod);
-    bool run();
+    void run();
     int maxThreads;
     std::string path;
 private:
     TournamentManager() = default;
-    std::vector<shared_lib> loadSharedLibs();
+    std::vector<SharedLib> loadSharedLibs();
     void initGames();
     void workerThread();
     void output();

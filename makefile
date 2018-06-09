@@ -1,14 +1,19 @@
-EXEC	:= ex3
-CC		:= g++
-CFLAGS	:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -pthread -ldl -lstdc++fs -DNDEBUG -g
-SRCDIR	:= .
-OBJDIR	:= .
-BINDIR	:= .
+EXE_NAME	:= ex3
+EXE_FLAGS	:= -pthread -ldl -lstdc++fs
 
-# detecting all src files
+LIB_NAME	:= RSPPlayer_203521984.so
+LIB_FLAGS	:= -shared -lstdc++fs
+
+CC			:= g++
+CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -g
+SRCDIR		:= .
+OBJDIR		:= .
+BINDIR		:= .
+
 SOURCES	= $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-TARGET	= $(BINDIR)/$(EXEC)
+EXE_TARGET	:= $(BINDIR)/$(EXE_NAME)
+LIB_TARGET	:= $(BINDIR)/$(LIB_NAME)
 
 PCNAME	:= $(shell uname -n)
 OSNAME	:= $(shell uname)
@@ -24,18 +29,23 @@ endif
 
 default : all
 
-all: rps_tournament
+all: rps_tournament rps_lib
 
-rps_tournament: $(TARGET)
+rps_tournament: $(EXE_TARGET)
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(CFLAGS)
+$(EXE_TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@ $(EXE_FLAGS)
+
+rps_lib: $(LIB_TARGET)
+
+$(LIB_TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@ $(LIB_FLAGS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
-	$(CC) -c $< -o $@ $(CFLAGS)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET) $(OBJECTS)
+	rm -f $(EXE_TARGET) $(LIB_TARGET) $(OBJECTS)
 
 zip:
-	zip hw2_203521984_203774849 *.cpp *.h makefile *.txt
+	zip hw3_203521984_203774849 *.cpp *.h makefile *.txt

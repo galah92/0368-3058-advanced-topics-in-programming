@@ -9,14 +9,14 @@
 #include "FilePlayerAlgorithm.h"
 
 
-const std::string DELIMITER = "-vs-";
-const std::string USAGE = "Usage: ./ex2 <auto|file>-vs-<auto|file>";
+// const std::string DELIMITER = "-vs-";
+// const std::string USAGE = "Usage: ./ex2 <auto|file>-vs-<auto|file>";
 
-std::shared_ptr<PlayerAlgorithm> PlayerAlgorithmFactory(std::string str) {
-    if (str == "auto") return std::make_shared<AutoPlayerAlgorithm>();
-    if (str == "file") return std::make_shared<FilePlayerAlgorithm>();
-    return nullptr;
-}
+// std::shared_ptr<PlayerAlgorithm> PlayerAlgorithmFactory(std::string str) {
+//     if (str == "auto") return std::make_shared<AutoPlayerAlgorithm>();
+//     if (str == "file") return std::make_shared<FilePlayerAlgorithm>();
+//     return nullptr;
+// }
 
 std::map<std::string, std::string> parseArgs(int argc, const char *argv[]) {
     std::vector<std::string> vec(argv + 1, argv + argc);
@@ -36,27 +36,22 @@ int main(int argc, const char *argv[])
     auto& manager = TournamentManager::get();
     manager.path = args.find("-path") == args.end() ? DEFAULT_PATH : args["-path"];
     manager.maxThreads = args.find("-threads") == args.end() ? DEFAULT_THREADS : std::stoi(args["-threads"]);
-    std::cout << manager.path << " " << manager.maxThreads << std::endl;
-    bool result = manager.run();
-    if (!result) {
-        std::cout << "Error: no shared libraries loaded" << std::endl;
-        return -1;
-    }
+    manager.run();
 
-    if (argc < 2) {
-        std::cout << USAGE << std::endl;
-        return -1;
-    }
-    std::string arg(argv[1]);
-    auto pos = arg.find(DELIMITER);
-    auto algo1 = PlayerAlgorithmFactory(arg.substr(0, pos));
-    arg.erase(0, pos + DELIMITER.length());
-    auto algo2 = PlayerAlgorithmFactory(arg.substr(0, pos));
-    if (!algo1 || !algo2) {
-        std::cout << USAGE << std::endl;
-        return -1;
-    }
-    GameManager game;
-    game.playRound(algo1, algo2);
-    return 0;
+    // if (argc < 2) {
+    //     std::cout << USAGE << std::endl;
+    //     return -1;
+    // }
+    // std::string arg(argv[1]);
+    // auto pos = arg.find(DELIMITER);
+    // auto algo1 = PlayerAlgorithmFactory(arg.substr(0, pos));
+    // arg.erase(0, pos + DELIMITER.length());
+    // auto algo2 = PlayerAlgorithmFactory(arg.substr(0, pos));
+    // if (!algo1 || !algo2) {
+    //     std::cout << USAGE << std::endl;
+    //     return -1;
+    // }
+    // GameManager game;
+    // game.playRound(algo1, algo2);
+    // return 0;
 }
