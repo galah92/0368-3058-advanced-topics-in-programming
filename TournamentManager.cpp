@@ -88,10 +88,37 @@ std::vector<SharedLib> TournamentManager::loadSharedLibs() {
     }
     return libs;
 }
+std::pair<int, int> chooseTwoGames(const std::unique_ptr<std::vector<std::pair<std::string, int>>> &cgPointer){
+    //TODO : implement
+    (void) cgPointer;
+    return std::make_pair(0,0);
+}
 
 void TournamentManager::initGames() {
+<<<<<<< HEAD
     // TODO: populate _games
     
+=======
+    _games.clear();
+    std::vector<std::pair<std::string,int>> currentGames;
+    for (const auto &algo : _algorithms){ // initialize every algorithm to 30 games
+        currentGames.push_back(std::make_pair(algo.first, 30));
+    }
+    auto cgPointer = std::make_unique<std::vector<std::pair<std::string, int>>>(currentGames);
+    while(currentGames.size() > 1){
+        auto gamesIndices = chooseTwoGames(cgPointer);
+        // push valid game(two algo's) to _games
+        _games.emplace_back(std::make_pair(currentGames[gamesIndices.first].first, true),
+                            std::make_pair(currentGames[gamesIndices.second].first, true)); 
+        currentGames[gamesIndices.first].second--;
+        currentGames[gamesIndices.second].second--;
+        if (currentGames[gamesIndices.first].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.first);
+        if (currentGames[gamesIndices.second].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.second);
+    }
+    if (currentGames.size() == 0) return;
+    // there is one algo in currentGames
+    // while()
+>>>>>>> _games signature updated, initGames() WIP
 }
 
 void TournamentManager::workerThread() {
@@ -99,17 +126,18 @@ void TournamentManager::workerThread() {
     while (true) {
         _gamesMutex.lock();
         if (_games.empty()) break; // no games left
-        auto ids = _games.front();
+        auto idsPair = _games.front();
+        // idsPair is pair of pair<string, bool>
         _games.pop_front();
         _gamesMutex.unlock();
-        auto winner = gameManager.playRound(_algorithms[ids.first](), _algorithms[ids.second]());
-        if (winner == 1) {
-            _scores[ids.first]->operator+=(3);
-        } else if (winner == 2) {
-            _scores[ids.second]->operator+=(3);
+        auto winner = gameManager.playRound(_algorithms[idsPair.first.first](), _algorithms[idsPair.second.first]());
+        if (winner == 1 && idsPair.first.second == true) {
+            _scores[idsPair.first.first]->operator+=(3);
+        } else if (winner == 2 && idsPair.second.second == true) {
+            _scores[idsPair.second.first]->operator+=(3);
         } else { // tie
-            _scores[ids.first]->operator++();
-            _scores[ids.second]->operator++();
+            if(idsPair.first.second == true) _scores[idsPair.first.first]->operator++();
+            if(idsPair.second.second == true) _scores[idsPair.second.first]->operator++();
         }
     }
     _gamesMutex.unlock(); // cause we're still aquiring it

@@ -30,7 +30,7 @@ private:
     static TournamentManager _singleton;
     std::unordered_map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> _algorithms;
     std::unordered_map<std::string, std::shared_ptr<std::atomic<unsigned int>>> _scores;
-    std::deque<std::pair<std::string, std::string>> _games;
+    std::deque<std::pair<std::pair<std::string, bool>, std::pair<std::string, bool>>> _games;
     std::mutex _gamesMutex;
     const static unsigned int MAX_GAMES = 30;
 };

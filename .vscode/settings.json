@@ -38,6 +38,11 @@
         "typeinfo": "cpp",
         "xstring": "cpp",
         "thread": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "mutex": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp",
+        "cstddef": "cpp",
+        "algorithm": "cpp"
     }
 }
