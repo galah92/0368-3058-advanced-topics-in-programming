@@ -51,6 +51,14 @@
         "bitset": "cpp",
         "iterator": "cpp",
         "map": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "atomic": "cpp",
+        "chrono": "cpp",
+        "codecvt": "cpp",
+        "ctime": "cpp",
+        "functional": "cpp",
+        "numeric": "cpp",
+        "ratio": "cpp",
+        "condition_variable": "cpp"
     }
 }

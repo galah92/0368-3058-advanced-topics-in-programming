@@ -4,6 +4,7 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <deque>
 #include <map>
 #include "PlayerAlgorithm.h"
 
@@ -22,15 +23,14 @@ private:
     bool isValidLib(const std::string fname) const;
     void loadSharedLibs();
     void freeSharedLibs();
-    void playerAllGames();
-    const std::string& getPlayerId(int randNum);
-    void runGameBetweenTwoPlayers(std::string firstPlayerID, std::string secondPlayerID, bool updateSecondPlayer);
-    void gamesWorker(int seedNum);
+    void initGames();
+    void workerThread();
     void output() const;
     static TournamentManager _singleton;
     std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> _algos;
     std::map<std::string, unsigned int> _scores;
     std::map<std::string, unsigned int> _numGames;
+    std::deque<std::pair<std::pair<std::string, bool>, std::pair<std::string, bool>>> _games;
     std::vector<void *> _libs;
     std::mutex _scoresMutex;
     std::mutex _numGamesMutex;
