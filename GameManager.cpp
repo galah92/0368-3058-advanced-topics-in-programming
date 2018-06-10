@@ -123,7 +123,7 @@ int GameManager::output() {
             break;
         }
         fout << std::endl << _board;
-        return winner;
+        return winner + 1;
     } else { // tie
         fout << "Winner: " << 0 << std::endl << "Reason: ";
         if (_players[0]->status == PlayerStatus::InvalidPos) {
