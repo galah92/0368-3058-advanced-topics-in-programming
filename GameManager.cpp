@@ -200,6 +200,7 @@ bool GameManager::isValid(const std::unique_ptr<JokerChange>& jokerChange, int i
 bool GameManager::isValid(const std::unique_ptr<PiecePosition>& piecePos, const BoardImpl& board) const {
     if (!piecePos) return false;
     // check that pos is empty
+    if (!board.isValidPosition(piecePos->getPosition())) return false;
     if (board[piecePos->getPosition()]->getPlayer() != 0) return false;
     // check that it's a valid piece
     if (!Piece::isValid(piecePos->getPiece(), piecePos->getJokerRep())) return false;

@@ -3,14 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPSGame.Shared", "RPSGame.Shared.vcxitems", "{9DE62972-8A37-43C2-B3F2-C982332D0949}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RSPPlayer_203521984", "RSPPlayer_203521984\RSPPlayer_203521984.vcxproj", "{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RPSGame.windows", "RPSGame.windows.vcxproj", "{8D4F76C8-CB50-4F67-BD05-082D569D56BA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ex3", "ex3\ex3.vcxproj", "{67003D65-58B4-4849-8822-3CD5DBFFFFF3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shared", "Shared\Shared.vcxitems", "{D148C8FD-88CB-4861-87A8-171E74234B58}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		RPSGame.Shared.vcxitems*{8d4f76c8-cb50-4f67-bd05-082d569d56ba}*SharedItemsImports = 4
-		RPSGame.Shared.vcxitems*{9de62972-8a37-43c2-b3f2-c982332d0949}*SharedItemsImports = 9
+		Shared\Shared.vcxitems*{67003d65-58b4-4849-8822-3cd5dbfffff3}*SharedItemsImports = 4
+		Shared\Shared.vcxitems*{d148c8fd-88cb-4861-87a8-171e74234b58}*SharedItemsImports = 9
+		Shared\Shared.vcxitems*{ef69bdf9-9f11-4c96-ad58-dfde71b2b662}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -21,16 +24,26 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Debug|ARM.ActiveCfg = Debug|Win32
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Debug|x64.ActiveCfg = Debug|x64
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Debug|x64.Build.0 = Debug|x64
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Debug|x86.ActiveCfg = Debug|Win32
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Debug|x86.Build.0 = Debug|Win32
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|ARM.ActiveCfg = Release|Win32
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x64.ActiveCfg = Release|x64
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x64.Build.0 = Release|x64
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x86.ActiveCfg = Release|Win32
-		{8D4F76C8-CB50-4F67-BD05-082D569D56BA}.Release|x86.Build.0 = Release|Win32
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Debug|ARM.ActiveCfg = Debug|Win32
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Debug|x64.ActiveCfg = Debug|x64
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Debug|x64.Build.0 = Debug|x64
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Debug|x86.ActiveCfg = Debug|Win32
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Debug|x86.Build.0 = Debug|Win32
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Release|ARM.ActiveCfg = Release|Win32
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Release|x64.ActiveCfg = Release|x64
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Release|x64.Build.0 = Release|x64
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Release|x86.ActiveCfg = Release|Win32
+		{EF69BDF9-9F11-4C96-AD58-DFDE71B2B662}.Release|x86.Build.0 = Release|Win32
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Debug|ARM.ActiveCfg = Debug|Win32
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Debug|x64.ActiveCfg = Debug|x64
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Debug|x64.Build.0 = Debug|x64
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Debug|x86.ActiveCfg = Debug|Win32
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Debug|x86.Build.0 = Debug|Win32
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Release|ARM.ActiveCfg = Release|Win32
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Release|x64.ActiveCfg = Release|x64
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Release|x64.Build.0 = Release|x64
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Release|x86.ActiveCfg = Release|Win32
+		{67003D65-58B4-4849-8822-3CD5DBFFFFF3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

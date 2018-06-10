@@ -10,7 +10,7 @@ void BoardImpl::clear() {
 }
 
 int BoardImpl::getPlayer(const Point& pos) const {
-    if (!isValidPosition(pos)) throw "BoardImpl::getPlayer: Invalid const Point& given";
+    if (!isValidPosition(pos)) return -1;
     return operator[](pos)->getPlayer();
 }
 

@@ -7,40 +7,36 @@ else ifeq ($(OSNAME), Darwin)
 else
 	CC	:= g++
 endif
+
 CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -fPIC -DNDEBUG -g
 
 EXE_TARGET	:= ex3
-EXE_OBJS	:= main.o TournamentManager.o GameManager.o AlgorithmRegistration.o Piece.o BoardImpl.o
 EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs -g
+EXE_OBJS	:= main.o TournamentManager.o GameManager.o Piece.o BoardImpl.o
 
 LIB_TARGET	:= RSPPlayer_203521984.so
-LIB_OBJS	:= AutoPlayerAlgorithm.o AlgorithmRegistration.o Piece.o BoardImpl.o
 LIB_FLAGS	:= -shared -g
+LIB_OBJS	:= AutoPlayerAlgorithm.o Piece.o BoardImpl.o
 
-SOURCES	= $(wildcard *.cpp)
-OBJECTS = $(SOURCES:%.cpp=%.o)
-
-.PHONY: clean zip
-
-default : all
+.PHONY: clean
 
 all: rps_tournament rps_lib
 
 rps_tournament: $(EXE_TARGET)
 
+rps_lib: $(LIB_TARGET)
+
 $(EXE_TARGET): $(EXE_OBJS)
 	$(CC) $(EXE_OBJS) -o $@ $(EXE_FLAGS)
 
-rps_lib: $(LIB_TARGET)
-
 $(LIB_TARGET): $(LIB_OBJS)
 	$(CC) $(LIB_OBJS) -o $@ $(LIB_FLAGS)
+
+SOURCES	= $(wildcard *.cpp)
+OBJECTS = $(SOURCES:%.cpp=%.o)
 
 $(OBJECTS): %.o : %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(EXE_TARGET) $(LIB_TARGET) $(OBJECTS)
-
-zip:
-	zip hw3_203521984_203774849 *.cpp *.h makefile *.txt
+	rm -f $(OBJECTS) $(EXE_TARGET) $(LIB_TARGET)

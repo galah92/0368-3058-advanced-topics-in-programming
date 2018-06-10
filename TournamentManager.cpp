@@ -1,168 +1,182 @@
-#include <iostream>
 #include <algorithm>
-#include <iterator>
-#include <thread>
+#include <iostream>
+#include <random>
+#include <dlfcn.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <experimental/filesystem>
 #include "TournamentManager.h"
 #include "GameManager.h"
-
-#if defined(__linux__) || defined(__APPLE__)
-#include <dlfcn.h>
-#elif _WIN32
-#include <Windows.h>
-#endif
+#include "AlgorithmRegistration.h"
 
 
-class SharedLib {
-public:
-    SharedLib(const std::experimental::filesystem::v1::path& path) {
-#if defined(__linux__) || defined(__APPLE__)
-        _lib = dlopen(path.c_str(), RTLD_LAZY);
-#elif _WIN32
-        _lib = LoadLibrary(path.string().c_str());
-#endif
-    }
-    ~SharedLib() {
-        if (!_lib) return;
-#if defined(__linux__) || defined(__APPLE__)
-        dlclose(_lib);
-#elif _WIN32
-        FreeLibrary((HMODULE)_lib); // TODO: change to dynamic_cast
-#endif
-        _lib = nullptr;
-    }
-    operator bool() const { return _lib; }
-    static bool valid(const std::experimental::filesystem::v1::path& path) {
-#if defined(__linux__) || defined(__APPLE__)
-        return path.extension() == ".so";
-#elif _WIN32
-        return path.extension() == ".dll";
-#endif
-        return true;
-    }
-private:
-    void* _lib = nullptr;
-};
+AlgorithmRegistration::AlgorithmRegistration(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod) {
+	TournamentManager::getTournamentManager().registerAlgorithm(id, factoryMethod);
+}
 
 TournamentManager TournamentManager::_singleton;
 
-TournamentManager& TournamentManager::get() {
-    return _singleton;
-}
-
 void TournamentManager::registerAlgorithm(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod) {
-    _algorithms[id] = factoryMethod;
-    _scores.emplace(id, std::make_shared<std::atomic<unsigned int>>(0));
+	if(_algos.find(id) != _algos.end()) {
+        std::cout << "ERROR: " << id << " is registered, skipping" << std::endl;
+	}
+	_algos[id] = factoryMethod;
+	_scores[id] = 0;
+    _numGames[id] = 0;
 }
 
 void TournamentManager::run() {
-    const auto sharedLibs = loadSharedLibs(); // registering all algorithms
-    if (sharedLibs.empty()) {
-        std::cout << "Error: no shared libraries loaded" << std::endl;
-        return;
-    }
-    initGames();
-    // init all worker threads
-    std::vector<std::thread> threads;
-    for (auto i = 0; i < maxThreads - 1; i++) {
-        threads.emplace_back(&TournamentManager::workerThread, this);
-    }
-    workerThread(); // main thread should also participate
-    for (auto& thread : threads) thread.join();
+    loadSharedLibs();
+    if (_algos.size() < 2) return; // not enough players
+    playerAllGames();
     output();
+    freeSharedLibs();
 }
 
-std::vector<SharedLib> TournamentManager::loadSharedLibs() {
-    std::vector<SharedLib> libs;
-    if (!std::experimental::filesystem::is_directory(path)) return libs;
-    const auto& it = std::experimental::filesystem::directory_iterator(path);
-    for (const auto& file : it) {
-        const auto& fpath = file.path();
-        if (!SharedLib::valid(fpath)) continue;
-        SharedLib lib(fpath);
-        if (lib) {
-            libs.push_back(lib);
-        } else {
-            std::cout << "Error: failed loading " << fpath.string() << std::endl;
+bool TournamentManager::isValidLib(const char* fileName) {
+	std::string filename(fileName);
+	std::string start("RSPPlayer_");
+	std::string end(".so");
+	if (filename.length() != 22) return false;
+	std::string fileStart(filename.substr(0, start.length()));
+	if (fileStart.compare(start) != 0) return false;
+	std::string fileEnd(filename.substr(start.length()+9, 22));
+	if (fileEnd.compare(end) != 0) return false;
+	return true;
+}
+
+void TournamentManager::loadSharedLibs() {
+    DIR* dir = opendir(path.c_str());
+    if (!dir) return;
+	struct dirent* ep;
+	while ((ep = readdir(dir))) {
+		if (isValidLib(ep->d_name)) {
+			std::string file(path + std::string("/") + std::string(ep->d_name));
+			void* lib = dlopen(file.c_str(), RTLD_LAZY);
+            if (lib) {
+                _libs.push_back(lib);
+            } else {
+                std::cout << "Error loading " << file << ": " << dlerror() << std::endl;
+            }
+		}
+	}
+	closedir(dir);
+    // namespace fs = std::experimental::filesystem::v1;
+    // if (!fs::is_directory(path)) return;
+    // for (const auto& file : fs::directory_iterator(path)) {
+    //     if (file.path().extension() != ".so") continue;
+    //     void* lib = dlopen(file.path().c_str(), RTLD_LAZY);
+    //     if (lib) {
+    //         _libs.push_back(lib);
+    //     } else {
+    //         std::cout << "Error loading " << file.path() << ": " << dlerror() << std::endl;
+    //     }
+    // }
+}
+
+void TournamentManager::freeSharedLibs() {
+    _algos.clear();
+    for (const auto& lib : _libs) dlclose(lib);
+}
+
+void TournamentManager::playerAllGames() {
+    std::vector<std::thread> threads;
+    for (unsigned int i = 0; i < maxThreads - 1; i++) {
+        threads.emplace_back(&TournamentManager::gamesWorker, this, i);
+    }
+    gamesWorker(maxThreads - 1); // main thread should also participate
+    for (auto& t : threads) t.join();
+    // handle leftover algorithms
+    std::string leftPlayer;
+    if(_numGames.size() > 0) { // assuming _numGames.size() == 1
+        leftPlayer = _numGames.begin()->first;
+        auto it = _scores.begin();
+        while (_numGames[leftPlayer] < _MAX_GAMES) {
+            // do not play against yourself
+            if (leftPlayer.compare(it->first) != 0) {
+                runGameBetweenTwoPlayers(leftPlayer,it->first,false);
+                _numGames[leftPlayer]++;
+            }
+            it++;
+            // If we reached the end of the map - start over
+            if (it == _scores.end()) it = _scores.begin();
         }
     }
-    return libs;
-}
-std::pair<int, int> chooseTwoGames(const std::unique_ptr<std::vector<std::pair<std::string, int>>> &cgPointer){
-    auto _rg = std::mt19937(std::random_device{}());
-    auto n = std::uniform_int_distribution<int>(0, cgPointer->size())(_rg);
-    auto k = std::uniform_int_distribution<int>(0, cgPointer->size())(_rg);
-    while (n == k){
-        k = std::uniform_int_distribution<int>(0, cgPointer->size())(_rg);
-    }
-    return std::make_pair(n,k);
 }
 
-void TournamentManager::initGames() {
-    _games.clear();
-    std::vector<std::pair<std::string,int>> currentGames;
-    for (const auto &algo : _algorithms){ // initialize every algorithm to 30 games
-        currentGames.push_back(std::make_pair(algo.first, 30));
-    }
-    auto cgPointer = std::make_unique<std::vector<std::pair<std::string, int>>>(currentGames);
-    while(currentGames.size() > 1){
-        auto gamesIndices = chooseTwoGames(cgPointer);
-        // push valid game(two algo's) to _games
-        _games.emplace_back(std::make_pair(currentGames[gamesIndices.first].first, true),
-                            std::make_pair(currentGames[gamesIndices.second].first, true)); 
-        currentGames[gamesIndices.first].second--;
-        currentGames[gamesIndices.second].second--;
-        // remove algo's which complete 30 games
-        if (currentGames[gamesIndices.first].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.first);
-        if (currentGames[gamesIndices.second].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.second);
-    }
-    if (currentGames.size() == 0) return; // there is one algo in currentGames
-    auto algo = currentGames.back();
-    // find opponent
-    std::string opponent;
-    for (const auto &op : _algorithms){
-        if (op.first != algo.first){
-            opponent = std::move(op.first);
-            break;
+void TournamentManager::runGameBetweenTwoPlayers(std::string firstPlayerID, std::string secondPlayerID, bool updateSecondPlayer) {
+	GameManager game;
+    auto winner = game.playRound(_algos[firstPlayerID](), _algos[secondPlayerID]());
+    std::lock_guard<std::mutex> guard(_scoresMutex);
+    if (winner == 1) {
+        _scores[firstPlayerID] += 3;
+    } else if (winner == 2 && updateSecondPlayer) {
+        _scores[secondPlayerID] += 3;
+    } else {
+        _scores[firstPlayerID] += 1;
+        if(updateSecondPlayer) {
+            _scores[secondPlayerID] += 1;
         }
     }
-    while(algo.second > 0){
-        _games.emplace_back(std::make_pair(algo.first, true),std::make_pair(opponent, false));
-        algo.second--;
-    }
 }
 
-void TournamentManager::workerThread() {
-    GameManager gameManager;
+void TournamentManager::gamesWorker(int seedNum) {
+    std::string firstPlayer;
+    std::string  secondPlayer;
+    // For random numbers
+    std::default_random_engine generator(seedNum * 10);
+    std::uniform_int_distribution<int> distribution(0, _numGames.size());
+    GameManager game;
     while (true) {
-        _gamesMutex.lock();
-        if (_games.empty()) { // no games left
-            _gamesMutex.unlock();
-            return;        
+        // Check if there is enough players
+        _numGamesMutex.lock();
+        if(_numGames.size() <= 1) {
+            _numGamesMutex.unlock();
+            return;
         }
-        auto idsPair = _games.front();
-        // idsPair is pair of pair<string, bool>
-        _games.pop_front();
-        _gamesMutex.unlock();
-        auto winner = gameManager.playRound(_algorithms[idsPair.first.first](), _algorithms[idsPair.second.first]());
-        if (winner == 1 && idsPair.first.second == true) {
-            _scores[idsPair.first.first]->operator+=(3);
-        } else if (winner == 2 && idsPair.second.second == true) {
-            _scores[idsPair.second.first]->operator+=(3);
-        } else { // tie
-            if(idsPair.first.second == true) _scores[idsPair.first.first]->operator++();
-            if(idsPair.second.second == true) _scores[idsPair.second.first]->operator++();
+        _numGamesMutex.unlock();
+        firstPlayer = "";
+        secondPlayer = "";
+        while (firstPlayer.compare(secondPlayer) == 0) {
+            firstPlayer = getPlayerId(distribution(generator) % _numGames.size());
+            secondPlayer = getPlayerId(distribution(generator) % _numGames.size());
         }
+        _numGamesMutex.lock();
+        _numGames[firstPlayer]++;
+        _numGames[secondPlayer]++;
+        if(_numGames[firstPlayer] == _MAX_GAMES) _numGames.erase(firstPlayer);
+        if(_numGames[secondPlayer] == _MAX_GAMES) _numGames.erase(secondPlayer);
+        _numGamesMutex.unlock();
+        auto winner = game.playRound(_algos[firstPlayer](), _algos[secondPlayer]());
+        std::lock_guard<std::mutex> guard(_scoresMutex);
+        if (winner == 1) {
+            _scores[firstPlayer] += 3;
+        } else if (winner == 2 && true) {
+            _scores[firstPlayer] += 3;
+        } else {
+            _scores[firstPlayer] += 1;
+            if (true) {
+                _scores[secondPlayer] += 1;
+            }
+        }
+
     }
 }
 
-void TournamentManager::output() {
-    std::vector<std::pair<std::string, std::shared_ptr<std::atomic<unsigned int>>>> vec;
-    copy(_scores.begin(), _scores.end(), std::back_inserter(vec));
-    std::sort(vec.begin(), vec.end(), [](const auto& lhs, const auto& rhs) {
-        return lhs.second < rhs.second; // sort by score
+const std::string& TournamentManager::getPlayerId(int randNum) {
+    auto randomIter = _numGames.begin();
+    if ((unsigned int)randNum > _numGames.size()) return randomIter->first;
+    std::advance(randomIter, randNum);
+    return randomIter->first;
+}
+
+void TournamentManager::output() const {
+    std::vector<std::pair<std::string, unsigned int>> vec;
+    for (const auto& p : _scores) vec.push_back(p);
+    std::sort(vec.begin(), vec.end(), [](const auto& p1, const auto& p2) {
+        return p1.second > p2.second;
     });
-    for (const auto& pair : vec) {
-        std::cout << pair.first << " " << *pair.second << std::endl;
+    for (const auto& p : vec) {
+        std::cout << p.first << " " << p.second << std::endl;
     }
 }

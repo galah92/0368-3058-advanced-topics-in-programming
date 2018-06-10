@@ -1,37 +1,38 @@
 #pragma once
 
-#include <unordered_map>
 #include <functional>
-#include <utility>
 #include <string>
-#include <atomic>
-#include <memory>
-#include <random>
-#include <deque>
+#include <thread>
 #include <mutex>
 #include <map>
 #include "PlayerAlgorithm.h"
 
 
-class SharedLib;
-
 class TournamentManager {
 public:
-    static TournamentManager& get();
+    static TournamentManager& getTournamentManager() { return _singleton; }
+    TournamentManager(const TournamentManager&) = delete;
+    TournamentManager& operator=(const TournamentManager&) = delete;
     void registerAlgorithm(std::string id, std::function<std::unique_ptr<PlayerAlgorithm>()> factoryMethod);
     void run();
-    int maxThreads = 4;
+    unsigned int maxThreads = 4;
     std::string path = "./";
 private:
     TournamentManager() = default;
-    std::vector<SharedLib> loadSharedLibs();
-    void initGames();
-    void workerThread();
-    void output();
+    bool isValidLib(const char* filename);
+    void loadSharedLibs();
+    void freeSharedLibs();
+    void playerAllGames();
+    const std::string& getPlayerId(int randNum);
+    void runGameBetweenTwoPlayers(std::string firstPlayerID, std::string secondPlayerID, bool updateSecondPlayer);
+    void gamesWorker(int seedNum);
+    void output() const;
     static TournamentManager _singleton;
-    std::unordered_map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> _algorithms;
-    std::unordered_map<std::string, std::shared_ptr<std::atomic<unsigned int>>> _scores;
-    std::deque<std::pair<std::pair<std::string, bool>, std::pair<std::string, bool>>> _games;
-    std::mutex _gamesMutex;
-    const static unsigned int MAX_GAMES = 30;
+    std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> _algos;
+    std::map<std::string, unsigned int> _scores;
+    std::map<std::string, unsigned int> _numGames;
+    std::vector<void *> _libs;
+    std::mutex _scoresMutex;
+    std::mutex _numGamesMutex;
+    const static unsigned int _MAX_GAMES = 30;
 };
