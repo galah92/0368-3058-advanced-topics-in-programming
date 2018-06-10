@@ -3,7 +3,9 @@
 #include <functional>
 #include <string>
 #include <thread>
+#include <atomic>
 #include <mutex>
+#include <tuple>
 #include <deque>
 #include <map>
 #include "PlayerAlgorithm.h"
@@ -28,11 +30,9 @@ private:
     void output() const;
     static TournamentManager _singleton;
     std::map<std::string, std::function<std::unique_ptr<PlayerAlgorithm>()>> _algos;
-    std::map<std::string, unsigned int> _scores;
-    std::map<std::string, unsigned int> _numGames;
-    std::deque<std::pair<std::pair<std::string, bool>, std::pair<std::string, bool>>> _games;
+    std::map<std::string, std::atomic_uint> _scores;
+    std::deque<std::tuple<std::string, std::string, bool>> _games;
     std::vector<void *> _libs;
     std::mutex _scoresMutex;
-    std::mutex _numGamesMutex;
-    const static unsigned int _MAX_GAMES = 30;
+    const unsigned int _MAX_GAMES = 30;
 };

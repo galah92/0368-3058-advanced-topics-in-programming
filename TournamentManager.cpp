@@ -22,7 +22,6 @@ void TournamentManager::registerAlgorithm(std::string id, std::function<std::uni
 	}
 	_algos[id] = factoryMethod;
 	_scores[id] = 0;
-    _numGames[id] = 0;
 }
 
 void TournamentManager::run() {
@@ -38,31 +37,6 @@ void TournamentManager::run() {
     for (auto& thread : threads) thread.join();
     output();
     freeSharedLibs();
-}
-
-void TournamentManager::workerThread() {
-    GameManager gameManager;
-    while (true) {
-        _scoresMutex.lock();
-        if (_games.empty()) { // no games left
-            _scoresMutex.unlock();
-            return;        
-        }
-        auto idsPair = _games.front();
-        // idsPair is pair of pair<string, bool>
-        _games.pop_front();
-        _scoresMutex.unlock();
-        auto winner = gameManager.playRound(_algos[idsPair.first.first](), _algos[idsPair.second.first]());
-        std::lock_guard<std::mutex> guard(_scoresMutex);
-        if (winner == 1 && idsPair.first.second == true) {
-            _scores[idsPair.first.first] += 3;
-        } else if (winner == 2 && idsPair.second.second == true) {
-            _scores[idsPair.second.first] += 3;
-        } else { // tie
-            if(idsPair.first.second == true) _scores[idsPair.first.first]++;
-            if(idsPair.second.second == true) _scores[idsPair.second.first]++;
-        }
-    }
 }
 
 bool TournamentManager::isValidLib(const std::string fname) const {
@@ -107,7 +81,7 @@ void TournamentManager::freeSharedLibs() {
     for (const auto& lib : _libs) dlclose(lib);
 }
 
-std::pair<int, int> chooseTwoGames(const std::vector<std::pair<std::string, int>>& games){
+std::pair<int, int> chooseTwoGames(const std::vector<std::pair<std::string, unsigned int>>& games){
     auto _rg = std::mt19937(std::random_device{}());
     auto n = std::uniform_int_distribution<int>(0, games.size() - 1)(_rg);
     auto k = std::uniform_int_distribution<int>(0, games.size() - 1)(_rg);
@@ -119,20 +93,20 @@ std::pair<int, int> chooseTwoGames(const std::vector<std::pair<std::string, int>
 
 void TournamentManager::initGames() {
     _games.clear();
-    std::vector<std::pair<std::string, int>> currentGames;
-    for (const auto& algo : _algos) currentGames.emplace_back(algo.first, 30);
-    while (currentGames.size() > 1) {
-        auto gamesIndices = chooseTwoGames(currentGames);
+    std::vector<std::pair<std::string, unsigned int>> numGames;
+    for (auto& algo : _algos) numGames.emplace_back(algo.first, _MAX_GAMES);
+    while (numGames.size() > 1) {
+        auto indices = chooseTwoGames(numGames);
         // push valid game(two algo's) to _games
-        _games.emplace_back(std::make_pair(currentGames[gamesIndices.first].first, true), std::make_pair(currentGames[gamesIndices.second].first, true)); 
-        currentGames[gamesIndices.first].second--;
-        currentGames[gamesIndices.second].second--;
+        _games.emplace_back(numGames[indices.first].first, numGames[indices.second].first, true);
+        numGames[indices.first].second--;
+        numGames[indices.second].second--;
         // remove algo's which complete 30 games
-        if (currentGames[gamesIndices.first].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.first);
-        if (currentGames[gamesIndices.second].second == 0) currentGames.erase(currentGames.begin() + gamesIndices.second);
+        if (numGames[indices.first].second == 0) numGames.erase(numGames.begin() + indices.first);
+        if (numGames[indices.second].second == 0) numGames.erase(numGames.begin() + indices.second);
     }
-    if (currentGames.size() == 0) return; // there is one algo in currentGames
-    auto algo = currentGames.back();
+    if (numGames.size() == 0) return; // there is one algo in numGames
+    auto algo = numGames.back();
     // find opponent
     std::string opponent;
     for (const auto &op : _algos) {
@@ -142,8 +116,36 @@ void TournamentManager::initGames() {
         }
     }
     while (algo.second > 0) {
-        _games.emplace_back(std::make_pair(algo.first, true),std::make_pair(opponent, false));
+        _games.emplace_back(algo.first, opponent, false);
         algo.second--;
+    }
+}
+
+void TournamentManager::workerThread() {
+    GameManager gameManager;
+    while (true) {
+        _scoresMutex.lock();
+        if (_games.empty()) { // no games left
+            _scoresMutex.unlock();
+            return;        
+        }
+        auto match = _games.front();
+        _games.pop_front();
+        _scoresMutex.unlock();
+        std::string id1, id2;
+        bool toUpdateScore;
+        std::tie(id1, id2, toUpdateScore) = match;
+        std::shared_ptr<PlayerAlgorithm> algo1 = _algos[id1]();
+        std::shared_ptr<PlayerAlgorithm> algo2 = _algos[id2]();
+        auto winner = gameManager.playRound(algo1, algo2);
+        if (winner == 1) {
+            _scores[id1] += 3;
+        } else if (winner == 2 && toUpdateScore) {
+            _scores[id2] += 3;
+        } else { // tie
+            _scores[id1]++;
+            _scores[id2]++;
+        }
     }
 }
 
