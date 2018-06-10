@@ -1,4 +1,3 @@
-#include <string>
 #include <algorithm>
 #include "AutoPlayerAlgorithm.h"
 #include "AlgorithmRegistration.h"
@@ -9,13 +8,13 @@ REGISTER_ALGORITHM(203521984)
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
 
 AutoPlayerAlgorithm::AutoPlayerAlgorithm() : _rg(std::mt19937(std::random_device{}())) {
-    _piecesOnBoardCount = { // num of pieces currently hard-coded 
+    _numPieces = {
         { 'F', 1 },
         { 'R', 2 },
         { 'P', 5 },
         { 'S', 1 },
         { 'B', 2 },
-        { 'J', 2 }
+        { 'J', 2 },
     };
 }
 
@@ -60,11 +59,11 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
         _board[pos] = std::make_shared<Piece>(_player, ourPiece);
     }
     else if (fightInfo.getWinner() == 1 - _player) { // we lost
-        _piecesOnBoardCount[ourPiece]--;
+        _numPieces[ourPiece]--;
         _board[pos] = std::make_shared<Piece>(1 - _player, oppPiece);
     }
     else { // both pieces killed
-        _piecesOnBoardCount[ourPiece]--;
+        _numPieces[ourPiece]--;
         _board[pos] = Piece::Empty;
     }
     // TODO: can deduce the number opponent pieces and their type!
@@ -87,7 +86,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 
     for (const auto& pieceType : MOVABLE_PIECES) {
-        if (_piecesOnBoardCount[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
+        if (_numPieces[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
     }
     // there are no movable pieces
     for (unsigned int y = 0; y < M; y++) {
@@ -104,7 +103,7 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
     for (const auto& pieceType : MOVABLE_PIECES) {
-        if (_piecesOnBoardCount[pieceType] == 0) continue;
+        if (_numPieces[pieceType] == 0) continue;
         for (auto y = 0; y < M; y++) {
             for (auto x = 0; x < N; x++) {
                 const auto& piece = _board[{x, y}];

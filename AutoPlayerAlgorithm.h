@@ -1,18 +1,18 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <map>
 #include <random>
+#include <memory>
+#include <vector>
+#include <map>
 #include "PlayerAlgorithm.h"
+#include "GameContainers.h"
 #include "PiecePosition.h"
+#include "JokerChange.h"
+#include "BoardImpl.h"
 #include "FightInfo.h"
 #include "Board.h"
 #include "Move.h"
-#include "JokerChange.h"
 #include "Piece.h"
-#include "GameContainers.h"
-#include "BoardImpl.h"
 
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm {
@@ -33,8 +33,8 @@ private:
     void rotateBoard();
     int _player;
     BoardImpl _board;
-    std::map<char, unsigned int> _piecesOnBoardCount;
     std::mt19937 _rg;
+    std::map<char, unsigned int> _numPieces;
 };
 
 using RSPPlayer_203521984 = AutoPlayerAlgorithm;

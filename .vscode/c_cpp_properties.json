@@ -24,6 +24,9 @@
             "name": "WSL",
             "intelliSenseMode": "clang-x64",
             "compilerPath": "/usr/bin/gcc",
+            "includePath": [
+                "${workspaceFolder}"
+            ],
             "defines": [
                 "__linux__",
                 "__x86_64__"
