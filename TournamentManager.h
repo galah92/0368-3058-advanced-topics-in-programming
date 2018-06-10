@@ -19,7 +19,7 @@ public:
     std::string path = "./";
 private:
     TournamentManager() = default;
-    bool isValidLib(const char* filename);
+    bool isValidLib(const std::string fname) const;
     void loadSharedLibs();
     void freeSharedLibs();
     void playerAllGames();

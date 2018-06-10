@@ -2,8 +2,8 @@
 #include <iostream>
 #include <random>
 #include <dlfcn.h>
-#include <sys/types.h>
-#include <dirent.h>
+// #include <sys/types.h>
+// #include <dirent.h>
 #include <experimental/filesystem>
 #include "TournamentManager.h"
 #include "GameManager.h"
@@ -33,45 +33,40 @@ void TournamentManager::run() {
     freeSharedLibs();
 }
 
-bool TournamentManager::isValidLib(const char* fileName) {
-	std::string filename(fileName);
-	std::string start("RSPPlayer_");
-	std::string end(".so");
-	if (filename.length() != 22) return false;
-	std::string fileStart(filename.substr(0, start.length()));
-	if (fileStart.compare(start) != 0) return false;
-	std::string fileEnd(filename.substr(start.length()+9, 22));
-	if (fileEnd.compare(end) != 0) return false;
+bool TournamentManager::isValidLib(const std::string fname) const {
+    if (fname.find("RSPPlayer_") != 0) return false; // wrong prefix
+    const std::string ext = ".so";
+    if (fname.compare(fname.length() - ext.length(), ext.length(), ext)) return false;
 	return true;
 }
 
 void TournamentManager::loadSharedLibs() {
-    DIR* dir = opendir(path.c_str());
-    if (!dir) return;
-	struct dirent* ep;
-	while ((ep = readdir(dir))) {
-		if (isValidLib(ep->d_name)) {
-			std::string file(path + std::string("/") + std::string(ep->d_name));
-			void* lib = dlopen(file.c_str(), RTLD_LAZY);
-            if (lib) {
-                _libs.push_back(lib);
-            } else {
-                std::cout << "Error loading " << file << ": " << dlerror() << std::endl;
-            }
-		}
-	}
-	closedir(dir);
-    // namespace fs = std::experimental::filesystem::v1;
-    // if (!fs::is_directory(path)) return;
-    // for (const auto& file : fs::directory_iterator(path)) {
-    //     if (file.path().extension() != ".so") continue;
-    //     void* lib = dlopen(file.path().c_str(), RTLD_LAZY);
-    //     if (lib) {
-    //         _libs.push_back(lib);
-    //     } else {
-    //         std::cout << "Error loading " << file.path() << ": " << dlerror() << std::endl;
-    //     }
-    // }
+    // DIR* dir = opendir(path.c_str());
+    // if (!dir) return;
+	// struct dirent* ep;
+	// while ((ep = readdir(dir))) {
+	// 	if (isValidLib(ep->d_name)) {
+	// 		std::string file(path + std::string("/") + std::string(ep->d_name));
+	// 		void* lib = dlopen(file.c_str(), RTLD_LAZY);
+    //         if (lib) {
+    //             _libs.push_back(lib);
+    //         } else {
+    //             std::cout << "Error loading" << dlerror() << std::endl;
+    //         }
+	// 	}
+	// }
+	// closedir(dir);
+    namespace fs = std::experimental::filesystem::v1;
+    if (!fs::is_directory(path)) return;
+    for (const auto& file : fs::directory_iterator(path)) {
+        if (file.path().extension() != ".so") continue;
+        void* lib = dlopen(file.path().c_str(), RTLD_LAZY);
+        if (lib) {
+            _libs.push_back(lib);
+        } else {
+            std::cout << "Error loading " << file.path() << ": " << dlerror() << std::endl;
+        }
+    }
 }
 
 void TournamentManager::freeSharedLibs() {
