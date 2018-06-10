@@ -2,9 +2,9 @@
 #include <iostream>
 #include <random>
 #include <dlfcn.h>
-// #include <sys/types.h>
-// #include <dirent.h>
-#include <experimental/filesystem>
+#include <sys/types.h>
+#include <dirent.h>
+// #include <experimental/filesystem>
 #include "TournamentManager.h"
 #include "GameManager.h"
 #include "AlgorithmRegistration.h"
@@ -47,33 +47,33 @@ bool TournamentManager::isValidLib(const std::string fname) const {
 }
 
 void TournamentManager::loadSharedLibs() {
-    // DIR* dir = opendir(path.c_str());
-    // if (!dir) return;
-	// struct dirent* ep;
-	// while ((ep = readdir(dir))) {
-	// 	if (isValidLib(ep->d_name)) {
-	// 		std::string file(path + std::string("/") + std::string(ep->d_name));
-	// 		void* lib = dlopen(file.c_str(), RTLD_LAZY);
-    //         if (lib) {
-    //             _libs.push_back(lib);
-    //         } else {
-    //             std::cout << "Error loading" << dlerror() << std::endl;
-    //         }
-	// 	}
-	// }
-	// closedir(dir);
-    namespace fs = std::experimental::filesystem::v1;
-    if (!fs::is_directory(path)) return;
-    for (const auto& file : fs::directory_iterator(path)) {
-        if (file.path().extension() != ".so") continue;
-        if (file.path().string().find("RSPPlayer_") == 0) continue;
-        void* lib = dlopen(file.path().c_str(), RTLD_LAZY);
-        if (lib) {
-            _libs.push_back(lib);
-        } else {
-            std::cout << "Error loading " << dlerror() << std::endl;
-        }
-    }
+    DIR* dir = opendir(path.c_str());
+    if (!dir) return;
+	struct dirent* ep;
+	while ((ep = readdir(dir))) {
+		if (isValidLib(ep->d_name)) {
+			std::string file(path + std::string("/") + std::string(ep->d_name));
+			void* lib = dlopen(file.c_str(), RTLD_LAZY);
+            if (lib) {
+                _libs.push_back(lib);
+            } else {
+                std::cout << "Error loading" << dlerror() << std::endl;
+            }
+		}
+	}
+	closedir(dir);
+    // namespace fs = std::experimental::filesystem::v1;
+    // if (!fs::is_directory(path)) return;
+    // for (const auto& file : fs::directory_iterator(path)) {
+    //     if (file.path().extension() != ".so") continue;
+    //     if (file.path().string().find("RSPPlayer_") == 0) continue;
+    //     void* lib = dlopen(file.path().c_str(), RTLD_LAZY);
+    //     if (lib) {
+    //         _libs.push_back(lib);
+    //     } else {
+    //         std::cout << "Error loading " << dlerror() << std::endl;
+    //     }
+    // }
 }
 
 void TournamentManager::freeSharedLibs() {
