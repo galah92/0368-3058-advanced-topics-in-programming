@@ -15,25 +15,25 @@ int BoardImpl::getPlayer(const Point& pos) const {
 }
 
 bool BoardImpl::isValidPosition(const Point& pos) const {
-    int x = pos.getX();
-    int y = pos.getY();
+    int x = (pos.getX() - 1);
+    int y = (pos.getY() - 1);
     return x >= 0 && x < N && y >= 0 && y < M;
 }
 
 std::shared_ptr<Piece>& BoardImpl::operator[](const Point& pos) {
-    return _arr[pos.getX() *  M + pos.getY()];
+    return _arr[(pos.getX() - 1) *  M + (pos.getY() - 1)];
 }
 
 std::shared_ptr<Piece> BoardImpl::operator[](const Point& pos) const {
-    return _arr[pos.getX() *  M + pos.getY()];
+    return _arr[(pos.getX() - 1) *  M + (pos.getY() - 1)];
 }
 
 std::shared_ptr<Piece>& BoardImpl::operator[](const std::pair<int, int> pos) {
-    return _arr[pos.first *  M + pos.second];
+    return _arr[(pos.first - 1) *  M + (pos.second - 1)];
 }
 
 std::shared_ptr<Piece> BoardImpl::operator[](const std::pair<int, int> pos) const {
-    return _arr[pos.first *  M + pos.second];
+    return _arr[(pos.first - 1) *  M + (pos.second - 1)];
 }
 
 std::ostream& operator<<(std::ostream& os, const BoardImpl& board) {

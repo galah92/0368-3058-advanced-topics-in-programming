@@ -61,8 +61,8 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
         return;
     }
     // merge tmpBoard and main board
-    for (unsigned int i = 0; i < N; i++) {
-        for (unsigned int j = 0; j < N; j++) {
+    for (unsigned int i = 1; i <= N; i++) {
+        for (unsigned int j = 1; j <= N; j++) {
             PointImpl pos(i, j);
             auto fightInfo = fight(pos, tmpBoard[pos]);
             if (fightInfo) fights.push_back(std::move(fightInfo));
