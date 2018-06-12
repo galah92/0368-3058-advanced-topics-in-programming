@@ -32,6 +32,7 @@ private:
     void initBoard();
     void rotateBoard();
     int _player;
+    int _opponent;
     BoardImpl _board;
     std::mt19937 _rg;
     std::map<char, unsigned int> _numPieces;

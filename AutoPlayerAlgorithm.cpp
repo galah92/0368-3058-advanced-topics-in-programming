@@ -18,6 +18,7 @@ AutoPlayerAlgorithm::AutoPlayerAlgorithm() : _rg(std::mt19937(std::random_device
 
 void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::unique_ptr<PiecePosition>>& positions) {
     _player = player;
+    _opponent = _player == 1 ? 2 : 1;
     _board.clear();
     positions.clear();
     initBoard();
@@ -36,7 +37,7 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
         for (auto x = 1; x <= N; x++) {
             PointImpl pos(x, y);
             if (board.getPlayer(pos) != _player && _board[pos]->getPlayer() == _player) { // player lose a fight
-                _board[pos] = std::make_shared<Piece>(1 - _player, 'U'); // Unknown opponent's piece
+                _board[pos] = std::make_shared<Piece>(_opponent, 'U'); // Unknown opponent's piece
             }
         }
     }
@@ -52,13 +53,13 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
     const auto& pos = fightInfo.getPosition();
     const auto ourPiece = fightInfo.getPiece(_player);
-    const auto oppPiece = fightInfo.getPiece(1 - _player);
+    const auto oppPiece = fightInfo.getPiece(_opponent);
     if (fightInfo.getWinner() == _player) {
         _board[pos] = std::make_shared<Piece>(_player, ourPiece);
     }
-    else if (fightInfo.getWinner() == 1 - _player) { // we lost
+    else if (fightInfo.getWinner() == _opponent) { // we lost
         _numPieces[ourPiece]--;
-        _board[pos] = std::make_shared<Piece>(1 - _player, oppPiece);
+        _board[pos] = std::make_shared<Piece>(_opponent, oppPiece);
     }
     else { // both pieces killed
         _numPieces[ourPiece]--;
@@ -75,7 +76,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
     to = getBestNeighbor(from);
 
     _board[*from] = Piece::Empty; // update board
-    if (_board[*to]->getPlayer() != 1 - _player) { // there will be no fight
+    if (_board[*to]->getPlayer() != _opponent) { // there will be no fight
         _board[*to] = _board[*from];
     }
     return std::make_unique<MoveImpl>(from->getX(), from->getY(), to->getX(), to->getY());

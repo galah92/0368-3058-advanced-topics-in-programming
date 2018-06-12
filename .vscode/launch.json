@@ -9,13 +9,13 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/ex2",
-            "args": ["auto-vs-file"],
+            "program": "${workspaceFolder}/ex3",
+            "args": ["-threads", "1"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
-            "MIMode": "lldb"
+            "MIMode": "gdb"
         },
         {
             "name": "C++ Launch (WSL)",
