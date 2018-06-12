@@ -23,6 +23,7 @@ int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_p
     std::vector<std::unique_ptr<FightInfo>> fights;
     position(0, fights);
     position(1, fights);
+    if (!isGameOn()) return output();
     _players[0]->algo->notifyOnInitialBoard(_board, fights);
     _players[1]->algo->notifyOnInitialBoard(_board, fights);
     // moves
