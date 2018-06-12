@@ -9,33 +9,31 @@
 #include "BoardImpl.h"
 
 
-enum class PlayerStatus {
-    Playing,
-    InvalidPos,
-    InvalidMove,
-    NoFlags,
-    CantMove,
-};
-
-struct Player {
-    Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
-        algo(algo),
-        status(PlayerStatus::Playing),
-        numFlags(0),
-        numMovable(0),
-        index(index) {}
-    std::shared_ptr<PlayerAlgorithm> algo;
-    PlayerStatus status = PlayerStatus::Playing;
-    std::map<char, unsigned int> numPieces;
-    unsigned int numFlags;
-    unsigned int numMovable;
-    int index;
-};
-
 class GameManager {
 public:
     int playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2);
 private:
+    enum class PlayerStatus {
+        Playing,
+        InvalidPos,
+        InvalidMove,
+        NoFlags,
+        CantMove,
+    };
+    struct Player {
+        Player(int index, std::shared_ptr<PlayerAlgorithm> algo) :
+            algo(algo),
+            status(PlayerStatus::Playing),
+            numFlags(0),
+            numMovable(0),
+            index(index) {}
+        std::shared_ptr<PlayerAlgorithm> algo;
+        PlayerStatus status = PlayerStatus::Playing;
+        std::map<char, unsigned int> numPieces;
+        unsigned int numFlags;
+        unsigned int numMovable;
+        int index;
+    };
     void position(int i, std::vector<std::unique_ptr<FightInfo>>& fights);
     void doMove(int i);
     void changeJoker(int i);

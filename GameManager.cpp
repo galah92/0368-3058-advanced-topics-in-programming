@@ -209,8 +209,11 @@ bool GameManager::isValid(const std::unique_ptr<PiecePosition>& piecePos, const 
 }
 
 bool GameManager::isValid(std::unique_ptr<Player>& player) const {
+    // check that status is 'playing'
     if (player->status != PlayerStatus::Playing) return false;
+    // check that has plags and can move
     if (player->numFlags == 0 || player->numMovable == 0) return false;
+    // check didn't exceed pieces capacity
     for (const auto& type : player->numPieces) {
         if (type.second > Piece::maxCapacity.at(type.first)) return false;
     }
