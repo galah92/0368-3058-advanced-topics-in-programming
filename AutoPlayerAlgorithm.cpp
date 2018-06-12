@@ -49,8 +49,10 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
     const auto& from = move.getFrom();
     const auto& to = move.getTo();
-    if (_board[from]->getPlayer() != _opponent) DEBUG("not an opponent piece");
-    if (_board[to]->getPlayer() == _opponent) DEBUG("stepping on opponent piece");
+    if (!_board.isValidPosition(from)) DEBUG("source pos not on board");
+    if (!_board.isValidPosition(to)) DEBUG("destination pos not on board");
+    if (_board[from]->getPlayer() != _opponent) DEBUG("source pos not of opponent piece");
+    if (_board[to]->getPlayer() == _opponent) DEBUG("destination pos of opponent piece");
     _board[to] = _board[from];
     _board[from] = Piece::Empty;
 }
@@ -61,18 +63,16 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
     if (_board[pos]->getPlayer() == 0) DEBUG("pos is empty");
     const auto ourPiece = fightInfo.getPiece(_player);
     const auto oppPiece = fightInfo.getPiece(_opponent);
-    if (fightInfo.getWinner() == _player) {
+    const auto winner = fightInfo.getWinner();
+    if (winner == _player) {
         _board[pos] = std::make_shared<Piece>(_player, ourPiece);
-    }
-    else if (fightInfo.getWinner() == _opponent) { // we lost
+    } else if (winner == _opponent) {
         _numPieces[ourPiece]--;
         _board[pos] = std::make_shared<Piece>(_opponent, oppPiece);
-    }
-    else { // both pieces killed
+    } else if (winner == 0) {
         _numPieces[ourPiece]--;
         _board[pos] = Piece::Empty;
-    }
-    // TODO: can deduce the number opponent pieces and their type!
+    } else DEBUG("invalid winner");
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
