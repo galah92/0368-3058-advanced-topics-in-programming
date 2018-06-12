@@ -46,7 +46,6 @@ private:
     bool isValid(const std::unique_ptr<JokerChange>& jokerChange, int i) const;
     bool isValid(const std::unique_ptr<PiecePosition>& piecePos, const BoardImpl& board) const;
     bool isValid(std::unique_ptr<Player>& player) const;
-    bool isGameOn();
     std::unique_ptr<Player> _players[2];
     BoardImpl _board;
     unsigned int _numFights;

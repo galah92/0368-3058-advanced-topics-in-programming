@@ -23,15 +23,15 @@ int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_p
     std::vector<std::unique_ptr<FightInfo>> fights;
     position(0, fights);
     position(1, fights);
-    if (!isGameOn()) return output();
+    if (!isValid(_players[0]) || !isValid(_players[1])) return output();
     _players[0]->algo->notifyOnInitialBoard(_board, fights);
     _players[1]->algo->notifyOnInitialBoard(_board, fights);
     // moves
     auto i = 0;
     while (_numFights < FIGHTS_THRESHOLD) {
-        if (!isGameOn()) break;
+        if (!isValid(_players[0]) || !isValid(_players[1])) break;
         doMove(i);
-        if (!isGameOn()) break;
+        if (!isValid(_players[0]) || !isValid(_players[1])) break;
         changeJoker(i);
         i = 1 - i; // switch player
     }
@@ -209,13 +209,10 @@ bool GameManager::isValid(const std::unique_ptr<PiecePosition>& piecePos, const 
 }
 
 bool GameManager::isValid(std::unique_ptr<Player>& player) const {
+    if (player->status != PlayerStatus::Playing) return false;
     if (player->numFlags == 0 || player->numMovable == 0) return false;
     for (const auto& type : player->numPieces) {
         if (type.second > Piece::maxCapacity.at(type.first)) return false;
     }
     return true;
-}
-
-bool GameManager::isGameOn() {
-    return _players[0]->status == PlayerStatus::Playing && _players[1]->status == PlayerStatus::Playing;
 }
