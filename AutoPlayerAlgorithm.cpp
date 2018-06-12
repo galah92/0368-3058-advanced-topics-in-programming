@@ -2,6 +2,8 @@
 #include "AutoPlayerAlgorithm.h"
 #include "AlgorithmRegistration.h"
 
+#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
+
 
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
 
@@ -33,25 +35,30 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::vector<std::unique_ptr<FightInfo>>& fights) {
+    for (const auto& fight : fights) notifyFightResult(*fight);
     for (auto y = 1; y <= M; y++) {
         for (auto x = 1; x <= N; x++) {
             PointImpl pos(x, y);
-            if (board.getPlayer(pos) != _player && _board[pos]->getPlayer() == _player) { // player lose a fight
-                _board[pos] = std::make_shared<Piece>(_opponent, 'U'); // Unknown opponent's piece
+            if (board.getPlayer(pos) == _opponent && _board[pos]->getPlayer() != _opponent) {
+                _board[pos] = std::make_shared<Piece>(_opponent, 'U');
             }
         }
     }
-    for (const auto& fight : fights) notifyFightResult(*fight);
-    // TODO: can deduce the number opponent pieces and their type!
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
-    _board[move.getTo()] = _board[move.getFrom()];
-    _board[move.getFrom()] = Piece::Empty;
+    const auto& from = move.getFrom();
+    const auto& to = move.getTo();
+    if (_board[from]->getPlayer() != _opponent) DEBUG("not an opponent piece");
+    if (_board[to]->getPlayer() == _opponent) DEBUG("stepping on opponent piece");
+    _board[to] = _board[from];
+    _board[from] = Piece::Empty;
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
     const auto& pos = fightInfo.getPosition();
+    if (!_board.isValidPosition(pos)) DEBUG("pos not on board");
+    if (_board[pos]->getPlayer() == 0) DEBUG("pos is empty");
     const auto ourPiece = fightInfo.getPiece(_player);
     const auto oppPiece = fightInfo.getPiece(_opponent);
     if (fightInfo.getWinner() == _player) {
