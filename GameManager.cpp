@@ -144,7 +144,7 @@ std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::share
     if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
     _board[pos] = killPiece1 && killPiece2 ? Piece::Empty : (killPiece1 ? piece2 : piece1);
     if (piece1 == Piece::Empty || piece2 == Piece::Empty) return nullptr;
-    auto winner = killPiece1 && killPiece2 ? 0 : (killPiece1 ? 2 : 1);
+    auto winner = (killPiece1 && killPiece2) ? 0 : (killPiece1 ? 2 : 1);
     auto ch1 = (piece1->getPlayer() == 1 ? piece1 : piece2)->getUnderlyingType();
     auto ch2 = (piece1->getPlayer() == 2 ? piece1 : piece2)->getUnderlyingType();
     return std::make_unique<FightInfoImpl>((const PointImpl&)pos, ch1, ch2, winner);

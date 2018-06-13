@@ -59,6 +59,7 @@ void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
+    // DEBUG(std::string("ch1: ") + fightInfo.getPiece(1) + std::string(", ch2: ") + fightInfo.getPiece(2) + std::string(" winner:") + std::to_string(fightInfo.getWinner()));
     const auto& pos = fightInfo.getPosition();
     if (!_board.isValidPosition(pos)) DEBUG("pos not on board");
     if (_board[pos]->getPlayer() == 0) DEBUG("pos is empty");
