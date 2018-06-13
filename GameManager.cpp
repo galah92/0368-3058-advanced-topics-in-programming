@@ -9,6 +9,7 @@
 #include "PiecePosition.h"
 #include "GameContainers.h"
 
+#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
 
 int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
     // init
@@ -32,6 +33,7 @@ int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_p
         changeJoker(i);
         i = 1 - i; // switch player
     }
+    DEBUG("---newGame!-----");
     return output();
 }
 
@@ -70,10 +72,16 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
 
 void GameManager::doMove(int i) {
     const auto move = _players[i]->algo->getMove();
+    DEBUG("------beforeDoMove-------");
+    DEBUG(_board);
+    DEBUG("------beforeDoMove-------");
     if (!isValid(move, i)) {
         _players[i]->status = PlayerStatus::InvalidMove;
         return;
     }
+    DEBUG("from x: " << move->getFrom().getX() << " y: " << move->getFrom().getY() << 
+                 " To x: " << move->getTo().getX() << " y: " << move->getTo().getY());
+
     _players[1 - i]->algo->notifyOnOpponentMove(*move);
     auto fightInfo = fight(move->getTo(), _board[move->getFrom()]);
     if (fightInfo) {
@@ -84,6 +92,9 @@ void GameManager::doMove(int i) {
         _numFights++;
     }
     _board[move->getFrom()] = Piece::Empty;
+    DEBUG("------afterDoMove-------");
+    DEBUG(_board);
+    DEBUG("------afterDoMove-------");
 }
 
 void GameManager::changeJoker(int i) {
