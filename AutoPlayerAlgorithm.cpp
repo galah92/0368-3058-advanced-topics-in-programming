@@ -47,9 +47,6 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
-    DEBUG("--------notifyOpponentMove--------");
-    DEBUG(_board);
-    DEBUG("--------notifyOpponentMove--------");
     const auto& from = move.getFrom();
     const auto& to = move.getTo();
     if (!_board.isValidPosition(from)) DEBUG("source pos not on board");
@@ -79,22 +76,18 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-    std::unique_ptr<PointImpl> from;
-    std::unique_ptr<PointImpl> to;
-    from = getPosToMoveFrom();
+    std::unique_ptr<PointImpl> from = getPosToMoveFrom();
     if (from == nullptr) return nullptr;
-    to = getBestNeighbor(from);
+    std::unique_ptr<PointImpl> to = getBestNeighbor(from);
 
-    if (_board[{to->getX(), to->getY()}]->getPlayer() != _opponent) { // there will be no fight
-        _board[{to->getX(), to->getY()}] = _board[{from->getX(), from->getY()}];
+    if (_board[*to]->getPlayer() != _opponent) { // there will be no fight
+        _board[*to] = _board[*from];
     }
-    _board[{from->getX(), from->getY()}] = Piece::Empty; // update board
-    DEBUG("getMove : from x:" << from->getX() << " y:" << from->getY() << " to x:" << to->getX() << " y:" << to->getY());
+    _board[*from] = Piece::Empty; // update board
     return std::make_unique<MoveImpl>(from->getX(), from->getY(), to->getX(), to->getY());
 }
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
-
     for (const auto& pieceType : MOVABLE_PIECES) {
         if (_numPieces[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
     }
