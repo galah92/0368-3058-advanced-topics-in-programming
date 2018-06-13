@@ -27,9 +27,10 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
     for (auto i = 1; i <= N; i++) {
         for (auto j = 1; j <= M; j++) {
             const auto& piece = _board[{i, j}];
-            if (piece->getPlayer() == player) {
-                positions.push_back(std::make_unique<PiecePositionImpl>(i, j, piece->getType(), piece->getJokerType()));
-            }
+            if (piece->getPlayer() != player) continue;
+            const auto& type = piece->getType();
+            const auto & jokerType = piece->getJokerType();
+            positions.push_back(std::make_unique<PiecePositionImpl>(i, j, type, jokerType));
         }
     }
 }
@@ -39,9 +40,9 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
     for (auto y = 1; y <= M; y++) {
         for (auto x = 1; x <= N; x++) {
             PointImpl pos(x, y);
-            if (board.getPlayer(pos) == _opponent && _board[pos]->getPlayer() != _opponent) {
-                _board[pos] = std::make_shared<Piece>(_opponent, 'U');
-            }
+            if (board.getPlayer(pos) != _opponent) continue;
+            if (_board[pos]->getPlayer() == _opponent) continue;
+            _board[pos] = std::make_shared<Piece>(_opponent, 'U');
         }
     }
 }
@@ -76,9 +77,9 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-    std::unique_ptr<PointImpl> from = getPosToMoveFrom();
+    const auto from = getPosToMoveFrom();
     if (from == nullptr) return nullptr;
-    std::unique_ptr<PointImpl> to = getBestNeighbor(from);
+    const auto to = getBestNeighbor(*from);
 
     if (_board[*to]->getPlayer() != _opponent) { // there will be no fight
         _board[*to] = _board[*from];
@@ -92,21 +93,20 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
         if (_numPieces[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
     }
     // there are no movable pieces
-    for (unsigned int y = 1; y <= M; y++) {
-        for (unsigned int x = 1; x <= N; x++) {
-            const auto& piece = _board[{x, y}];
-            if (piece->getType() == 'J' && piece->getPlayer() == _player) // reach joker pos
-                if (piece->getJokerType() == 'B') { // joker isn't movable rep
-                    return std::make_unique<JokerChangeImpl>(PointImpl(x, y), 'S');
-                }
+    for (auto y = 1; y <= M; y++) {
+        for (auto x = 1; x <= N; x++) {
+            if (_board[{x, y}]->getType() != 'J') continue;
+            if (_board[{x, y}]->getPlayer() != _player) continue;
+            if (_board[{x, y}]->getJokerType() != 'B') continue; // it can move
+            return std::make_unique<JokerChangeImpl>(PointImpl(x, y), 'S');
         }
     }
     return nullptr;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() const {
     for (const auto& pieceType : MOVABLE_PIECES) {
-        if (_numPieces[pieceType] == 0) continue;
+        if (_numPieces.at(pieceType) == 0) continue;
         for (auto y = 1; y <= M; y++) {
             for (auto x = 1; x <= N; x++) {
                 const auto& piece = _board[{x, y}];
@@ -118,15 +118,14 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
     }
     // there are no possible moves of movable 
     // handle Joker move
-    for (unsigned int y = 1; y <= M; y++) {
-        for (unsigned int x = 1; x <= N; x++) {
-            const auto& piece = _board[{x, y}];
-            if (piece->getType() != 'J') continue;
+    for (auto y = 1; y <= M; y++) {
+        for (auto x = 1; x <= N; x++) {
+            if (_board[{x, y}]->getType() != 'J') continue;
             if (std::find(MOVABLE_PIECES.begin(),
                 MOVABLE_PIECES.end(),
-                piece->getJokerType())
-                == MOVABLE_PIECES.end()) continue; // joker rep isn't movable
-            if (piece->getPlayer() != _player) continue;
+                _board[{x, y}]->getJokerType())
+                == MOVABLE_PIECES.end()) continue; // joker isn't movable
+            if (_board[{x, y}]->getPlayer() != _player) continue;
             if (hasValidMove(x, y)) {
                 return std::make_unique<PointImpl>(x, y);
             }
@@ -135,16 +134,14 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() {
     return nullptr;
 }
 
-bool AutoPlayerAlgorithm::hasValidMove(int x, int y) {
-    auto from = std::make_unique<PointImpl>(x, y);
-    auto permutations = validPermutations(from);
-    for (const auto& pos : permutations) {
+bool AutoPlayerAlgorithm::hasValidMove(int x, int y) const {
+    for (const auto& pos : validPermutations(PointImpl(x, y))) {
         if (_board[pos]->getPlayer() != _player) return true;
     }
     return false;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<PointImpl>& from) {
+std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(const Point& from) const {
     for (const auto& pos : validPermutations(from)) {
         if (_board[pos]->getPlayer() == _player) continue;
         return std::make_unique<PointImpl>(pos);
@@ -152,10 +149,10 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(std::unique_ptr<
     return nullptr;
 }
 
-std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(std::unique_ptr<PointImpl>& from) {
+std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(const Point& from) const {
     std::vector<PointImpl> vec;
-    int x = from->getX();
-    int y = from->getY();
+    auto x = from.getX();
+    auto y = from.getY();
     if (_board.isValidPosition(PointImpl(x - 1, y - 1))) vec.push_back(PointImpl(x - 1, y - 1));
     if (_board.isValidPosition(PointImpl(x - 1, y))) vec.push_back(PointImpl(x - 1, y));
     if (_board.isValidPosition(PointImpl(x - 1, y + 1))) vec.push_back(PointImpl(x - 1, y + 1));
