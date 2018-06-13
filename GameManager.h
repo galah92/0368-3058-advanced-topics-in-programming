@@ -47,4 +47,5 @@ private:
     std::unique_ptr<Player> _players[2];
     BoardImpl _board;
     unsigned int _numFights;
+    const unsigned int FIGHTS_THRESHOLD = 100;
 };

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cmath>
 #include "GameManager.h"
 #include "Piece.h"
 #include "Point.h"
@@ -10,8 +9,6 @@
 #include "PiecePosition.h"
 #include "GameContainers.h"
 
-
-const unsigned int FIGHTS_THRESHOLD = 100;
 
 int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
     // init

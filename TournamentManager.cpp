@@ -124,14 +124,11 @@ void TournamentManager::initGames() {
 void TournamentManager::workerThread() {
     GameManager gameManager;
     while (true) {
-        _scoresMutex.lock();
-        if (_games.empty()) { // no games left
-            _scoresMutex.unlock();
-            return;        
-        }
+        std::unique_lock<std::mutex> lock(_scoresMutex);
+        if (_games.empty()) return; // no games left
         auto match = _games.front();
         _games.pop_front();
-        _scoresMutex.unlock();
+        lock.unlock();
         std::string id1, id2;
         bool toUpdateScore;
         std::tie(id1, id2, toUpdateScore) = match;
