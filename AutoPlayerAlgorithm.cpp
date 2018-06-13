@@ -47,6 +47,9 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
+    DEBUG("--------notifyOpponentMove--------");
+    DEBUG(_board);
+    DEBUG("--------notifyOpponentMove--------");
     const auto& from = move.getFrom();
     const auto& to = move.getTo();
     if (!_board.isValidPosition(from)) DEBUG("source pos not on board");
@@ -82,10 +85,11 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
     if (from == nullptr) return nullptr;
     to = getBestNeighbor(from);
 
-    _board[*from] = Piece::Empty; // update board
-    if (_board[*to]->getPlayer() != _opponent) { // there will be no fight
-        _board[*to] = _board[*from];
+    if (_board[{to->getX(), to->getY()}]->getPlayer() != _opponent) { // there will be no fight
+        _board[{to->getX(), to->getY()}] = _board[{from->getX(), from->getY()}];
     }
+    _board[{from->getX(), from->getY()}] = Piece::Empty; // update board
+    DEBUG("getMove : from x:" << from->getX() << " y:" << from->getY() << " to x:" << to->getX() << " y:" << to->getY());
     return std::make_unique<MoveImpl>(from->getX(), from->getY(), to->getX(), to->getY());
 }
 
