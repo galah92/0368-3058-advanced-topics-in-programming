@@ -128,13 +128,11 @@ void TournamentManager::workerThread() {
         if (_games.empty()) return; // no games left
         auto match = _games.front();
         _games.pop_front();
-        lock.unlock();
-        std::string id1, id2;
-        bool toUpdateScore;
-        std::tie(id1, id2, toUpdateScore) = match;
-        std::shared_ptr<PlayerAlgorithm> algo1 = _algos[id1]();
-        std::shared_ptr<PlayerAlgorithm> algo2 = _algos[id2]();
-        auto winner = gameManager.playRound(algo1, algo2);
+        lock.unlock(); // allow other threads to deque for matches
+        const auto& id1 = std::get<0>(match);
+        const auto& id2 = std::get<1>(match);
+        bool toUpdateScore = std::get<2>(match);
+        auto winner = gameManager.playRound(_algos[id1](), _algos[id2]());
         if (winner == 1) {
             _scores[id1] += 3;
         } else if (winner == 2 && toUpdateScore) {
