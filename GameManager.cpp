@@ -60,14 +60,14 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
         return;
     }
     // merge tmpBoard and main board
-    for (unsigned int i = 1; i <= N; i++) {
+        for (unsigned int i = 1; i <= N; i++) {
         for (unsigned int j = 1; j <= N; j++) {
             PointImpl pos(i, j);
             auto fightInfo = fight(pos, tmpBoard[pos]);
             if (fightInfo) fights.push_back(std::move(fightInfo));
+            }
         }
     }
-}
 
 void GameManager::doMove(int i) {
     const auto move = _players[i]->algo->getMove();
@@ -144,7 +144,7 @@ std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::share
     if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
     _board[pos] = killPiece1 && killPiece2 ? Piece::Empty : (killPiece1 ? piece2 : piece1);
     if (piece1 == Piece::Empty || piece2 == Piece::Empty) return nullptr;
-    auto winner = (killPiece1 && killPiece2) ? 0 : (killPiece1 ? 2 : 1);
+    auto winner = (killPiece1 && killPiece2) ? 0 : (killPiece1 ? piece2->getPlayer() : piece1->getPlayer());
     auto ch1 = (piece1->getPlayer() == 1 ? piece1 : piece2)->getUnderlyingType();
     auto ch2 = (piece1->getPlayer() == 2 ? piece1 : piece2)->getUnderlyingType();
     return std::make_unique<FightInfoImpl>((const PointImpl&)pos, ch1, ch2, winner);
