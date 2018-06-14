@@ -12,7 +12,7 @@ CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -fPIC -DNDEBUG -g
 
 EXE_TARGET	:= ex3
 EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs -g
-EXE_OBJS	:= main.o TournamentManager.o GameManager.o Piece.o GameBoard.o
+EXE_OBJS	:= main.o TournamentManager.o GameManager.o Piece.o
 
 LIB_TARGET	:= RSPPlayer_203521984.so
 LIB_FLAGS	:= -shared -g
@@ -32,11 +32,14 @@ $(EXE_TARGET): $(EXE_OBJS)
 $(LIB_TARGET): $(LIB_OBJS)
 	$(CC) $(LIB_OBJS) -o $@ $(LIB_FLAGS)
 
-SOURCES	= $(wildcard *.cpp)
-OBJECTS = $(SOURCES:%.cpp=%.o)
+SRCS := $(wildcard *.cpp)
+OBJS := $(SRCS:.cpp=.o)
+DEPS := $(SRCS:.cpp=.d)
 
-$(OBJECTS): %.o : %.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJS): %.o : %.cpp
+	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS) $(EXE_TARGET) $(LIB_TARGET)
+	rm -f $(OBJS) $(DEPS) $(EXE_TARGET) $(LIB_TARGET)
+
+-include $(DEPS)
