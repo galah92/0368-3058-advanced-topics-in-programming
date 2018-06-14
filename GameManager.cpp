@@ -1,5 +1,5 @@
-#include <iostream>
-#include <fstream>
+// #include <iostream>
+// #include <fstream>
 #include <vector>
 #include "GameManager.h"
 #include "Piece.h"
@@ -100,38 +100,38 @@ void GameManager::changeJoker(int i) {
 }
 
 int GameManager::output() {
-    std::ofstream fout("rps.output");
+    // std::ofstream fout("rps.output");
     if (_players[0]->status == PlayerStatus::Playing || _players[1]->status == PlayerStatus::Playing) {
         int winner = _players[0]->status == PlayerStatus::Playing ? 0 : 1;
-        int loser = 1 - winner;
-        fout << "Winner: " << winner + 1 << std::endl << "Reason: ";
-        switch (_players[loser]->status) {
-        case PlayerStatus::InvalidPos:
-            fout << "Bad positioning input for player " << loser + 1 << std::endl;
-            break;
-        case PlayerStatus::InvalidMove:
-            fout << "Bad move input for player " << loser + 1 << std::endl;
-            break;
-        case PlayerStatus::NoFlags:
-            fout << "All flags of the opponent are captured" << std::endl;
-            break;
-        case PlayerStatus::CantMove:
-            fout << "All moving PIECEs of the opponent are eaten" << std::endl;
-            break;
-        default:
-            break;
-        }
-        fout << std::endl << _board;
+        // int loser = 1 - winner;
+        // fout << "Winner: " << winner + 1 << std::endl << "Reason: ";
+        // switch (_players[loser]->status) {
+        // case PlayerStatus::InvalidPos:
+        //     fout << "Bad positioning input for player " << loser + 1 << std::endl;
+        //     break;
+        // case PlayerStatus::InvalidMove:
+        //     fout << "Bad move input for player " << loser + 1 << std::endl;
+        //     break;
+        // case PlayerStatus::NoFlags:
+        //     fout << "All flags of the opponent are captured" << std::endl;
+        //     break;
+        // case PlayerStatus::CantMove:
+        //     fout << "All moving PIECEs of the opponent are eaten" << std::endl;
+        //     break;
+        // default:
+        //     break;
+        // }
+        // fout << std::endl << _board;
         return winner + 1;
     } else { // tie
-        fout << "Winner: " << 0 << std::endl << "Reason: ";
-        if (_players[0]->status == PlayerStatus::InvalidPos) {
-            fout << "Bad positioning input for both players" << std::endl;
-        } else { // _players[0].status == PlayerStatus::NoFlags
-            fout << "Both players cannot play (no flags / cannot move)" << std::endl;
-        }
-        // TODO: handle numFights exceeded
-        fout << std::endl << _board;
+        // fout << "Winner: " << 0 << std::endl << "Reason: ";
+        // if (_players[0]->status == PlayerStatus::InvalidPos) {
+        //     fout << "Bad positioning input for both players" << std::endl;
+        // } else { // _players[0].status == PlayerStatus::NoFlags
+        //     fout << "Both players cannot play (no flags / cannot move)" << std::endl;
+        // }
+        // // TODO: handle numFights exceeded
+        // fout << std::endl << _board;
         return 0;
     }
 }
