@@ -6,7 +6,7 @@
 
 class Piece {
 public:
-    Piece(int player, char type, char jokerType = 'J');
+    Piece(int player = 0, char type = ' ', char jokerType = ' ');
     int getPlayer() const;
     char getUnderlyingType() const;
     char getType() const;
