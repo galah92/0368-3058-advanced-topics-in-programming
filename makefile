@@ -16,7 +16,7 @@ EXE_OBJS	:= main.o TournamentManager.o GameManager.o Piece.o
 
 LIB_TARGET	:= RSPPlayer_203521984.so
 LIB_FLAGS	:= -shared -g
-LIB_OBJS	:= AutoPlayerAlgorithm.o Piece.o BoardImpl.o
+LIB_OBJS	:= AutoPlayerAlgorithm.o
 
 .PHONY: clean
 
