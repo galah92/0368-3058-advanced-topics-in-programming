@@ -39,7 +39,7 @@ private:
     void changeJoker(int i);
     int output();
     std::unique_ptr<FightInfo> fight(const Point& pos, const GameBoard<Piece>::Entry& entry);
-    void kill(const Piece& piece);
+    void kill(const Piece& piece, int playerIndex);
     bool isValid(const std::unique_ptr<Move>& move, int i) const;
     bool isValid(const std::unique_ptr<JokerChange>& jokerChange, int i) const;
     bool isValid(const std::unique_ptr<PiecePosition>& piecePos, const GameBoard<Piece>& board) const;

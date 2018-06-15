@@ -146,8 +146,8 @@ std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const GameBoard<
     const auto& piece2 = entry.player == 2 ? entry.piece : _board[pos].piece;
     auto killPiece1 = piece2.canKill(piece1);
     auto killPiece2 = piece1.canKill(piece2);
-    if (killPiece1) kill(piece1);
-    if (killPiece2) kill(piece2);
+    if (killPiece1) kill(piece1, 1);
+    if (killPiece2) kill(piece2, 2);
     const auto winner = (killPiece1 && killPiece2) ? 0 : (killPiece1 ? 2 : 1);
     _board[pos] = { winner == 0 ? Piece() : (winner == 1 ? piece1 : piece2), winner };
     const auto ch1 = piece1.getUnderlyingType();
@@ -155,8 +155,8 @@ std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const GameBoard<
     return std::make_unique<FightInfoImpl>((const PointImpl&)pos, ch1, ch2, winner);
 }
 
-void GameManager::kill(const Piece& piece) {
-    auto& player = _players[piece.getPlayer() - 1];
+void GameManager::kill(const Piece& piece, int playerIndex) {
+    auto& player = _players[playerIndex];
     player->numPieces[piece.getType()]--;
     if (piece.getType() == 'F') {
         player->numFlags--;
