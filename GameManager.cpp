@@ -1,17 +1,15 @@
-// #include <iostream>
-// #include <fstream>
 #include <fstream>
 #include <vector>
 #include "GameManager.h"
+#include "GameContainers.h"
 #include "Piece.h"
 #include "Point.h"
 #include "Move.h"
 #include "JokerChange.h"
 #include "PiecePosition.h"
-#include "GameContainers.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { nullstream << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
+#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
 
 int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
     // init
@@ -28,14 +26,12 @@ int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_p
     _players[1]->algo->notifyOnInitialBoard(_board, fights);
     // moves
     auto i = 0;
-    DEBUG("start loop");
     while (_numFights < FIGHTS_THRESHOLD) {
         if (!isValid(_players[0]) || !isValid(_players[1])) break;
         doMove(i);
         if (!isValid(_players[0]) || !isValid(_players[1])) break;
         changeJoker(i);
         i = 1 - i; // switch player
-        DEBUG("inside loop, _numFights = " << _numFights);
     }
     return output();
 }
@@ -104,40 +100,9 @@ void GameManager::changeJoker(int i) {
 }
 
 int GameManager::output() {
-    // std::ofstream fout("rps.output");
-    if (_players[0]->status == PlayerStatus::Playing || _players[1]->status == PlayerStatus::Playing) {
-        int winner = _players[0]->status == PlayerStatus::Playing ? 0 : 1;
-        // int loser = 1 - winner;
-        // fout << "Winner: " << winner + 1 << std::endl << "Reason: ";
-        // switch (_players[loser]->status) {
-        // case PlayerStatus::InvalidPos:
-        //     fout << "Bad positioning input for player " << loser + 1 << std::endl;
-        //     break;
-        // case PlayerStatus::InvalidMove:
-        //     fout << "Bad move input for player " << loser + 1 << std::endl;
-        //     break;
-        // case PlayerStatus::NoFlags:
-        //     fout << "All flags of the opponent are captured" << std::endl;
-        //     break;
-        // case PlayerStatus::CantMove:
-        //     fout << "All moving PIECEs of the opponent are eaten" << std::endl;
-        //     break;
-        // default:
-        //     break;
-        // }
-        // fout << std::endl << _board;
-        return winner + 1;
-    } else { // tie
-        // fout << "Winner: " << 0 << std::endl << "Reason: ";
-        // if (_players[0]->status == PlayerStatus::InvalidPos) {
-        //     fout << "Bad positioning input for both players" << std::endl;
-        // } else { // _players[0].status == PlayerStatus::NoFlags
-        //     fout << "Both players cannot play (no flags / cannot move)" << std::endl;
-        // }
-        // // TODO: handle numFights exceeded
-        // fout << std::endl << _board;
-        return 0;
-    }
+    auto is1Playing = _players[0]->status == PlayerStatus::Playing;
+    auto is2Playing = _players[1]->status == PlayerStatus::Playing;
+    return (is1Playing == is2Playing) ? 0 : (is1Playing ? 1 : 2);
 }
 
 std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::shared_ptr<Piece> piece1) {
