@@ -4,7 +4,7 @@
 #include "AlgorithmRegistration.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { nullstream << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
+#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
 
 
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
@@ -26,138 +26,129 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
     _board.clear();
     positions.clear();
     initBoard();
-    for (std::size_t i = 0; i < GameBoard<Piece>::M; i++) {
-        for (std::size_t j = 0; j < GameBoard<Piece>::N; j++) {
-            if (_board[{i, j}].player != player) continue;
-            const auto& type = _board[{i, j}].piece.type;
-            const auto & jokerType = _board[{i, j}].piece.jokerType;
-            DEBUG("adding " << i << " " << j << " " << type << " " << jokerType);
-            positions.push_back(std::make_unique<PiecePositionImpl>(i + 1, j + 1, type, jokerType));
+    for (auto i = 1; i <= N; i++) {
+        for (auto j = 1; j <= M; j++) {
+            const auto& piece = _board[{i, j}];
+            if (piece->getPlayer() != player) continue;
+            const auto& type = piece->getType();
+            const auto & jokerType = piece->getJokerType();
+            positions.push_back(std::make_unique<PiecePositionImpl>(i, j, type, jokerType));
         }
     }
-    DEBUG("end");
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::vector<std::unique_ptr<FightInfo>>& fights) {
-    DEBUG("start");
     for (const auto& fight : fights) notifyFightResult(*fight);
-    for (std::size_t i = 0; i < GameBoard<Piece>::M; i++) {
-        for (std::size_t j = 0; j < GameBoard<Piece>::N; j++) {
-            if (board.getPlayer(PointImpl(i + 1, j + 1)) != _opponent) continue;
-            if (_board[{i, j}].player == _opponent) continue;
-            _board[{i, j}] = { { 'U', 'U' }, _opponent };
+    for (auto y = 1; y <= M; y++) {
+        for (auto x = 1; x <= N; x++) {
+            PointImpl pos(x, y);
+            if (board.getPlayer(pos) != _opponent) continue;
+            if (_board[pos]->getPlayer() == _opponent) continue;
+            _board[pos] = std::make_shared<Piece>(_opponent, 'U');
         }
     }
-    DEBUG("end");
 }
 
 void AutoPlayerAlgorithm::notifyOnOpponentMove(const Move& move) {
     const auto& from = move.getFrom();
     const auto& to = move.getTo();
-    if (!_board.isValid(from)) DEBUG("source pos not on board");
-    if (!_board.isValid(to)) DEBUG("destination pos not on board");
-    if (_board[from].player != _opponent) DEBUG("source pos not of opponent piece");
-    if (_board[to].player == _opponent) DEBUG("destination pos of opponent piece");
+    if (!_board.isValidPosition(from)) DEBUG("source pos not on board");
+    if (!_board.isValidPosition(to)) DEBUG("destination pos not on board");
+    if (_board[from]->getPlayer() != _opponent) DEBUG("source pos not of opponent piece");
+    if (_board[to]->getPlayer() == _opponent) DEBUG("destination pos of opponent piece");
     _board[to] = _board[from];
-    _board[from] = { { ' ', ' ' }, 0 };
+    _board[from] = Piece::Empty;
 }
 
 void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
+    // DEBUG(std::string("ch1: ") + fightInfo.getPiece(1) + std::string(", ch2: ") + fightInfo.getPiece(2) + std::string(" winner:") + std::to_string(fightInfo.getWinner()));
     const auto& pos = fightInfo.getPosition();
-    if (!_board.isValid(pos)) DEBUG("pos not on board");
-    if (_board[pos].player == 0) DEBUG("pos is empty");
+    if (!_board.isValidPosition(pos)) DEBUG("pos not on board");
+    if (_board[pos]->getPlayer() == 0) DEBUG("pos is empty");
     const auto ourPiece = fightInfo.getPiece(_player);
     const auto oppPiece = fightInfo.getPiece(_opponent);
     const auto winner = fightInfo.getWinner();
     if (winner == _player) {
-        _board[pos] = { { ourPiece, ' ' }, _player };
+        _board[pos] = std::make_shared<Piece>(_player, ourPiece);
     } else if (winner == _opponent) {
         _numPieces[ourPiece]--;
-        _board[pos] = { { oppPiece, ' ' }, _opponent };
+        _board[pos] = std::make_shared<Piece>(_opponent, oppPiece);
     } else if (winner == 0) {
         _numPieces[ourPiece]--;
-        _board[pos] = { { ' ', ' ' }, 0 };
+        _board[pos] = Piece::Empty;
     } else DEBUG("invalid winner");
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-    DEBUG("here");
     const auto from = getPosToMoveFrom();
     if (from == nullptr) return nullptr;
     const auto to = getBestNeighbor(*from);
 
-    if (_board[*to].player != _opponent) { // there will be no fight
+    if (_board[*to]->getPlayer() != _opponent) { // there will be no fight
         _board[*to] = _board[*from];
     }
-    _board[*from] = { { ' ', ' ' }, 0 }; // update board
-    DEBUG(from->getX() + from->getY() + to->getX() + to->getY());
+    _board[*from] = Piece::Empty; // update board
     return std::make_unique<MoveImpl>(from->getX(), from->getY(), to->getX(), to->getY());
 }
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
     for (const auto& pieceType : MOVABLE_PIECES) {
-        if (_numPieces[pieceType] > 1) {
-            DEBUG("returning nullptr");
-            return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
-        }
+        if (_numPieces[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
     }
     // there are no movable pieces
-    for (std::size_t i = 0; i < GameBoard<Piece>::M; i++) {
-        for (std::size_t j = 0; j < GameBoard<Piece>::N; j++) {
-            if (_board[{i, j}].piece.type != 'J') continue;
-            if (_board[{i, j}].player != _player) continue;
-            if (_board[{i, j}].piece.jokerType != 'B') continue; // it can move
-            return std::make_unique<JokerChangeImpl>(PointImpl(i + 1, j + 1), 'S');
+    for (auto y = 1; y <= M; y++) {
+        for (auto x = 1; x <= N; x++) {
+            if (_board[{x, y}]->getType() != 'J') continue;
+            if (_board[{x, y}]->getPlayer() != _player) continue;
+            if (_board[{x, y}]->getJokerType() != 'B') continue; // it can move
+            return std::make_unique<JokerChangeImpl>(PointImpl(x, y), 'S');
         }
     }
-    DEBUG("returning nullptr");
     return nullptr;
 }
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() const {
     for (const auto& pieceType : MOVABLE_PIECES) {
         if (_numPieces.at(pieceType) == 0) continue;
-    for (std::size_t i = 0; i < GameBoard<Piece>::M; i++) {
-        for (std::size_t j = 0; j < GameBoard<Piece>::N; j++) {
-                if (_board[{i, j}].piece.type != pieceType) continue;
-                if (_board[{i, j}].piece.jokerType != _player) continue;
-                if (hasValidMove(i, j)) return std::make_unique<PointImpl>(i + 1, j + 1);
+        for (auto y = 1; y <= M; y++) {
+            for (auto x = 1; x <= N; x++) {
+                const auto& piece = _board[{x, y}];
+                if (piece->getType() != pieceType) continue;
+                if (piece->getPlayer() != _player) continue;
+                if (hasValidMove(x, y)) return std::make_unique<PointImpl>(x, y);
             }
         }
     }
     // there are no possible moves of movable 
     // handle Joker move
-    for (std::size_t i = 0; i < GameBoard<Piece>::M; i++) {
-        for (std::size_t j = 0; j < GameBoard<Piece>::N; j++) {
-            if (_board[{i, j}].piece.type != 'J') continue;
+    for (auto y = 1; y <= M; y++) {
+        for (auto x = 1; x <= N; x++) {
+            if (_board[{x, y}]->getType() != 'J') continue;
             if (std::find(MOVABLE_PIECES.begin(),
                 MOVABLE_PIECES.end(),
-                _board[{i, j}].piece.jokerType)
+                _board[{x, y}]->getJokerType())
                 == MOVABLE_PIECES.end()) continue; // joker isn't movable
-            if (_board[{i, j}].player != _player) continue;
-            if (hasValidMove(i, j)) {
-                return std::make_unique<PointImpl>(i + 1, j + 1);
+            if (_board[{x, y}]->getPlayer() != _player) continue;
+            if (hasValidMove(x, y)) {
+                return std::make_unique<PointImpl>(x, y);
             }
         }
     }
-    DEBUG("returning nullptr");
     return nullptr;
 }
 
 bool AutoPlayerAlgorithm::hasValidMove(int x, int y) const {
     for (const auto& pos : validPermutations(PointImpl(x, y))) {
-        if (_board[pos].player != _player) return true;
+        if (_board[pos]->getPlayer() != _player) return true;
     }
-    DEBUG("returning false");
     return false;
 }
 
 std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(const Point& from) const {
     for (const auto& pos : validPermutations(from)) {
-        if (_board[pos].player == _player) continue;
+        if (_board[pos]->getPlayer() == _player) continue;
         return std::make_unique<PointImpl>(pos);
     }
-    DEBUG("returning nullptr");
     return nullptr;
 }
 
@@ -165,43 +156,43 @@ std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(const Point& from)
     std::vector<PointImpl> vec;
     auto x = from.getX();
     auto y = from.getY();
-    if (_board.isValid(PointImpl(x - 1, y - 1))) vec.push_back(PointImpl(x - 1, y - 1));
-    if (_board.isValid(PointImpl(x - 1, y))) vec.push_back(PointImpl(x - 1, y));
-    if (_board.isValid(PointImpl(x - 1, y + 1))) vec.push_back(PointImpl(x - 1, y + 1));
-    if (_board.isValid(PointImpl(x, y - 1))) vec.push_back(PointImpl(x, y - 1));
-    if (_board.isValid(PointImpl(x, y + 1))) vec.push_back(PointImpl(x, y + 1));
-    if (_board.isValid(PointImpl(x + 1, y - 1))) vec.push_back(PointImpl(x + 1, y - 1));
-    if (_board.isValid(PointImpl(x + 1, y))) vec.push_back(PointImpl(x + 1, y));
-    if (_board.isValid(PointImpl(x + 1, y + 1))) vec.push_back(PointImpl(x + 1, y + 1));
+    if (_board.isValidPosition(PointImpl(x - 1, y - 1))) vec.push_back(PointImpl(x - 1, y - 1));
+    if (_board.isValidPosition(PointImpl(x - 1, y))) vec.push_back(PointImpl(x - 1, y));
+    if (_board.isValidPosition(PointImpl(x - 1, y + 1))) vec.push_back(PointImpl(x - 1, y + 1));
+    if (_board.isValidPosition(PointImpl(x, y - 1))) vec.push_back(PointImpl(x, y - 1));
+    if (_board.isValidPosition(PointImpl(x, y + 1))) vec.push_back(PointImpl(x, y + 1));
+    if (_board.isValidPosition(PointImpl(x + 1, y - 1))) vec.push_back(PointImpl(x + 1, y - 1));
+    if (_board.isValidPosition(PointImpl(x + 1, y))) vec.push_back(PointImpl(x + 1, y));
+    if (_board.isValidPosition(PointImpl(x + 1, y + 1))) vec.push_back(PointImpl(x + 1, y + 1));
     return vec;
 }
 
 void AutoPlayerAlgorithm::initBoard() {
     // flag in edge surrounded by bombs & joker
-    _board[{1, 1}] = { { 'F', 'B' }, _player };
-    _board[{1, 2}] = { { 'B', 'B' }, _player };
-    _board[{2, 1}] = { { 'B', 'B' }, _player };
-    _board[{2, 2}] = { { 'J', 'B' }, _player };
+    _board[{1, 1}] = std::make_shared<Piece>(_player, 'F');
+    _board[{1, 2}] = std::make_shared<Piece>(_player, 'B');
+    _board[{2, 1}] = std::make_shared<Piece>(_player, 'B');
+    _board[{2, 2}] = std::make_shared<Piece>(_player, 'J', 'B');
     // currently all other pieces positions are hardcoded
-    _board[{6, 6}] = { { 'J', 'B' }, _player };
-    _board[{3, 8}] = { { 'R', 'B' }, _player };
-    _board[{9, 3}] = { { 'R', 'B' }, _player };
-    _board[{3, 3}] = { { 'P', 'B' }, _player };
-    _board[{4, 8}] = { { 'P', 'B' }, _player };
-    _board[{5, 5}] = { { 'P', 'B' }, _player };
-    _board[{6, 9}] = { { 'P', 'B' }, _player };
-    _board[{7, 5}] = { { 'P', 'B' }, _player };
-    _board[{8, 7}] = { { 'S', 'B' }, _player };
+    _board[{6, 6}] = std::make_shared<Piece>(_player, 'J', 'B');
+    _board[{3, 8}] = std::make_shared<Piece>(_player, 'R');
+    _board[{9, 3}] = std::make_shared<Piece>(_player, 'R');
+    _board[{3, 3}] = std::make_shared<Piece>(_player, 'P');
+    _board[{4, 8}] = std::make_shared<Piece>(_player, 'P');
+    _board[{5, 5}] = std::make_shared<Piece>(_player, 'P');
+    _board[{6, 9}] = std::make_shared<Piece>(_player, 'P');
+    _board[{7, 5}] = std::make_shared<Piece>(_player, 'P');
+    _board[{8, 7}] = std::make_shared<Piece>(_player, 'S');
     // rotate the board by 90deg - flag can be on any edge
-    auto n = std::uniform_int_distribution<std::size_t>(0, 3)(_rg);
-    for (std::size_t i = 0; i < n; i++) rotateBoard();
+    auto n = std::uniform_int_distribution<int>(0, 3)(_rg);
+    for (auto i = 0; i < n; i++) rotateBoard();
 }
 
 void AutoPlayerAlgorithm::rotateBoard() {
-    GameBoard<Piece> oldBoard = _board;
-    for (std::size_t i = 0; i < GameBoard<Piece>::N; i++) {
-        for (std::size_t j = 0; j < GameBoard<Piece>::M; j++) {
-            _board[{i, j}] = oldBoard[{GameBoard<Piece>::N - 1 - j, i}];
+    BoardImpl oldBoard = _board;
+    for (auto i = 1; i <= N; i++) {
+        for (auto j = 1; j <= M; j++) {
+            _board[{i, j}] = oldBoard[{N + 1 - j, i}];
         }
     }
 }

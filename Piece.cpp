@@ -1,13 +1,20 @@
 #include <vector>
+#include <cctype>
 #include <limits>
 #include <algorithm>
 #include "Piece.h"
 
 
+std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, ' ');
+
 Piece::Piece(int player, char type, char jokerType) :
     _player(player),
     _type(type),
     _jokerType(jokerType) {}
+
+int Piece::getPlayer() const {
+    return _player;
+}
 
 char Piece::getUnderlyingType() const {
     if (_type == 'J') return _jokerType;
@@ -65,9 +72,12 @@ bool Piece::isValid(char type) {
     case 'S':
     case 'B':
         return true;
+    case ' ':
+    case 'J':
     default:
         return false;
     }
+    return false;
 }
 
 bool Piece::isValid(char type, char jokerType) {

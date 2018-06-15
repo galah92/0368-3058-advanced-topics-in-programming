@@ -6,7 +6,7 @@
 #include "Piece.h"
 #include "FightInfo.h"
 #include "Board.h"
-#include "GameBoard.h"
+#include "BoardImpl.h"
 
 
 class GameManager {
@@ -38,14 +38,14 @@ private:
     void doMove(int i);
     void changeJoker(int i);
     int output();
-    std::unique_ptr<FightInfo> fight(const Point& pos, const GameBoard<Piece>::Entry& entry);
-    void kill(const Piece& piece, int playerIndex);
+    std::unique_ptr<FightInfo> fight(const Point& pos, const std::shared_ptr<Piece> piece1);
+    void kill(std::shared_ptr<Piece> piece);
     bool isValid(const std::unique_ptr<Move>& move, int i) const;
     bool isValid(const std::unique_ptr<JokerChange>& jokerChange, int i) const;
-    bool isValid(const std::unique_ptr<PiecePosition>& piecePos, const GameBoard<Piece>& board) const;
+    bool isValid(const std::unique_ptr<PiecePosition>& piecePos, const BoardImpl& board) const;
     bool isValid(std::unique_ptr<Player>& player) const;
     std::unique_ptr<Player> _players[2];
-    GameBoard<Piece> _board;
+    BoardImpl _board;
     unsigned int _numFights;
     const unsigned int FIGHTS_THRESHOLD = 100;
 };
