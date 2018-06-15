@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <ostream>
 #include <array>
 #include <utility>
 #include "Board.h"
@@ -21,6 +21,15 @@ public:
     const Entry& operator[](const Point& pos) const { return _arr[getIndex(pos)]; }
     Entry& operator[](const std::pair<int, int>& pos) { return _arr[getIndex(pos)]; }
     const Entry& operator[](const std::pair<int, int>& pos) const { return _arr[getIndex(pos)]; }
+    friend std::ostream& operator<<(std::ostream& os, const GameBoard<T> board) {
+        for (std::size_t i = 0; i < board.N; i++) {
+            for (std::size_t j = 0; j < board.M; j++) {
+                os << board[{i, j}].piece;
+            }
+            os << std::endl;
+        }
+        return os;
+    }
 private:
     std::size_t getIndex(const Point& pos) const { return (pos.getX() - 1) * M + (pos.getY() - 1); }
     std::size_t getIndex(const std::pair<int, int>& pos) const { return pos.first * M + pos.second; }
