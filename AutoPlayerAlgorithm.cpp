@@ -41,7 +41,7 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
     for (const auto& fight : fights) notifyFightResult(*fight);
     for (auto y = 1; y <= M; y++) {
         for (auto x = 1; x <= N; x++) {
-            PointImpl pos(x, y);
+            GamePoint pos(x, y);
             if (board.getPlayer(pos) != _opponent) continue;
             if (_board[pos]->getPlayer() == _opponent) continue;
             _board[pos] = std::make_shared<Piece>(_opponent, 'U');
@@ -88,7 +88,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
         _board[*to] = _board[*from];
     }
     _board[*from] = Piece::Empty; // update board
-    return std::make_unique<MoveImpl>(from->getX(), from->getY(), to->getX(), to->getY());
+    return std::make_unique<GameMove>(from->getX(), from->getY(), to->getX(), to->getY());
 }
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
@@ -101,13 +101,13 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
             if (_board[{x, y}]->getType() != 'J') continue;
             if (_board[{x, y}]->getPlayer() != _player) continue;
             if (_board[{x, y}]->getJokerType() != 'B') continue; // it can move
-            return std::make_unique<JokerChangeImpl>(PointImpl(x, y), 'S');
+            return std::make_unique<GameJokerChange>(GamePoint(x, y), 'S');
         }
     }
     return nullptr;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() const {
+std::unique_ptr<GamePoint> AutoPlayerAlgorithm::getPosToMoveFrom() const {
     for (const auto& pieceType : MOVABLE_PIECES) {
         if (_numPieces.at(pieceType) == 0) continue;
         for (auto y = 1; y <= M; y++) {
@@ -115,7 +115,7 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() const {
                 const auto& piece = _board[{x, y}];
                 if (piece->getType() != pieceType) continue;
                 if (piece->getPlayer() != _player) continue;
-                if (hasValidMove(x, y)) return std::make_unique<PointImpl>(x, y);
+                if (hasValidMove(x, y)) return std::make_unique<GamePoint>(x, y);
             }
         }
     }
@@ -130,7 +130,7 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() const {
                 == MOVABLE_PIECES.end()) continue; // joker isn't movable
             if (_board[{x, y}]->getPlayer() != _player) continue;
             if (hasValidMove(x, y)) {
-                return std::make_unique<PointImpl>(x, y);
+                return std::make_unique<GamePoint>(x, y);
             }
         }
     }
@@ -138,32 +138,32 @@ std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getPosToMoveFrom() const {
 }
 
 bool AutoPlayerAlgorithm::hasValidMove(int x, int y) const {
-    for (const auto& pos : validPermutations(PointImpl(x, y))) {
+    for (const auto& pos : validPermutations(GamePoint(x, y))) {
         if (_board[pos]->getPlayer() != _player) return true;
     }
     return false;
 }
 
-std::unique_ptr<PointImpl> AutoPlayerAlgorithm::getBestNeighbor(const Point& from) const {
+std::unique_ptr<GamePoint> AutoPlayerAlgorithm::getBestNeighbor(const Point& from) const {
     for (const auto& pos : validPermutations(from)) {
         if (_board[pos]->getPlayer() == _player) continue;
-        return std::make_unique<PointImpl>(pos);
+        return std::make_unique<GamePoint>(pos);
     }
     return nullptr;
 }
 
-std::vector<PointImpl> AutoPlayerAlgorithm::validPermutations(const Point& from) const {
-    std::vector<PointImpl> vec;
+std::vector<GamePoint> AutoPlayerAlgorithm::validPermutations(const Point& from) const {
+    std::vector<GamePoint> vec;
     auto x = from.getX();
     auto y = from.getY();
-    if (_board.isValidPosition(PointImpl(x - 1, y - 1))) vec.push_back(PointImpl(x - 1, y - 1));
-    if (_board.isValidPosition(PointImpl(x - 1, y))) vec.push_back(PointImpl(x - 1, y));
-    if (_board.isValidPosition(PointImpl(x - 1, y + 1))) vec.push_back(PointImpl(x - 1, y + 1));
-    if (_board.isValidPosition(PointImpl(x, y - 1))) vec.push_back(PointImpl(x, y - 1));
-    if (_board.isValidPosition(PointImpl(x, y + 1))) vec.push_back(PointImpl(x, y + 1));
-    if (_board.isValidPosition(PointImpl(x + 1, y - 1))) vec.push_back(PointImpl(x + 1, y - 1));
-    if (_board.isValidPosition(PointImpl(x + 1, y))) vec.push_back(PointImpl(x + 1, y));
-    if (_board.isValidPosition(PointImpl(x + 1, y + 1))) vec.push_back(PointImpl(x + 1, y + 1));
+    if (_board.isValidPosition(GamePoint(x - 1, y - 1))) vec.push_back(GamePoint(x - 1, y - 1));
+    if (_board.isValidPosition(GamePoint(x - 1, y))) vec.push_back(GamePoint(x - 1, y));
+    if (_board.isValidPosition(GamePoint(x - 1, y + 1))) vec.push_back(GamePoint(x - 1, y + 1));
+    if (_board.isValidPosition(GamePoint(x, y - 1))) vec.push_back(GamePoint(x, y - 1));
+    if (_board.isValidPosition(GamePoint(x, y + 1))) vec.push_back(GamePoint(x, y + 1));
+    if (_board.isValidPosition(GamePoint(x + 1, y - 1))) vec.push_back(GamePoint(x + 1, y - 1));
+    if (_board.isValidPosition(GamePoint(x + 1, y))) vec.push_back(GamePoint(x + 1, y));
+    if (_board.isValidPosition(GamePoint(x + 1, y + 1))) vec.push_back(GamePoint(x + 1, y + 1));
     return vec;
 }
 

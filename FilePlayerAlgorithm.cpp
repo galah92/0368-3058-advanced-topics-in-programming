@@ -23,10 +23,10 @@ void FilePlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
     while (std::getline(_movesstream, line))
     {
         std::istringstream iss(line);
-        _moves.push_back(std::make_unique<MoveImpl>(iss));
+        _moves.push_back(std::make_unique<GameMove>(iss));
         std::string token;
         iss >> token;
-        _jokerChanges.push_back(token == "J:" ? std::make_unique<JokerChangeImpl>(iss) : nullptr);
+        _jokerChanges.push_back(token == "J:" ? std::make_unique<GameJokerChange>(iss) : nullptr);
     }
 }
 

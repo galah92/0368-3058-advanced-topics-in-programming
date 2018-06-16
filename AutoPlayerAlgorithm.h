@@ -25,9 +25,9 @@ public:
     std::unique_ptr<Move> getMove() override;
     std::unique_ptr<JokerChange> getJokerChange() override;
 private:
-    std::unique_ptr<PointImpl> getPosToMoveFrom() const;
-    std::unique_ptr<PointImpl> getBestNeighbor(const Point& from) const;
-    std::vector<PointImpl> validPermutations(const Point& from) const;
+    std::unique_ptr<GamePoint> getPosToMoveFrom() const;
+    std::unique_ptr<GamePoint> getBestNeighbor(const Point& from) const;
+    std::vector<GamePoint> validPermutations(const Point& from) const;
     bool hasValidMove(int x, int y) const;
     void initBoard();
     void rotateBoard();
