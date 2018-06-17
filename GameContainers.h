@@ -96,7 +96,7 @@ public:
     GameBoard() { clear(); }
     void clear() { _arr.fill({ T(), 0 }); }
     int getPlayer(const Point& pos) const override { return _arr[getIndex(pos)].player; }
-    bool isValid(const Point& pos) const { return getIndex(pos) >= 0 && getIndex(pos) < SIZE; }
+    bool isValid(const Point& pos) const { return pos.getX() > 0 && pos.getX() <= N && pos.getY() > 0 && pos.getY() <= N; }
     Entry& operator[](const Point& pos) { return _arr[getIndex(pos)]; }
     const Entry& operator[](const Point& pos) const { return _arr[getIndex(pos)]; }
     Entry& operator[](const std::pair<int, int>& pos) { return _arr[getIndex(pos)]; }

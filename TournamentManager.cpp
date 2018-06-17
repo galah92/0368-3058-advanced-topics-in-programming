@@ -133,6 +133,7 @@ void TournamentManager::workerThread() {
         const auto& id2 = std::get<1>(match);
         bool toUpdateScore = std::get<2>(match);
         auto winner = gameManager.playRound(_algos[id1](), _algos[id2]());
+        // std::cout << "================ winner: " << (winner == 0 ? "tie" : (winner == 1 ? id1 : id2)) << std::endl;
         if (winner == 1) {
             _scores[id1] += 3;
         } else if (winner == 2 && toUpdateScore) {

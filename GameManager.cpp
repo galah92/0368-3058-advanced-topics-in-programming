@@ -9,7 +9,7 @@
 #include "PiecePosition.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { nullstream << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
+#define DEBUG(x) do { std::cout << "GameManager::" << __func__ << "()\t" << x << std::endl; } while (0)
 
 int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
     // init

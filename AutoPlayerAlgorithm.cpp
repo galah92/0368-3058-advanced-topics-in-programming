@@ -39,7 +39,6 @@ void AutoPlayerAlgorithm::getInitialPositions(int player, std::vector<std::uniqu
 }
 
 void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::vector<std::unique_ptr<FightInfo>>& fights) {
-    DEBUG("begin");
     for (const auto& fight : fights) notifyFightResult(*fight);
     for (auto y = 1; y <= _board.M; y++) {
         for (auto x = 1; x <= _board.N; x++) {
@@ -81,7 +80,6 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-    DEBUG("begin");
     DEBUG(std::endl << _board);
     const auto from = getPosToMoveFrom();
     if (from == nullptr) return nullptr;
@@ -106,7 +104,6 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
             return std::make_unique<GameJokerChange>(GamePoint(x + 1, y + 1), 'S');
         }
     }
-    DEBUG("returning nullptr");
     return nullptr;
 }
 
@@ -158,14 +155,14 @@ std::vector<GamePoint> AutoPlayerAlgorithm::validPermutations(const Point& from)
     std::vector<GamePoint> vec;
     auto x = from.getX();
     auto y = from.getY();
-    if (_board.isValid(GamePoint(x - 1, y - 1))) vec.push_back(GamePoint(x - 1, y - 1));
-    if (_board.isValid(GamePoint(x - 1, y))) vec.push_back(GamePoint(x - 1, y));
-    if (_board.isValid(GamePoint(x - 1, y + 1))) vec.push_back(GamePoint(x - 1, y + 1));
-    if (_board.isValid(GamePoint(x, y - 1))) vec.push_back(GamePoint(x, y - 1));
-    if (_board.isValid(GamePoint(x, y + 1))) vec.push_back(GamePoint(x, y + 1));
-    if (_board.isValid(GamePoint(x + 1, y - 1))) vec.push_back(GamePoint(x + 1, y - 1));
-    if (_board.isValid(GamePoint(x + 1, y))) vec.push_back(GamePoint(x + 1, y));
-    if (_board.isValid(GamePoint(x + 1, y + 1))) vec.push_back(GamePoint(x + 1, y + 1));
+    if (_board.isValid(GamePoint(x - 1, y - 1))) vec.emplace_back(x - 1, y - 1);
+    if (_board.isValid(GamePoint(x - 1, y))) vec.emplace_back(x - 1, y);
+    if (_board.isValid(GamePoint(x - 1, y + 1))) vec.emplace_back(x - 1, y + 1);
+    if (_board.isValid(GamePoint(x, y - 1))) vec.emplace_back(x, y - 1);
+    if (_board.isValid(GamePoint(x, y + 1))) vec.emplace_back(x, y + 1);
+    if (_board.isValid(GamePoint(x + 1, y - 1))) vec.emplace_back(x + 1, y - 1);
+    if (_board.isValid(GamePoint(x + 1, y))) vec.emplace_back(x + 1, y);
+    if (_board.isValid(GamePoint(x + 1, y + 1))) vec.emplace_back(x + 1, y + 1);
     return vec;
 }
 
