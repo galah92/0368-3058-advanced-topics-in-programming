@@ -1,11 +1,12 @@
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include <cctype>
 #include "AutoPlayerAlgorithm.h"
 #include "AlgorithmRegistration.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << std::setw(32) << x << std::endl; } while (0)
+#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "\t\t" << x << std::endl; } while (0)
 
 
 const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
@@ -45,7 +46,7 @@ void AutoPlayerAlgorithm::notifyOnInitialBoard(const Board& board, const std::ve
             GamePoint pos(x, y);
             if (board.getPlayer(pos) != _opponent) continue;
             if (_board[pos].player == _opponent) continue;
-            _board[pos] = { { 'U', 'U' }, _opponent };
+            _board[pos] = { { 'u', 'u' }, _opponent };
         }
     }
 }
@@ -72,7 +73,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
         _board[pos] = { { ourPiece, ' ' }, _player };
     } else if (winner == _opponent) {
         _numPieces[ourPiece]--;
-        _board[pos] = { { oppPiece, ' ' }, _opponent };
+        _board[pos] = { { (char)std::tolower(oppPiece), ' ' }, _opponent };
     } else if (winner == 0) {
         _numPieces[ourPiece]--;
         _board[pos] = { Piece(), 0 };
@@ -81,6 +82,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
     DEBUG("begin");
+    DEBUG(std::endl << _board);
     const auto from = getPosToMoveFrom();
     if (from == nullptr) return nullptr;
     const auto to = getBestNeighbor(*from);
@@ -104,6 +106,7 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
             return std::make_unique<GameJokerChange>(GamePoint(x + 1, y + 1), 'S');
         }
     }
+    DEBUG("returning nullptr");
     return nullptr;
 }
 

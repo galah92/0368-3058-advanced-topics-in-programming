@@ -23,6 +23,11 @@ public:
     std::unique_ptr<Move> getMove() override;
     std::unique_ptr<JokerChange> getJokerChange() override;
 private:
+    struct Piece {
+        char type = ' ';
+        char jokerType = ' ';
+        friend std::ostream& operator<<(std::ostream& os, const Piece piece) { return os << piece.type; }
+    };
     std::unique_ptr<GamePoint> getPosToMoveFrom() const;
     std::unique_ptr<GamePoint> getBestNeighbor(const Point& from) const;
     std::vector<GamePoint> validPermutations(const Point& from) const;
@@ -31,7 +36,6 @@ private:
     void rotateBoard();
     int _player;
     int _opponent;
-    using Piece = struct { char type = ' '; char jokerType = ' '; };
     GameBoard<Piece> _board;
     std::mt19937 _rg;
     std::map<char, unsigned int> _numPieces;

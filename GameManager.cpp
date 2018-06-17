@@ -9,7 +9,7 @@
 #include "PiecePosition.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
+#define DEBUG(x) do { nullstream << "RSPPlayer203521984::" << __func__ << "()\t" << x << std::endl; } while (0)
 
 int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
     // init
@@ -60,7 +60,7 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
         return;
     }
     // merge tmpBoard and main board
-        for (unsigned int i = 1; i <= N; i++) {
+    for (unsigned int i = 1; i <= N; i++) {
         for (unsigned int j = 1; j <= N; j++) {
             GamePoint pos(i, j);
             auto fightInfo = fight(pos, tmpBoard[pos]);
