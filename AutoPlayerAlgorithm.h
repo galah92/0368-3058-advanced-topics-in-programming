@@ -32,6 +32,7 @@ private:
     std::unique_ptr<GamePoint> getBestNeighbor(const Point& from) const;
     std::vector<GamePoint> validPermutations(const Point& from) const;
     bool hasValidMove(int x, int y) const;
+    bool isMovable(const Piece& piece) const;
     void initBoard();
     void rotateBoard();
     int _player;

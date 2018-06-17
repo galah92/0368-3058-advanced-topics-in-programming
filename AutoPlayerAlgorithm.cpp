@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cctype>
+#include <set>
 #include "AutoPlayerAlgorithm.h"
 #include "AlgorithmRegistration.h"
 
@@ -9,7 +10,7 @@ std::fstream nullstream;
 #define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "\t\t" << x << std::endl; } while (0)
 
 
-const auto MOVABLE_PIECES = { 'R', 'P', 'S' };
+const std::set<char> MOVABLE_PIECES = { 'R', 'P', 'S' };
 
 AutoPlayerAlgorithm::AutoPlayerAlgorithm() : _rg(std::mt19937(std::random_device{}())) {
     _numPieces = {
@@ -80,7 +81,7 @@ void AutoPlayerAlgorithm::notifyFightResult(const FightInfo& fightInfo) {
 }
 
 std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
-    DEBUG(std::endl << _board);
+    // DEBUG(std::endl << _board);
     const auto from = getPosToMoveFrom();
     if (from == nullptr) return nullptr;
     const auto to = getBestNeighbor(*from);
@@ -93,7 +94,7 @@ std::unique_ptr<Move> AutoPlayerAlgorithm::getMove() {
 
 std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
     for (const auto& pieceType : MOVABLE_PIECES) {
-        if (_numPieces[pieceType] > 1) return nullptr; // no need to change Jokers (Jokers are bombs and protect the flag)
+        if (_numPieces[pieceType] > 1) return nullptr; // no need to change jokers
     }
     // there are no movable pieces
     for (auto y = 0; y < _board.M; y++) {
@@ -108,26 +109,10 @@ std::unique_ptr<JokerChange> AutoPlayerAlgorithm::getJokerChange() {
 }
 
 std::unique_ptr<GamePoint> AutoPlayerAlgorithm::getPosToMoveFrom() const {
-    for (const auto& pieceType : MOVABLE_PIECES) {
-        if (_numPieces.at(pieceType) == 0) continue;
-        for (auto y = 0; y < _board.M; y++) {
-            for (auto x = 0; x < _board.N; x++) {
-                if (_board[{x, y}].piece.type != pieceType) continue;
-                if (_board[{x, y}].player != _player) continue;
-                if (hasValidMove(x + 1, y + 1)) return std::make_unique<GamePoint>(x + 1, y + 1);
-            }
-        }
-    }
-    // there are no possible moves of movable 
-    // handle Joker move
     for (auto y = 0; y < _board.M; y++) {
         for (auto x = 0; x < _board.N; x++) {
-            if (_board[{x, y}].piece.type != 'J') continue;
-            if (std::find(MOVABLE_PIECES.begin(),
-                MOVABLE_PIECES.end(),
-                _board[{x, y}].piece.jokerType)
-                == MOVABLE_PIECES.end()) continue; // joker isn't movable
             if (_board[{x, y}].player != _player) continue;
+            if (!isMovable(_board[{x, y}].piece)) continue;
             if (hasValidMove(x + 1, y + 1)) {
                 return std::make_unique<GamePoint>(x + 1, y + 1);
             }
@@ -141,6 +126,12 @@ bool AutoPlayerAlgorithm::hasValidMove(int x, int y) const {
         if (_board[pos].player != _player) return true;
     }
     return false;
+}
+
+bool AutoPlayerAlgorithm::isMovable(const Piece& piece) const {
+    const auto& type = piece.type;
+    const auto& jokerType = piece.jokerType;
+    return MOVABLE_PIECES.count(type) || (type == 'J' && MOVABLE_PIECES.count(jokerType));
 }
 
 std::unique_ptr<GamePoint> AutoPlayerAlgorithm::getBestNeighbor(const Point& from) const {
