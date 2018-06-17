@@ -90,8 +90,8 @@ private:
 template<class T>
 class GameBoard : public Board {
 public:
-    const static std::size_t N = 10;
-    const static std::size_t M = 10;
+    const static int N = 10;
+    const static int M = 10;
     using Entry = struct { T piece; int player; };
     GameBoard() { clear(); }
     void clear() { _arr.fill({ T(), 0 }); }
@@ -102,8 +102,8 @@ public:
     Entry& operator[](const std::pair<int, int>& pos) { return _arr[getIndex(pos)]; }
     const Entry& operator[](const std::pair<int, int>& pos) const { return _arr[getIndex(pos)]; }
     friend std::ostream& operator<<(std::ostream& os, const GameBoard<T> board) {
-        for (std::size_t i = 0; i < board.N; i++) {
-            for (std::size_t j = 0; j < board.M; j++) {
+        for (int i = 0; i < board.N; i++) {
+            for (int j = 0; j < board.M; j++) {
                 os << board[{i, j}].piece;
             }
             os << std::endl;
@@ -111,8 +111,8 @@ public:
         return os;
     }
 private:
-    std::size_t getIndex(const Point& pos) const { return (pos.getX() - 1) * M + (pos.getY() - 1); }
-    std::size_t getIndex(const std::pair<int, int>& pos) const { return pos.first * M + pos.second; }
-    const static std::size_t SIZE = N * M;
+    int getIndex(const Point& pos) const { return (pos.getX() - 1) * M + (pos.getY() - 1); }
+    int getIndex(const std::pair<int, int>& pos) const { return pos.first * M + pos.second; }
+    const static int SIZE = N * M;
     std::array<Entry, SIZE> _arr;
 };

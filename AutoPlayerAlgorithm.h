@@ -8,11 +8,9 @@
 #include "GameContainers.h"
 #include "PiecePosition.h"
 #include "JokerChange.h"
-#include "BoardImpl.h"
 #include "FightInfo.h"
 #include "Board.h"
 #include "Move.h"
-#include "Piece.h"
 
 
 class AutoPlayerAlgorithm : public PlayerAlgorithm {
@@ -33,7 +31,8 @@ private:
     void rotateBoard();
     int _player;
     int _opponent;
-    BoardImpl _board;
+    using Piece = struct { char type = ' '; char jokerType = ' '; };
+    GameBoard<Piece> _board;
     std::mt19937 _rg;
     std::map<char, unsigned int> _numPieces;
 };
