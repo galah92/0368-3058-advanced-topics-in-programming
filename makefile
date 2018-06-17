@@ -8,14 +8,14 @@ else
 	CC	:= g++
 endif
 
-CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -fPIC -DNDEBUG -g
+CFLAGS		:= -std=c++14 -Wall -Wextra -Werror -pedantic-errors -fPIC
 
 EXE_TARGET	:= ex3
-EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs -g
+EXE_FLAGS	:= -pthread -rdynamic -ldl -lstdc++fs
 EXE_OBJS	:= main.o TournamentManager.o GameManager.o Piece.o BoardImpl.o
 
 LIB_TARGET	:= RSPPlayer_203521984.so
-LIB_FLAGS	:= -shared -g
+LIB_FLAGS	:= -shared
 LIB_OBJS	:= AutoPlayerAlgorithm.o Piece.o BoardImpl.o
 
 .PHONY: clean

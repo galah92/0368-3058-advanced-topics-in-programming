@@ -71,7 +71,7 @@ std::pair<int, int> chooseTwoGames(const std::vector<std::pair<std::string, unsi
     while (n == k) {
         k = std::uniform_int_distribution<int>(0, games.size() - 1)(_rg);
     }
-    return std::make_pair(n,k);
+    return std::make_pair(n, k);
 }
 
 void TournamentManager::initGames() {
@@ -85,8 +85,10 @@ void TournamentManager::initGames() {
         numGames[indices.first].second--;
         numGames[indices.second].second--;
         // remove algo's which complete 30 games
-        if (numGames[indices.first].second == 0) numGames.erase(numGames.begin() + indices.first);
-        if (numGames[indices.second].second == 0) numGames.erase(numGames.begin() + indices.second);
+        numGames.erase(
+            std::remove_if(numGames.begin(), numGames.end(), [] (auto& p) { return p.second == 0; }),
+            numGames.end()
+        );
     }
     if (numGames.size() == 0) return; // there is one algo in numGames
     auto algo = numGames.back();
@@ -116,7 +118,6 @@ void TournamentManager::workerThread() {
         const auto& id2 = std::get<1>(match);
         bool toUpdateScore = std::get<2>(match);
         auto winner = gameManager.playRound(_algos[id1](), _algos[id2]());
-        // std::cout << "================ winner: " << (winner == 0 ? "tie" : (winner == 1 ? id1 : id2)) << std::endl;
         if (winner == 1) {
             _scores[id1] += 3;
         } else if (winner == 2 && toUpdateScore) {
