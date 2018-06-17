@@ -5,8 +5,6 @@
 #include "Piece.h"
 
 
-std::shared_ptr<Piece> Piece::Empty = std::make_shared<Piece>(0, ' ');
-
 Piece::Piece(int player, char type, char jokerType) :
     _player(player),
     _type(type),

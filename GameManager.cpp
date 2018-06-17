@@ -1,7 +1,6 @@
 #include <fstream>
 #include <vector>
 #include "GameManager.h"
-#include "GameContainers.h"
 #include "Piece.h"
 #include "Point.h"
 #include "Move.h"
@@ -9,7 +8,7 @@
 #include "PiecePosition.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { std::cout << "GameManager::" << __func__ << "()\t" << x << std::endl; } while (0)
+#define DEBUG(x) do { nullstream << "GameManager::" << __func__ << "()\t" << x << std::endl; } while (0)
 
 int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_ptr<PlayerAlgorithm> algo2) {
     // init
@@ -38,7 +37,7 @@ int GameManager::playRound(std::shared_ptr<PlayerAlgorithm> algo1, std::shared_p
 
 void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fights) {
     auto& player = _players[i];
-    BoardImpl tmpBoard;
+    GameBoard<Piece> tmpBoard;
     std::vector<std::unique_ptr<PiecePosition>> positions;
     player->algo->getInitialPositions(player->index, positions);
     // populate tmpBoard & player piece map
@@ -50,20 +49,20 @@ void GameManager::position(int i, std::vector<std::unique_ptr<FightInfo>>& fight
         const auto& pos = piecePos->getPosition();
         auto type = piecePos->getPiece();
         auto jokerType = piecePos->getJokerRep();
-        tmpBoard[pos] = std::make_shared<Piece>(player->index, type, jokerType);
+        tmpBoard[pos] = { Piece(player->index, type, jokerType), player->index };
         player->numPieces[type]++;
-        if (tmpBoard[pos]->getType() == 'F') player->numFlags++;
-        if (tmpBoard[pos]->canMove()) player->numMovable++;
+        if (tmpBoard[pos].piece.getType() == 'F') player->numFlags++;
+        if (tmpBoard[pos].piece.canMove()) player->numMovable++;
     }
     if (!isValid(player)) {
         player->status = PlayerStatus::InvalidPos;
         return;
     }
     // merge tmpBoard and main board
-    for (unsigned int i = 1; i <= N; i++) {
-        for (unsigned int j = 1; j <= N; j++) {
+    for (unsigned int i = 1; i <= _board.N; i++) {
+        for (unsigned int j = 1; j <= _board.N; j++) {
             GamePoint pos(i, j);
-            auto fightInfo = fight(pos, tmpBoard[pos]);
+            auto fightInfo = fight(pos, tmpBoard[pos].piece);
             if (fightInfo) fights.push_back(std::move(fightInfo));
             }
         }
@@ -76,7 +75,7 @@ void GameManager::doMove(int i) {
         return;
     }
     _players[1 - i]->algo->notifyOnOpponentMove(*move);
-    auto fightInfo = fight(move->getTo(), _board[move->getFrom()]);
+    auto fightInfo = fight(move->getTo(), _board[move->getFrom()].piece);
     if (fightInfo) {
         _players[0]->algo->notifyFightResult(*fightInfo);
         _players[1]->algo->notifyFightResult(*fightInfo);
@@ -84,7 +83,7 @@ void GameManager::doMove(int i) {
     } else {
         _numFights++;
     }
-    _board[move->getFrom()] = Piece::Empty;
+    _board[move->getFrom()] = { Piece(), 0 };
 }
 
 void GameManager::changeJoker(int i) {
@@ -95,8 +94,8 @@ void GameManager::changeJoker(int i) {
         player->status = PlayerStatus::InvalidMove;
         return;
     }
-    const auto& piece = _board[jokerChange->getJokerChangePosition()];
-    piece->setJokerType(jokerChange->getJokerNewRep());
+    auto& piece = _board[jokerChange->getJokerChangePosition()].piece;
+    piece.setJokerType(jokerChange->getJokerNewRep());
 }
 
 int GameManager::output() {
@@ -105,28 +104,29 @@ int GameManager::output() {
     return (is1Playing == is2Playing) ? 0 : (is1Playing ? 1 : 2);
 }
 
-std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const std::shared_ptr<Piece> piece1) {
-    auto piece2 = _board[pos];
-    auto killPiece1 = piece2->canKill(*piece1);
-    auto killPiece2 = piece1->canKill(*piece2);
-    if (killPiece1 && piece1 != Piece::Empty) kill(piece1);
-    if (killPiece2 && piece2 != Piece::Empty) kill(piece2);
-    _board[pos] = killPiece1 && killPiece2 ? Piece::Empty : (killPiece1 ? piece2 : piece1);
-    if (piece1 == Piece::Empty || piece2 == Piece::Empty) return nullptr;
-    auto winner = (killPiece1 && killPiece2) ? 0 : (killPiece1 ? piece2->getPlayer() : piece1->getPlayer());
-    auto ch1 = (piece1->getPlayer() == 1 ? piece1 : piece2)->getUnderlyingType();
-    auto ch2 = (piece1->getPlayer() == 2 ? piece1 : piece2)->getUnderlyingType();
+std::unique_ptr<FightInfo> GameManager::fight(const Point& pos, const Piece& piece1) {
+    auto piece2 = _board[pos].piece;
+    auto killPiece1 = piece2.canKill(piece1);
+    auto killPiece2 = piece1.canKill(piece2);
+    if (killPiece1 && piece1.getPlayer() != 0) kill(piece1);
+    if (killPiece2 && piece2.getPlayer() != 0) kill(piece2);
+    auto piece = killPiece1 && killPiece2 ? Piece() : (killPiece1 ? piece2 : piece1);
+    _board[pos] = { piece, piece.getPlayer() };
+    if (piece1.getPlayer() == 0 || piece2.getPlayer() == 0) return nullptr;
+    auto winner = (killPiece1 && killPiece2) ? 0 : (killPiece1 ? piece2.getPlayer() : piece1.getPlayer());
+    auto ch1 = (piece1.getPlayer() == 1 ? piece1 : piece2).getUnderlyingType();
+    auto ch2 = (piece1.getPlayer() == 2 ? piece1 : piece2).getUnderlyingType();
     return std::make_unique<GameFightInfo>((const GamePoint&)pos, ch1, ch2, winner);
 }
 
-void GameManager::kill(std::shared_ptr<Piece> piece) {
-    auto& player = _players[piece->getPlayer() - 1];
-    player->numPieces[piece->getType()]--;
-    if (piece->getType() == 'F') {
+void GameManager::kill(const Piece& piece) {
+    auto& player = _players[piece.getPlayer() - 1];
+    player->numPieces[piece.getType()]--;
+    if (piece.getType() == 'F') {
         player->numFlags--;
         if (player->numFlags == 0) player->status = PlayerStatus::NoFlags;
     }
-    if (piece->canMove()) {
+    if (piece.canMove()) {
         player->numMovable--;
         if (player->numMovable == 0) player->status = PlayerStatus::CantMove;
     }
@@ -137,18 +137,18 @@ bool GameManager::isValid(const std::unique_ptr<Move>& move, int i) const {
     const auto& from = move->getFrom();
     const auto& to = move->getTo();
     // check that points on board
-    if (!_board.isValidPosition(to)) return false;
-    if (!_board.isValidPosition(from)) return false;
+    if (!_board.isValid(to)) return false;
+    if (!_board.isValid(from)) return false;
     // check  that points are next to each other
     auto horizontal = std::abs(from.getX() - to.getX());
     auto vertical = std::abs(from.getY() - to.getY());
     if (horizontal > 1 || vertical > 1) return false;
     if (horizontal == 0 && vertical == 0) return false;
     // check that that piece is the player's piece and that it can move
-    if (_board[from]->getPlayer() != i + 1) return false;
-    if (!_board[from]->canMove()) return false;
+    if (_board[from].player != i + 1) return false;
+    if (!_board[from].piece.canMove()) return false;
     // check that the destination doesn't contain a player's piece
-    if (_board[to]->getPlayer() == i + 1) return false;
+    if (_board[to].player == i + 1) return false;
     return true;
 }
 
@@ -156,20 +156,20 @@ bool GameManager::isValid(const std::unique_ptr<JokerChange>& jokerChange, int i
     const auto rep = jokerChange->getJokerNewRep();
     const auto& pos = jokerChange->getJokerChangePosition();
     // check that point on board
-    if (!_board.isValidPosition(pos)) return false;
+    if (!_board.isValid(pos)) return false;
     // check that rep is valid
     if (!Piece::isValid(rep)) return false;
     // check that that piece is the player's piece and that it's a Joker
-    if (_board[pos]->getPlayer() != i + 1) return false;
-    if (_board[pos]->getType() != 'J') return false;
+    if (_board[pos].player != i + 1) return false;
+    if (_board[pos].piece.getType() != 'J') return false;
     return true;
 }
 
-bool GameManager::isValid(const std::unique_ptr<PiecePosition>& piecePos, const BoardImpl& board) const {
+bool GameManager::isValid(const std::unique_ptr<PiecePosition>& piecePos, const GameBoard<Piece>& board) const {
     if (!piecePos) return false;
     // check that pos is empty
-    if (!board.isValidPosition(piecePos->getPosition())) return false;
-    if (board[piecePos->getPosition()]->getPlayer() != 0) return false;
+    if (!board.isValid(piecePos->getPosition())) return false;
+    if (board[piecePos->getPosition()].player != 0) return false;
     // check that it's a valid piece
     if (!Piece::isValid(piecePos->getPiece(), piecePos->getJokerRep())) return false;
     return true;

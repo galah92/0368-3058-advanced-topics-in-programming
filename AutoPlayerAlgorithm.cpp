@@ -7,7 +7,7 @@
 #include "AlgorithmRegistration.h"
 
 std::fstream nullstream;
-#define DEBUG(x) do { std::cout << "RSPPlayer203521984::" << __func__ << "\t\t" << x << std::endl; } while (0)
+#define DEBUG(x) do { nullstream << "RSPPlayer203521984::" << __func__ << "\t\t" << x << std::endl; } while (0)
 
 
 const std::set<char> MOVABLE_PIECES = { 'R', 'P', 'S' };
