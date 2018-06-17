@@ -164,15 +164,15 @@ void AutoPlayerAlgorithm::initBoard() {
     _board[{1, 0}] = { { 'B', 'B' }, _player };
     _board[{1, 1}] = { { 'J', 'B' }, _player };
     // currently all other pieces positions are hardcoded
-    _board[{5, 5}] = { { 'J', 'B' }, _player };
-    _board[{2, 7}] = { { 'R', 'B' }, _player };
-    _board[{8, 2}] = { { 'R', 'B' }, _player };
-    _board[{2, 2}] = { { 'P', 'B' }, _player };
-    _board[{3, 7}] = { { 'P', 'B' }, _player };
-    _board[{4, 4}] = { { 'P', 'B' }, _player };
-    _board[{5, 8}] = { { 'P', 'B' }, _player };
-    _board[{6, 4}] = { { 'P', 'B' }, _player };
-    _board[{7, 6}] = { { 'S', 'B' }, _player };
+    _board[{1, 2}] = { { 'J', 'B' }, _player };
+    _board[{2, 2}] = { { 'R', 'B' }, _player };
+    _board[{2, 3}] = { { 'R', 'B' }, _player };
+    _board[{9, 9}] = { { 'P', 'B' }, _player };
+    _board[{2, 0}] = { { 'P', 'B' }, _player };
+    _board[{9, 0}] = { { 'P', 'B' }, _player };
+    _board[{1, 3}] = { { 'P', 'B' }, _player };
+    _board[{0, 9}] = { { 'P', 'B' }, _player };
+    _board[{0, 2}] = { { 'S', 'B' }, _player };
     // rotate the board by 90deg - flag can be on any edge
     auto n = std::uniform_int_distribution<int>(0, 3)(_rg);
     for (auto i = 0; i < n; i++) rotateBoard();
