@@ -1,4 +1,4 @@
-﻿#ifndef __PLAYER_ALGORITHM_H_
+#ifndef __PLAYER_ALGORITHM_H_
 #define __PLAYER_ALGORITHM_H_
 
 //--------------------------

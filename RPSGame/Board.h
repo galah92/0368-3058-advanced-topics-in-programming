@@ -1,4 +1,4 @@
-﻿#ifndef __BOARD_H_
+#ifndef __BOARD_H_
 #define __BOARD_H_
 
 //--------------------------

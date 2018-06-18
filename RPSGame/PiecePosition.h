@@ -1,4 +1,4 @@
-﻿#ifndef __PIECE_POSITION_H_
+#ifndef __PIECE_POSITION_H_
 #define __PIECE_POSITION_H_
 
 //--------------------------
