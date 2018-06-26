@@ -6,10 +6,10 @@
 #include <array>
 #include <tuple>
 
-template<typename GAME_PIECE>
+template<class GAME_PIECE>
 using PieceInfo = std::unique_ptr<const std::pair<int, GAME_PIECE>>;
 
-template<int ROWS, int COLS, typename GAME_PIECE, int NUM_PLAYERS = 2>
+template<int ROWS, int COLS, class GAME_PIECE, int NUM_PLAYERS = 2>
 class GameBoard {
 public:
     const static int SIZE = ROWS * COLS;
