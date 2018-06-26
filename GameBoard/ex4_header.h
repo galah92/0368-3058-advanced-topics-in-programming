@@ -6,10 +6,10 @@
 #include <array>
 #include <tuple>
 
-template<class GAME_PIECE>
+template<typename GAME_PIECE>
 using PieceInfo = std::unique_ptr<const std::pair<int, GAME_PIECE>>;
 
-template<int ROWS, int COLS, class GAME_PIECE, int NUM_PLAYERS = 2>
+template<int ROWS, int COLS, typename GAME_PIECE, int NUM_PLAYERS = 2>
 class GameBoard {
 public:
     const static int SIZE = ROWS * COLS;
@@ -60,7 +60,7 @@ public:
             return pieceInfo->second == piece;
         });
     }
-    iterator allOccureneceOfPieceForPlayer(int playerNum, GAME_PIECE piece) {
+    iterator allOccureneceOfPieceForPlayer(GAME_PIECE piece, int playerNum) {
         return iterator(*this, [playerNum, piece](const auto& pieceInfo) {
             return pieceInfo->first == playerNum && pieceInfo->second == piece;
         });
